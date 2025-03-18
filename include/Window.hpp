@@ -10,11 +10,12 @@
 #include "RenderTarget.hpp"
 #include "Renderable.hpp"
 #include "RenderData.hpp"
-#include "Camera.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include <FreeCamera.hpp>
+#include <TargetCamera.hpp>
 
 class Window : public RenderTarget {
 public:
@@ -42,9 +43,8 @@ public:
     GLFWwindow* const getWindowHandle() const { return m_window; }
 
     // Camera methods
-    void setCamera(const Camera& camera);
-    Camera& getCamera();
-    const Camera& getCamera() const;
+    void setCamera(const CFreeCamera& camera);
+    CFreeCamera& getCamera() { return m_camera; }
 
     void processInput(float deltaTime); // For handling camera movement
     void processMouseMovement(float xoffset, float yoffset);
@@ -59,7 +59,8 @@ private:
     int m_height;
     std::string m_title;
 
-    Camera m_camera; // Camera object
+    //CFreeCamera m_camera; // Camera object
+    CFreeCamera m_camera;
     glm::mat4 m_projection_matrix;
 
     void initialize(GLFWwindow* window);

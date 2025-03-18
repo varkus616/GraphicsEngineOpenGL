@@ -6,6 +6,7 @@ class Renderable;
 class RenderData;
 class VertexBuffer;
 class IndexBuffer;
+class Mesh;
 
 class RenderTarget {
 public:

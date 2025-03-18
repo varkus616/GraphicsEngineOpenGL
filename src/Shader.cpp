@@ -145,6 +145,97 @@ void Shader::setMat4(const std::string& name, const glm::mat4& mat, GLboolean tr
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, transpose_flag, glm::value_ptr(mat));
 }
 
+void Shader::setIntArray(const std::string& name, const std::vector<GLint>& values) const {
+    glUniform1iv(glGetUniformLocation(ID, name.c_str()), values.size(), values.data());
+}
+
+void Shader::setFloatArray(const std::string& name, const std::vector<GLfloat>& values) const {
+    glUniform1fv(glGetUniformLocation(ID, name.c_str()), values.size(), values.data());
+}
+
+void Shader::setVec2Array(const std::string& name, const std::vector<glm::vec2>& values) const {
+    glUniform2fv(glGetUniformLocation(ID, name.c_str()), values.size(), &values[0][0]);
+}
+
+void Shader::setVec3Array(const std::string& name, const std::vector<glm::vec3>& values) const {
+    glUniform3fv(glGetUniformLocation(ID, name.c_str()), values.size(), &values[0][0]);
+}
+
+void Shader::setVec4Array(const std::string& name, const std::vector<glm::vec4>& values) const {
+    glUniform4fv(glGetUniformLocation(ID, name.c_str()), values.size(), &values[0][0]);
+}
+
+void Shader::setMat2Array(const std::string& name, const std::vector<glm::mat2>& values, GLboolean transpose_flag) const {
+    glUniformMatrix2fv(glGetUniformLocation(ID, name.c_str()), values.size(), transpose_flag, glm::value_ptr(values[0]));
+}
+
+void Shader::setMat3Array(const std::string& name, const std::vector<glm::mat3>& values, GLboolean transpose_flag) const {
+    glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), values.size(), transpose_flag, glm::value_ptr(values[0]));
+}
+
+void Shader::setMat4Array(const std::string& name, const std::vector<glm::mat4>& values, GLboolean transpose_flag) const {
+    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), values.size(), transpose_flag, glm::value_ptr(values[0]));
+}
+
+void Shader::setIntArray(const std::string& name, const int* values, const size_t size) const {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniform1iv(location, size, values);
+    }
+}
+
+void Shader::setFloatArray(const std::string& name, const float* values, const size_t size) const {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniform1fv(location, size, values);
+    }
+}
+
+void Shader::setVec2Array(const std::string& name, const glm::vec2* values, const size_t size) const {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniform2fv(location, size, reinterpret_cast<const float*>(values));
+    }
+}
+
+void Shader::setVec3Array(const std::string& name, const glm::vec3* values, const size_t size) const {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniform3fv(location, size, reinterpret_cast<const float*>(values));
+    }
+}
+
+void Shader::setVec4Array(const std::string& name, const glm::vec4* values, const size_t size) const {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniform4fv(location, size, reinterpret_cast<const float*>(values));
+    }
+}
+
+void Shader::setMat2Array(const std::string& name, const glm::mat2* values, const size_t size, GLboolean transpose_flag) const {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniformMatrix2fv(location, size, transpose_flag, reinterpret_cast<const float*>(values));
+    }
+}
+
+void Shader::setMat3Array(const std::string& name, const glm::mat3* values, const size_t size, GLboolean transpose_flag) const {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniformMatrix3fv(location, size, transpose_flag, reinterpret_cast<const float*>(values));
+    }
+}
+
+void Shader::setMat4Array(const std::string& name, const glm::mat4* values, const size_t size, GLboolean transpose_flag) const {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniformMatrix4fv(location, size, transpose_flag, reinterpret_cast<const float*>(values));
+    }
+}
+
+
+
+
 void Shader::checkCompileErrors(GLuint shader, std::string type) {
     int success;
     int len = 0;

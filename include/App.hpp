@@ -6,12 +6,10 @@
 #include <random>
 
 #include <Shader.hpp>     
-#include <Texture.hpp>
 #include <Utilities.hpp>
 #include <Window.hpp>
 #include <Shapes.hpp>
-#include <RenderableObject.hpp>
-
+#include <Spotlight.hpp>
 
 class App
 {
@@ -26,19 +24,26 @@ public:
 	void processInput();
 	void update();
 	void render();
-
 	Window& m_window;
 	
 	Texture testTexture;
 	Sphere sphere;
-	RenderableObject shotgun;
+
+	Mesh	plane;
+	Triangle epicT;
+
+	RenderableObject sphereObj;
+
+	RenderableObject obj;
 	std::vector<Cube> cubes;
 	RenderData currentRenderData;
+	SpotLight light;
 
 	bool m_app_running = true;
 
 private:
 	void imguiRender();
+	void installLights();
 };
 
 #endif // !APP_HPP

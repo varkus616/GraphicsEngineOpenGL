@@ -5,6 +5,7 @@
 #include <memory>
 #include <sstream>
 #include <SOIL2/soil2.h>
+#include <Mesh.hpp>
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexBufferLayout.hpp"
@@ -45,37 +46,6 @@ GLuint Utils::loadTexture(const char* texImagePath) {
 
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
     return textureID;
-}
-
-
-VertexBuffer Utils::createRectangle(float width, float height) {
-    float vertices[] = {
-        0.0f, 0.0f,    
-        width, 0.0f,   
-        width, height, 
-        0.0f, height   
-    };
-       
-    return VertexBuffer(vertices, sizeof(vertices));
-}
-
-VertexBuffer Utils::createCircle(float radius, int num_segments)
-{
-    float* vertices = new float[num_segments * 2];
-    Utils::generateCircleVertices(vertices, num_segments, radius);
-    
-    VertexBuffer vb(vertices, sizeof(vertices));
-    delete vertices;
-    return vb;
-}
-
-void Utils::generateCircleVertices(float* vertices, int segments, float radius) {
-    float angleStep = 2.0f * M_PI / segments;
-    for (int i = 0; i < segments; ++i) {
-        float angle = i * angleStep;
-        vertices[2 * i] = radius * cos(angle);
-        vertices[2 * i + 1] = radius * sin(angle);
-    }
 }
 
 std::string Utils::mat4ToString(const glm::mat4& matrix)
@@ -124,18 +94,83 @@ std::string Utils::vec4ToString(const glm::vec4& vector)
     return oss.str();
 }
 
-// Konwertuje pozycjê w oknie na znormalizowane wspó³rzêdne urz¹dzenia (NDC) dla osi X, Y i Z
-glm::vec3 Utils::windowToNDC(int x, int y, float z, int windowWidth, int windowHeight) {
-    float ndcX = 2.0f * x / windowWidth - 1.0f;
-    float ndcY = 1.0f - 2.0f * y / windowHeight;
-    float ndcZ = 2.0f * z - 1.0f;
-    return glm::vec3(ndcX, ndcY, ndcZ);
+Mesh Utils::generatePlane(const int SIZE_X, const  int SIZE_Z)
+{
+    std::vector<Vertex> vertexes;
+    std::vector<GLuint> indices;
+
+    //GLuint* id = &indices[0];
+
+    int count = 0;
+    int HALF_SIZE_X = SIZE_X / 2;
+    int HALF_SIZE_Z = SIZE_Z / 2;
+    for (int i = 0; i <= SIZE_Z; i++) {
+        for (int j = 0; j <= SIZE_X; j++) {
+            
+            Vertex v;
+            v.Position.x = ((float(j) / (SIZE_X - 1)) * 2 - 1) * HALF_SIZE_X;
+            v.Position.y = 0;
+            v.Position.z = ((float(i) / (SIZE_Z - 1)) * 2 - 1) * HALF_SIZE_Z;
+
+            v.TextureCoords = glm::vec2(float(j) / SIZE_X, float(i) / SIZE_Z);
+            v.Normal = glm::vec3(0.0f, 1.0f, 0.0f); // Normal skierowany w górê
+            v.VertexColors = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); // Bia³y kolor
+
+            vertexes.push_back(v);
+        }
+    }
+    
+    for (int i = 0; i < SIZE_Z; i++) {
+        for (int j = 0; j < SIZE_X; j++){
+            int i0 = i * (SIZE_X + 1) + j;
+            int i1 = i0 + 1;
+            int i2 = i0 + (SIZE_X + 1);
+            int i3 = i2 + 1;
+            if ((j + i) % 2){
+                indices.push_back(i0);
+                indices.push_back(i2);
+                indices.push_back(i1);
+
+
+                indices.push_back(i1);
+                indices.push_back(i2);
+                indices.push_back(i3);
+
+                //*id++ = i0; *id++ = i2; *id++ = i1;
+                //*id++ = i1; *id++ = i2; *id++ = i3;
+            }
+            else {
+                indices.push_back(i0);
+                indices.push_back(i2);
+                indices.push_back(i3);
+
+
+                indices.push_back(i0);
+                indices.push_back(i3);
+                indices.push_back(i1);
+                //*id++ = i0; *id++ = i2; *id++ = i3;
+                //*id++ = i0; *id++ = i3; *id++ = i1;
+            }
+        }
+    }
+
+    return Mesh(vertexes, indices);
 }
 
-// Konwertuje znormalizowane wspó³rzêdne urz¹dzenia (NDC) na pozycjê w oknie dla osi X, Y i Z
-glm::vec3 Utils::ndcToWindow(float ndcX, float ndcY, float ndcZ, int windowWidth, int windowHeight) {
-    int x = (ndcX + 1.0f) * 0.5f * windowWidth;
-    int y = (1.0f - ndcY) * 0.5f * windowHeight;
-    float z = (ndcZ + 1.0f) * 0.5f;
-    return glm::vec3(x, y, z);
-}
+// GOLD material
+glm::vec4* Utils::goldAmbient() { static glm::vec4 a = { 0.2473f, 0.1995f, 0.0745f, 1 }; return &a; }
+glm::vec4* Utils::goldDiffuse() { static glm::vec4 a = { 0.7516f, 0.6065f, 0.2265f, 1 }; return &a; }
+glm::vec4* Utils::goldSpecular() { static glm::vec4 a = { 0.6283f, 0.5558f, 0.3661f, 1 }; return &a; }
+float Utils::goldShininess() { return 51.2f; }
+
+// SILVER material - ambient, diffuse, specular, and shininess
+float* Utils::silverAmbient() { static float a[4] = { 0.1923f, 0.1923f, 0.1923f, 1 }; return (float*)a; }
+float* Utils::silverDiffuse() { static float a[4] = { 0.5075f, 0.5075f, 0.5075f, 1 }; return (float*)a; }
+float* Utils::silverSpecular() { static float a[4] = { 0.5083f, 0.5083f, 0.5083f, 1 }; return (float*)a; }
+float Utils::silverShininess() { return 51.2f; }
+
+// BRONZE material - ambient, diffuse, specular, and shininess
+float* Utils::bronzeAmbient() { static float a[4] = { 0.2125f, 0.1275f, 0.0540f, 1 }; return (float*)a; }
+float* Utils::bronzeDiffuse() { static float a[4] = { 0.7140f, 0.4284f, 0.1814f, 1 }; return (float*)a; }
+float* Utils::bronzeSpecular() { static float a[4] = { 0.3935f, 0.2719f, 0.1667f, 1 }; return (float*)a; }
+float Utils::bronzeShininess() { return 25.6f; }

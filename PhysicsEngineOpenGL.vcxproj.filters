@@ -28,6 +28,9 @@
     <Filter Include="Shaders\Vert">
       <UniqueIdentifier>{fe2ab6b6-22a3-4969-9f23-a173c5ae76a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Geo">
+      <UniqueIdentifier>{1001a8c7-ea1c-4cdf-9153-1e29cb7cb51c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -96,6 +99,15 @@
     <ClCompile Include="src\Shapes.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="src\AbstractCamera.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FreeCamera.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TargetCamera.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\glew64.dll" />
@@ -104,6 +116,9 @@
     </None>
     <None Include="shaders\vert\vertShader.glsl">
       <Filter>Shaders\Vert</Filter>
+    </None>
+    <None Include="shaders\geo\geoShader.glsl">
+      <Filter>Shaders\Geo</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +213,21 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="include\Shapes.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AbstractCamera.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FreeCamera.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CPlane.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TargetCamera.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Spotlight.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

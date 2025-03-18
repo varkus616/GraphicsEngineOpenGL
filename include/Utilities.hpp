@@ -13,24 +13,37 @@
 
 class VertexBuffer;
 class VertexArray;
+class Mesh;
 namespace Utils {
+	Mesh generatePlane(const int SIZE_X, const  int SIZE_Z);
 	void GLClearError();
 	bool GLLogCall(const char* function, const char* file, int line);
 	//std::vector<GLuint> generateIndicies(VertexBuffer& vb);
 
 	GLuint loadTexture(const char* texImagePath);
 
-	VertexBuffer createRectangle(float width, float height);
-	VertexBuffer createCircle(float radius, int num_segments);
-	void generateCircleVertices(float* vertices, int segments, float radius);
-
-	glm::vec3 windowToNDC(int x, int y, float z, int windowWidth, int windowHeight);
-	glm::vec3 ndcToWindow(float ndcX, float ndcY, float ndcZ, int windowWidth, int windowHeight);
+	void filterMouseMoves(float dx, float dy);
 
 	std::string mat4ToString(const glm::mat4& matrix);
 	std::string mat3ToString(const glm::mat3& matrix);
 	std::string vec2ToString(const glm::vec2& vector);
 	std::string vec3ToString(const glm::vec3& vector);
 	std::string vec4ToString(const glm::vec4& vector);
+
+	glm::vec4* goldAmbient();
+	glm::vec4* goldDiffuse();
+	glm::vec4* goldSpecular();
+	float  goldShininess();
+	float* silverAmbient();
+	float* silverDiffuse();
+	float* silverSpecular();
+	float  silverShininess();
+	float* bronzeAmbient();
+	float* bronzeDiffuse();
+	float* bronzeSpecular();
+	float  bronzeShininess();
+
+
 }
+
 #endif // ! UTILITIES_HPP

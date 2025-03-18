@@ -14,33 +14,41 @@ enum class UniformType {
     VEC4,
     MAT2,
     MAT3,
-    MAT4
+    MAT4,
+    INT_ARRAY,
+    FLOAT_ARRAY,
+    VEC2_ARRAY,
+    VEC3_ARRAY,
+    VEC4_ARRAY,
+    MAT4_ARRAY,
+    NONE
 };
 
+
 struct UniformValue {
-    UniformValue(UniformType dt, GLboolean d) :dataType(dt), boolUnif(d) {};
-    UniformValue(UniformType dt, GLint     d) :dataType(dt), intUnif(d) {};
-    UniformValue(UniformType dt, GLfloat   d) :dataType(dt), floatUnif(d) {};
-    UniformValue(UniformType dt, glm::vec2 d) :dataType(dt), vec2Unif(d) {};
-    UniformValue(UniformType dt, glm::vec3 d) :dataType(dt), vec3Unif(d) {};
-    UniformValue(UniformType dt, glm::vec4 d) :dataType(dt), vec4Unif(d) {};
-    UniformValue(UniformType dt, glm::mat2 d) :dataType(dt), mat2Unif(d) {};
-    UniformValue(UniformType dt, glm::mat3 d) :dataType(dt), mat3Unif(d) {};
-    UniformValue(UniformType dt, glm::mat4 d) :dataType(dt), mat4Unif(d) {};
-    UniformValue() = default;
     UniformType dataType;
-    union {
-        GLboolean  boolUnif;
-        GLint      intUnif;
-        GLfloat    floatUnif;
-        glm::vec2  vec2Unif;
-        glm::vec3  vec3Unif;
-        glm::vec4  vec4Unif;
-        glm::mat2  mat2Unif;
-        glm::mat3  mat3Unif;
-        glm::mat4  mat4Unif;
-    };
+    const void* dataPtr = nullptr;  
+    size_t size = 0;                
+
+    UniformValue() : dataType(UniformType::NONE), dataPtr(nullptr) {}
+    UniformValue(UniformType dt, const GLboolean& d) : dataType(dt), dataPtr(&d) {}
+    UniformValue(UniformType dt, const GLint& d) : dataType(dt), dataPtr(&d) {}
+    UniformValue(UniformType dt, const GLfloat& d) : dataType(dt), dataPtr(&d) {}
+    UniformValue(UniformType dt, const glm::vec2& d) : dataType(dt), dataPtr(&d) {}
+    UniformValue(UniformType dt, const glm::vec3& d) : dataType(dt), dataPtr(&d) {}
+    UniformValue(UniformType dt, const glm::vec4& d) : dataType(dt), dataPtr(&d) {}
+    UniformValue(UniformType dt, const glm::mat2& d) : dataType(dt), dataPtr(&d) {}
+    UniformValue(UniformType dt, const glm::mat3& d) : dataType(dt), dataPtr(&d) {}
+    UniformValue(UniformType dt, const glm::mat4& d) : dataType(dt), dataPtr(&d) {}
+
+    // Przechowywanie wskaŸnika na tablicê (bez kopiowania)
+    template <typename T>
+    UniformValue(UniformType dt, const std::vector<T>& arr)
+        : dataType(dt), dataPtr(arr.data()), size(arr.size()) {}
+
+    ~UniformValue() = default;
 };
+
 
 struct ShaderConfig {
 
@@ -48,49 +56,63 @@ struct ShaderConfig {
     std::unordered_map<std::string, UniformValue> uniforms;
     
     void apply(Shader& shader) const {
-            for (auto it = uniforms.begin(); it != uniforms.end(); ++it) {
-                switch (it->second.dataType)
-                {
-                case UniformType::BOOL:
-                    shader.setBool(it->first, it->second.boolUnif);
-                    break;
+        for (auto& it : uniforms) {
+            const std::string& name = it.first;
+            const UniformValue& value = it.second;
 
-                case UniformType::INT:
-                    shader.setInt(it->first, it->second.intUnif);
-                    break;
+            switch (value.dataType) {
+            case UniformType::BOOL:
+                shader.setBool(name, *reinterpret_cast<const GLboolean*>(value.dataPtr));
+                break;
+            case UniformType::INT:
+                shader.setInt(name, *reinterpret_cast<const GLint*>(value.dataPtr));
+                break;
+            case UniformType::FLOAT:
+                shader.setFloat(name, *reinterpret_cast<const GLfloat*>(value.dataPtr));
+                break;
+            case UniformType::VEC2:
+                shader.setVec2(name, *reinterpret_cast<const glm::vec2*>(value.dataPtr));
+                break;
+            case UniformType::VEC3:
+                shader.setVec3(name, *reinterpret_cast<const glm::vec3*>(value.dataPtr));
+                break;
+            case UniformType::VEC4:
+                shader.setVec4(name, *reinterpret_cast<const glm::vec4*>(value.dataPtr));
+                break;
+            case UniformType::MAT2:
+                shader.setMat2(name, *reinterpret_cast<const glm::mat2*>(value.dataPtr), GL_FALSE);
+                break;
+            case UniformType::MAT3:
+                shader.setMat3(name, *reinterpret_cast<const glm::mat3*>(value.dataPtr), GL_FALSE);
+                break;
+            case UniformType::MAT4:
+                shader.setMat4(name, *reinterpret_cast<const glm::mat4*>(value.dataPtr), GL_FALSE);
+                break;
 
-                case UniformType::FLOAT:
-                    shader.setFloat(it->first, it->second.floatUnif);
-                    break;
+                // Obs³uga tablic
+            case UniformType::INT_ARRAY:
+                shader.setIntArray(name, (const GLint*)value.dataPtr, value.size);
+                break;
+            case UniformType::FLOAT_ARRAY:
+                shader.setFloatArray(name, (const GLfloat*)value.dataPtr, value.size);
+                break;
+            case UniformType::VEC2_ARRAY:
+                shader.setVec2Array(name, (const glm::vec2*)value.dataPtr, value.size);
+                break;
+            case UniformType::VEC3_ARRAY:
+                shader.setVec3Array(name, (const glm::vec3*)value.dataPtr, value.size);
+                break;
+            case UniformType::VEC4_ARRAY:
+                shader.setVec4Array(name, (const glm::vec4*)value.dataPtr, value.size);
+                break;
+            case UniformType::MAT4_ARRAY:
+                shader.setMat4Array(name, (const glm::mat4*)value.dataPtr, value.size);
+                break;
 
-                case UniformType::VEC2:
-                    shader.setVec2(it->first, it->second.vec2Unif);
-                    break;
-
-                case UniformType::VEC3:
-                    shader.setVec3(it->first, it->second.vec3Unif);
-                    break;
-
-                case UniformType::VEC4:
-                    shader.setVec4(it->first, it->second.vec4Unif);
-                    break;
-
-                case UniformType::MAT2:
-                    shader.setMat2(it->first, it->second.mat2Unif);
-                    break;
-
-                case UniformType::MAT3:
-                    shader.setMat3(it->first, it->second.mat3Unif);
-                    break;
-
-                case UniformType::MAT4:
-                    shader.setMat4(it->first, it->second.mat4Unif);
-                    break;
-                default:
-                    std::cerr << "Error: Unknown uniform type!\n";
-                    std::exit(EXIT_FAILURE);
-                }
-
+            default:
+                std::cerr << "Error: Unknown uniform type!\n";
+                std::exit(EXIT_FAILURE);
             }
-        };
+        }
+    }
 };

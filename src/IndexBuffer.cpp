@@ -7,6 +7,7 @@ IndexBuffer::IndexBuffer(const void* data, GLuint size)
     GLCall(glGenBuffers(1, &_rendererID));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _rendererID));
     GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));//in bytes
+    Unbind();
 }
 
 IndexBuffer::~IndexBuffer()

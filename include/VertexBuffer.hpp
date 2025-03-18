@@ -24,6 +24,7 @@ public:
     void BufferData(const void* data, GLuint size);
 
     const GLuint GetSize() const { return _size; }
+    const GLuint GetID() const { return _rendererID; }
  
 private:
     GLuint _rendererID;

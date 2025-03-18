@@ -3,17 +3,15 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/glm.hpp"
 #include "Utilities.hpp"
-#include <functional>
 #include "IndexBuffer.hpp"
+#include <functional>
 
 Window::Window(RenderContext& context, int width, int height, const std::string& title)
-    : m_width(width), m_height(height), m_title(title), m_camera(glm::vec3(0.f, 0.f, -8.f))
+    : m_width(width), m_height(height), m_title(title)
 {
-    m_projection_matrix = glm::ortho(0.0f, (float)m_width, (float)m_height, 0.0f, -1.0f, 1.0f);
 
     float aspect_ratio = getWidth() / getHeight();
-    m_projection_matrix = glm::perspective(1.0472f, aspect_ratio, 0.1f, 1000.f);
-    
+    m_camera.SetupProjection(90, aspect_ratio, 0.1f, 1000.f);
     
     m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
     if (!m_window) {
@@ -32,20 +30,27 @@ Window::Window(RenderContext& context)
     : Window(context, 800, 600, "Window") {}
 
 Window::~Window() {
-    glfwDestroyWindow(m_window);
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    glfwDestroyWindow(m_window);
     glfwTerminate();
 }
 
 void Window::initialize(GLFWwindow* window) {
-    
-    InitializeImGui(m_window);
-    
+
     GLCall(glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4));
-    GLCall(glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1));
+    GLCall(glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3));
     GLCall(glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE));
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    // Ustawienie backendów (dla OpenGL + GLFW)
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 430");
+    ImGui::StyleColorsDark();
 }
 
 const bool Window::shouldClose() const {
@@ -80,7 +85,7 @@ void Window::draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& d
             GLCall(glDrawElements(GL_TRIANGLES, EBO.GetSize() / sizeof(GLuint), GL_UNSIGNED_INT, nullptr));
             break;
         case PrimitiveType::QUADS:
-            GLCall(glDrawElements(GL_QUADS, EBO.GetSize() , GL_UNSIGNED_INT, nullptr));
+            GLCall(glDrawElements(GL_QUADS, EBO.GetSize() / sizeof(GLuint), GL_UNSIGNED_INT, nullptr));
             break;
         default:
             break;
@@ -141,63 +146,56 @@ void Window::setTitle(const std::string& title) {
     glfwSetWindowTitle(m_window, title.c_str());
 }
 
-void Window::InitializeImGui(GLFWwindow* window) {
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 430");
-}
-
-void Window::setCamera(const Camera& camera) {
-    m_camera = camera;
-}
-
-Camera& Window::getCamera() {
-    return m_camera;
-}
-
-const Camera& Window::getCamera() const {
-    return m_camera;
-}
-
 void Window::processInput(float deltaTime) {
 
     if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(m_window, true);
+    
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-        m_camera.ProcessKeyboard(FORWARD, deltaTime);
+        m_camera.Walk(deltaTime);
     if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        m_camera.ProcessKeyboard(BACKWARD, deltaTime);
+        m_camera.Walk(-deltaTime);
+    
     if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-        m_camera.ProcessKeyboard(LEFT, deltaTime);
+        m_camera.Strafe(-deltaTime);
     if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-        m_camera.ProcessKeyboard(RIGHT, deltaTime);
+        m_camera.Strafe(deltaTime);
+    
     if (glfwGetKey(m_window, GLFW_KEY_F) == GLFW_PRESS)
-        m_camera.ProcessKeyboard(TOP, deltaTime);
+        m_camera.Lift(deltaTime);
     if (glfwGetKey(m_window, GLFW_KEY_G) == GLFW_PRESS)
-        m_camera.ProcessKeyboard(DOWN, deltaTime);
+        m_camera.Lift(-deltaTime);
+
     if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
-        m_camera.ProcessKeyboard(ROT_RIGHT, deltaTime);
+        m_camera.Rotate(-deltaTime, 0.f, 0.f);
     if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
-        m_camera.ProcessKeyboard(ROT_LEFT, deltaTime);
+        m_camera.Rotate(deltaTime, 0.f, 0.f);
+    
     if (glfwGetKey(m_window, GLFW_KEY_Z) == GLFW_PRESS)
-        m_camera.ProcessKeyboard(ROT_BOT, deltaTime);
+        m_camera.Rotate(0.f, deltaTime, 0.f);
     if (glfwGetKey(m_window, GLFW_KEY_X) == GLFW_PRESS)
-        m_camera.ProcessKeyboard(ROT_TOP, deltaTime);
+        m_camera.Rotate(0.f, -deltaTime, 0.f);
+
+
+    if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
+        m_camera.Rotate(0.f, 0.f, deltaTime);
+    if (glfwGetKey(m_window, GLFW_KEY_Y) == GLFW_PRESS)
+        m_camera.Rotate(0.f, 0.f, -deltaTime);
+
+    if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS) {
+        m_camera.ResetRotation();
+        m_camera.SetPosition(glm::vec3(0.f, 0.f, 0.f));
+    }
 }
 
 void Window::processMouseMovement(float xoffset, float yoffset) {
-    m_camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void Window::processMouseScroll(float yoffset) {
-    m_camera.ProcessMouseScroll(yoffset);
 }
 
 glm::mat4 Window::getProjectionMatrix() const {
-    return m_projection_matrix;
+    return m_camera.GetProjectionMatrix();
 }
 
 glm::mat4 Window::getViewMatrix() const {

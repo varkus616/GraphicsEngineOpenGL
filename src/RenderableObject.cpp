@@ -1,7 +1,7 @@
 #include <RenderableObject.hpp>
 
 
-RenderableObject::RenderableObject(Mesh* mesh) 
+RenderableObject::RenderableObject(Mesh* mesh, DrawMode mode) : m_drawMode(mode)
 {
     if (mesh != nullptr)
         m_meshes.push_back(mesh);
@@ -12,8 +12,10 @@ void RenderableObject::draw(RenderTarget& target, RenderData& data)
     for (size_t i = 0; i < m_meshes.size(); i++) {
         auto& mesh = m_meshes[i];
         if (mesh != nullptr) {
-            mesh->setupBuffers(data.layout);
+            mesh->setupBuffers();
             mesh->bindTextures();
+            mesh->getIndexBuffer().Bind();
+            data.drawMode = m_drawMode;
 
             target.draw(mesh->getBuffer(), mesh->getIndexBuffer(), data);
 
@@ -29,7 +31,6 @@ glm::mat4& RenderableObject::getModelMatrix() {
     }
     return transform.modelMatrix;
 }
-
 
 void RenderableObject::loadModel(std::string path)
 {
@@ -62,29 +63,39 @@ void RenderableObject::processNode(aiNode* node, const aiScene* scene)
 
 Mesh* RenderableObject::processMesh(aiMesh* mesh, const aiScene* scene)
 {
-    std::vector<GLfloat> vertices;
+    //std::vector<GLfloat> vertices;
     std::vector<GLuint> indices;
-    std::vector<Texture> textures;
-    std::vector<GLfloat> textCoords;
+    //std::vector<GLfloat> textCoords;
+
+
+    std::vector<Vertex> vertexes;
 
     for (size_t i = 0; i < mesh->mNumVertices; i++)
     {
-        vertices.push_back(mesh->mVertices[i].x);
-        vertices.push_back(mesh->mVertices[i].y);
-        vertices.push_back(mesh->mVertices[i].z);
+        Vertex v;
+        v.Position.x = mesh->mVertices[i].x;
+        v.Position.y = mesh->mVertices[i].y;
+        v.Position.z = mesh->mVertices[i].z;
+        //vertices.push_back(mesh->mVertices[i].x);
+        //vertices.push_back(mesh->mVertices[i].y);
+        //vertices.push_back(mesh->mVertices[i].z);
 
         // normals
-        //if (mesh->HasNormals())
-        //{
-        //    // Dodaj normalki potem
-        //}
+        if (mesh->HasNormals())
+        {
+            //v.Position.x = mesh->mNormals[i].x;
+            //v.Position.x = mesh->mNormals[i].y;
+            //v.Position.x = mesh->mNormals[i].z;
+        }
 
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
-            textCoords.push_back(mesh->mTextureCoords[0][i].x);
-            textCoords.push_back(mesh->mTextureCoords[0][i].y);
-        }   
+            //v.TextureCoords.x = mesh->mTextureCoords[0][i].x;
+            //v.TextureCoords.y = mesh->mTextureCoords[0][i].y;
+            //textCoords.push_back(mesh->mTextureCoords[0][i].x);
+            //textCoords.push_back(mesh->mTextureCoords[0][i].y);
+        }
     }
     // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
     for (size_t i = 0; i < mesh->mNumFaces; i++)
@@ -118,5 +129,14 @@ Mesh* RenderableObject::processMesh(aiMesh* mesh, const aiScene* scene)
 
     // return a mesh object created from the extracted mesh data
 
-    return new Mesh(vertices, indices, textCoords);
+    return new Mesh(vertexes, indices);
+}
+
+void RenderableObject::setColor(const glm::vec4& color) {
+    
+    for (size_t i = 0; i < m_meshes.size(); i++) {
+        auto& mesh = m_meshes[i];
+        mesh->setColor(color);
+    }
+
 }

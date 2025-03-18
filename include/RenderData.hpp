@@ -24,22 +24,16 @@ enum class PrimitiveType {
 };
 
 struct RenderData {
-
     RenderData(const Shader& shader, const Transform& transform, const VertexBufferLayout& layout);
     RenderData(const Shader& shader, const Transform& transform);
     RenderData(const Shader& shader);
     RenderData() = default;
 
     std::function<void(Renderable&, RenderData&, Window&)> uniformUpdater = nullptr;
-    
-    void setUniformUpdater(std::function<void(Renderable&, RenderData&, Window&)> updater) {
-        uniformUpdater = updater;
-    }
 
     Shader shaderProgram;
     ShaderConfig shaderConfig;
     Transform transform;
-    VertexBufferLayout layout;
 
     GLuint instancedDrawModeSize = 0;
     DrawMode drawMode = DrawMode::ARRAYS;

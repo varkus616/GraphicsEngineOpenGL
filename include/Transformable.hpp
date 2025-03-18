@@ -2,7 +2,7 @@
 #define TRANSFORMABLE_HPP
 
 #include <Transform.hpp>
-
+#include <glm/ext/matrix_transform.hpp>
 
 enum class Axis {X, Y, Z};
 

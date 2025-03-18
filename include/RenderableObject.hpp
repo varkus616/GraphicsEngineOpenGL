@@ -6,11 +6,13 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <Renderable.hpp>
+#include <Transformable.hpp>
 
 class RenderableObject : public Renderable, public Transformable 
 {
 public:
-    RenderableObject(Mesh* mesh);
+    RenderableObject(Mesh* mesh, DrawMode mode = DrawMode::ARRAYS);
     RenderableObject() = default;
     ~RenderableObject() = default;
 
@@ -19,14 +21,14 @@ public:
     void loadModel(std::string path);
     void processNode(aiNode* node, const aiScene* scene);
     Mesh* processMesh(aiMesh* mesh, const aiScene* scene);
-
-
-
+    void setColor(const glm::vec4& color);
+    
+    glm::mat4& getModelMatrix() override;
 
     std::vector<Mesh*> m_meshes;
-    glm::mat4& getModelMatrix() override;
-    
+    DrawMode m_drawMode;
 
     void draw(RenderTarget& target, RenderData& data) override;
+
 };
  
