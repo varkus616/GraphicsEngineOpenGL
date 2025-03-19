@@ -37,13 +37,11 @@ public:
 	RenderableObject obj;
 	std::vector<Cube> cubes;
 	RenderData currentRenderData;
-	SpotLight light;
 
 	bool m_app_running = true;
 
 private:
 	void imguiRender();
-	void installLights();
 };
 
 #endif // !APP_HPP

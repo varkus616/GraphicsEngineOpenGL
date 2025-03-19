@@ -7,7 +7,6 @@ layout (location=3) in vec4 vertColor;
 
 layout (binding=0) uniform sampler2D samp;
 
-out vec4 varyingColor;
 out vec3 varyingNormal;		
 out vec3 varyingLightDir;	
 out vec3 varyingVertPos;
@@ -35,15 +34,24 @@ uniform vec4 globalAmbient;
 uniform PositionalLight light;
 uniform Material material;
 uniform mat4 mv_matrix;
+uniform mat4 model;
 uniform mat4 proj_matrix;
 uniform mat4 norm_matrix;
+uniform mat4 view;
+out vec3 FragPos;
+out vec3 Normal;
 
 void main() 
 {
-	varyingVertPos=(mv_matrix * vec4(vertPos,1.0)).xyz;
-	varyingLightDir = light.position - varyingVertPos;
-	varyingNormal=(norm_matrix * vec4(vertNormal,1.0)).xyz;
-	gl_Position=proj_matrix * mv_matrix * vec4(vertPos,1.0);
+
+	varyingNormal=vec3(2);// vertNormal;
+	Normal = vertNormal;
+	FragPos=vec3(model * vec4(vertPos, 1.0));
+	gl_Position=proj_matrix * view * vec4(FragPos, 1);
+	
+	//varyingVertPos=(mv_matrix * vec4(vertPos,1.0)).xyz;
+	//varyingLightDir = light.position - varyingVertPos;
+	//varyingNormal=(norm_matrix * vec4(vertNormal,1.0)).xyz;
 
 }
 

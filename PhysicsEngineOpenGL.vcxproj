@@ -182,6 +182,7 @@
     <ClInclude Include="include\CPlane.hpp" />
     <ClInclude Include="include\FreeCamera.hpp" />
     <ClInclude Include="include\GeometryData.hpp" />
+    <ClInclude Include="include\Light.hpp" />
     <ClInclude Include="include\Renderable.hpp" />
     <ClInclude Include="include\IndexBuffer.hpp" />
     <ClInclude Include="include\Mesh.hpp" />
