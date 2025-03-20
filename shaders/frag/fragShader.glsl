@@ -1,5 +1,6 @@
 #version 430
-layout (location=3) in vec4 vertColor;
+
+
 
 
 struct Material {
@@ -63,12 +64,10 @@ uniform SpotLight light;
 uniform Material material;
 uniform vec3 viewPos;
 
-in vec3 varyingNormal;
-in vec3 varyingLightDir;
-in vec3 varyingVertPos;
 in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoords;
+in vec4 VertColor;
 
 out vec4 FragColor;
 
@@ -100,14 +99,13 @@ void main()
         //vec3 specular = light.specular * (spec * material.specular);  
         vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));  
 
-
         //ambient *= attenuation;
-        //diffuse *= attenuation;
+        diffuse *= attenuation;
         //specular *= attenuation;
 
         vec4 lightColor = vec4(ambient + diffuse + specular, 1.f);
 
-        vec4 result = (vertColor * 0.5f) + (lightColor * 0.5f);
+        vec4 result = (VertColor * 0.1f) + (lightColor * 0.5f);
 
         FragColor = result;
     }else

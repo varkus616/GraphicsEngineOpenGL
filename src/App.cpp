@@ -50,12 +50,11 @@ App::App(Window& window)
             d.shaderConfig.uniforms["light.constant"] = UniformValue(UniformType::FLOAT,    light.constant);
             d.shaderConfig.uniforms["light.linear"] = UniformValue(UniformType::FLOAT, light.linear);
             d.shaderConfig.uniforms["light.quadratic"] = UniformValue(UniformType::FLOAT, light.quadratic);
+            d.shaderConfig.uniforms["light.cutOff"] = UniformValue(UniformType::FLOAT, light.cutOff);
 
             d.shaderConfig.uniforms["material.ambient"] = UniformValue(UniformType::VEC3, material.ambient);
             d.shaderConfig.uniforms["material.diffuse"] = UniformValue(UniformType::INT,  0);
             d.shaderConfig.uniforms["material.specular"] = UniformValue(UniformType::INT,  1);
-            d.shaderConfig.uniforms["material.specular"] = UniformValue(UniformType::VEC3, material.specular);
-            d.shaderConfig.uniforms["material.shininess"] = UniformValue(UniformType::FLOAT, material.shininess);
         };
 
 
@@ -70,7 +69,7 @@ App::App(Window& window)
         auto& cube = cubes[i];
         float x = rand() % (BOUND_X + 1 - (-BOUND_X)) + (-BOUND_X);
         float y = rand() % (BOUND_Y + 1 - (-BOUND_Y)) + (-BOUND_Y);
-        float z = rand() % (BOUND_Z + 1 - (-BOUND_Z)) + (-BOUND_Z);
+        float z =   rand() % (BOUND_Z + 1 - (-BOUND_Z)) + (-BOUND_Z);
         cube.addTexture(wallText, 0);
         cube.setPosition(x, y, z);
     }
@@ -150,13 +149,9 @@ void App::renderImGui()
     // Material Controls
     ImGui::Text("Material Properties");
     ImGui::ColorEdit3("Material Ambient", &material.ambient[0]);
-    ImGui::ColorEdit3("Material Diffuse", &material.diffuse[0]);
-    ImGui::ColorEdit3("Material Specular", &material.specular[0]);
     ImGui::SliderFloat("Shininess", &material.shininess, 1.0f, 128.0f);
 
     ImGui::End();
-
-
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -42,7 +42,7 @@ public:
 	RenderData currentRenderData;
 
 
-	Light light;
+	SpotLight light;
 	Material material;
 	bool m_app_running = true;
 

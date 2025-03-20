@@ -1,60 +1,76 @@
-#pragma once 
+#pragma once
 #ifndef LIGHT_HPP
 #define LIGHT_HPP
 #include <glm/glm.hpp>
 
 
-
-
-struct DirectionalLight {
-    glm::vec3 direction;
-
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
-
-
-    DirectionalLight(glm::vec3 dir = { -2.2f, 1.0f, 2.0f },
-        glm::vec3 amb = { 0.2f, 0.2f, 0.2f },
-        glm::vec3 diff = { 0.5f, 0.5f, 0.5f },
-        glm::vec3 spec = { 1.0f, 1.0f, 1.0f })
-        : direction(dir), ambient(amb), diffuse(diff), specular(spec) {}
+class Material {
+public:
+    GLuint diffuse;  // samplery 2D
+    GLuint specular;
+    glm::vec3 ambient;  // kolory
+    float shininess;
+    Material() = default;
+    Material(GLuint diffuse, GLuint specular, glm::vec3 ambient, float shininess)
+        : diffuse(diffuse), specular(specular), ambient(ambient), shininess(shininess) {
+    }
 };
 
-
-
-
-
-struct Light {
+class Light {
+public:
     glm::vec3 position;
     glm::vec3 ambient;
     glm::vec3 diffuse;
     glm::vec3 specular;
+    float constant;
+    float linear;
+    float quadratic;
 
-    float  constant;
-    float  linear;
-    float  quadratic;
-    float  cutOff;
+    Light() {}
 
-    Light(glm::vec3 pos = { -2.2f, 1.0f, 2.0f },
-        glm::vec3 amb = { 0.2f, 0.2f, 0.2f },
-        glm::vec3 diff = { 0.5f, 0.5f, 0.5f },
-        glm::vec3 spec = { 1.0f, 1.0f, 1.0f })
-        : position(pos), ambient(amb), diffuse(diff), specular(spec) {}
+    Light(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
+        float constant, float linear, float quadratic)
+        : position(position), ambient(ambient), diffuse(diffuse), specular(specular),
+        constant(constant), linear(linear), quadratic(quadratic) {
+    }
 };
 
-struct Material {
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
-    float shininess;
+class SpotLight : public Light {
+public:
+    glm::vec3 direction;
+    float cutOff;
 
-    Material(glm::vec3 amb = { 1.f, 0.5f, 0.31f },
-        glm::vec3 diff = { 1.f, 0.5f, 0.31f },
-        glm::vec3 spec = { 0.5f, 0.5f, 0.5f },
-        float shine = 32.f)
-        : ambient(amb), diffuse(diff), specular(spec), shininess(shine) {}
+    SpotLight() {}
+
+    SpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
+        float cutOff, float constant, float linear, float quadratic)
+        : Light(position, ambient, diffuse, specular, constant, linear, quadratic),
+        direction(direction), cutOff(cutOff) {
+    }
 };
 
+class DirLight : public Light {
+public:
+    glm::vec3 direction;
+
+    DirLight() {}
+
+    DirLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
+        float constant, float linear, float quadratic)
+        : Light(glm::vec3(0.0f, 0.0f, 0.0f), ambient, diffuse, specular, constant, linear, quadratic),
+        direction(direction) {
+    }
+};
+
+class PointLight : public Light {
+public:
+
+    PointLight() {}
+
+    PointLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
+        float constant, float linear, float quadratic)
+        : Light(position, ambient, diffuse, specular, constant, linear, quadratic) {
+    }
+};
 
 #endif // !LIGHT_HPP
