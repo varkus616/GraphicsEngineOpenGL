@@ -1,75 +1,152 @@
 #version 430
-
-//layout(location = 0) out vec4 vFragColor;
-//layout(location = 1) out vec4 vVertexColor;
-
 layout (location=3) in vec4 vertColor;
-// uniforms match those in the vertex shader,
-// but are not used directly in this fragment shader
-struct PositionalLight
-{	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	vec3 position;
+
+
+struct Material {
+    sampler2D diffuse;
+    sampler2D specular;
+    vec3 ambient;
+    //vec3 diffuse;
+    //vec3 specular;
+    float shininess;
+}; 
+struct Light {
+    vec3 position;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+    float  constant;
+    float  linear;
+    float  quadratic;
 };
-struct Material
-{	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	float shininess;
+
+
+struct SpotLight {
+    vec3 position;
+    vec3 direction;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+    float cutOff;
+
+    float  constant;
+    float  linear;
+    float  quadratic;
 };
 
+struct DirLight {
+    vec3 direction;
 
-uniform vec4 globalAmbient;
-//uniform PositionalLight light;
-//uniform Material material;
-uniform mat4 mv_matrix;
-uniform mat4 proj_matrix;
-uniform mat4 norm_matrix;
-uniform vec3 objectColor;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
 
-uniform vec4 lightAmbient;
-uniform vec4 lightDiffuse;
-uniform vec3 lightPosition;
+struct PointLight {    
+    vec3 position;
+    
+    float constant;
+    float linear;
+    float quadratic;  
 
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};  
+
+
+uniform SpotLight light;  
+uniform Material material;
+uniform vec3 viewPos;
 
 in vec3 varyingNormal;
 in vec3 varyingLightDir;
 in vec3 varyingVertPos;
 in vec3 FragPos;
 in vec3 Normal;
-out vec4 fragColor;
+in vec2 TexCoords;
 
-const float ambientStrenght = 0.1f;
+out vec4 FragColor;
 
-void main() 
-{
-	//vec3 L = normalize(varyingLightDir);
-	//vec3 N = normalize(varyingNormal);
-	//vec3 V = normalize(-varyingVertPos);
-	//// compute light reflection vector with respect to N:
-	//vec3 R = normalize(reflect(-L, N));
-	//// get the angle between the light and surface normal:
-	//float cosTheta = dot(L,N);
-	//// angle between the view vector and reflected light:
-	//float cosPhi = dot(V,R);
-	// compute ADS contributions (per pixel), and combine to build output color:
+void main()
+{    
+    vec3 lightDir = normalize(light.position - FragPos);
+    float theta = dot(lightDir, normalize(-light.direction));
+
+    if (theta > light.cutOff)
+    {
+        float distance = length(light.position - FragPos);
+
+        float attenuation =  1.0 / (light.constant  + light.linear * distance + light.quadratic * (distance * distance));
+
+        // ambient
+        //vec3 ambient = light.ambient * material.ambient;
+        vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
+  	    
+        // diffuse 
+        vec3 norm = normalize(Normal);
+        float diff = max(dot(norm, lightDir), 0.0);
+        //vec3 diffuse = light.diffuse * (diff * material.diffuse);
+        vec3 diffuse =  light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
+
+        // specular
+        vec3 viewDir = normalize(viewPos - FragPos);
+        vec3 reflectDir = reflect(-lightDir, norm);  
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+        //vec3 specular = light.specular * (spec * material.specular);  
+        vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));  
 
 
-	//vec3 diffuse = light.diffuse.xyz * material.diffuse.xyz * max(cosTheta,0.0);
-	//vec3 specular =
-	//light.specular.xyz * material.specular.xyz * pow(max(cosPhi,0.0), material.shininess);
-	
-	//vec3 ambient = ((globalAmbient * material.ambient) + (light.ambient * material.ambient)).xyz * ambientStrenght;
-	vec3 ambient = ambientStrenght * vec3(lightAmbient);
+        //ambient *= attenuation;
+        //diffuse *= attenuation;
+        //specular *= attenuation;
 
-	vec3 norm = normalize(Normal);
-	vec3 lighDir = normalize(lightPosition - FragPos);
+        vec4 lightColor = vec4(ambient + diffuse + specular, 1.f);
 
-	float diff = max(dot(norm, lighDir), 0.f); 
-	vec3 diffuse =  diff * vec3(lightDiffuse); 
+        vec4 result = (vertColor * 0.5f) + (lightColor * 0.5f);
 
-	vec3 result = (ambient + diffuse) * objectColor;
-	fragColor = vec4(result, 1.f);
-
+        FragColor = result;
+    }else
+       FragColor = vec4(light.ambient * vec3(texture(material.diffuse, TexCoords)), 1.0);
 }
+
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
+{
+    vec3 lightDir = normalize(-light.direction);
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // combine results
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+    return (ambient + diffuse + specular);
+}  
+
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.position - fragPos);
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // attenuation
+    float distance    = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + 
+  			     light.quadratic * (distance * distance));    
+    // combine results
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+    ambient  *= attenuation;
+    diffuse  *= attenuation;
+    specular *= attenuation;
+    return (ambient + diffuse + specular);
+} 

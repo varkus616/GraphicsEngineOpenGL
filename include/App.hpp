@@ -10,6 +10,7 @@
 #include <Window.hpp>
 #include <Shapes.hpp>
 #include <Spotlight.hpp>
+#include <Light.hpp>
 
 class App
 {
@@ -24,6 +25,8 @@ public:
 	void processInput();
 	void update();
 	void render();
+	void renderImGui();
+
 	Window& m_window;
 	
 	Texture testTexture;
@@ -38,6 +41,9 @@ public:
 	std::vector<Cube> cubes;
 	RenderData currentRenderData;
 
+
+	Light light;
+	Material material;
 	bool m_app_running = true;
 
 private:

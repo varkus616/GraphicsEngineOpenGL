@@ -1,58 +1,24 @@
 #version 430
 
+layout (location=0) in vec2 textureCoords;
 layout (location=1) in vec3 vertPos;
 layout (location=2) in vec3 vertNormal;
-layout (location=3) in vec4 vertColor;
 
-
-layout (binding=0) uniform sampler2D samp;
-
-out vec3 varyingNormal;		
-out vec3 varyingLightDir;	
-out vec3 varyingVertPos;
-noperspective out vec2 tc;
-
-const float PI = 3.14159;
-
-struct PositionalLight
-{
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	vec3 position;
-};
-struct Material
-{	
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	float shininess;
-};
-
-uniform float time;
-uniform vec4 globalAmbient;
-uniform PositionalLight light;
-uniform Material material;
-uniform mat4 mv_matrix;
 uniform mat4 model;
 uniform mat4 proj_matrix;
 uniform mat4 norm_matrix;
 uniform mat4 view;
+
 out vec3 FragPos;
 out vec3 Normal;
+out vec2 TexCoords;
 
 void main() 
 {
-
-	varyingNormal=vec3(2);// vertNormal;
-	Normal = vertNormal;
+	Normal = mat3(norm_matrix) * vertNormal;
 	FragPos=vec3(model * vec4(vertPos, 1.0));
 	gl_Position=proj_matrix * view * vec4(FragPos, 1);
-	
-	//varyingVertPos=(mv_matrix * vec4(vertPos,1.0)).xyz;
-	//varyingLightDir = light.position - varyingVertPos;
-	//varyingNormal=(norm_matrix * vec4(vertNormal,1.0)).xyz;
-
+	TexCoords = textureCoords;
 }
 
 

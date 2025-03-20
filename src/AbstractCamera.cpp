@@ -11,16 +11,44 @@ void CAbstractCamera::SetupProjection(float fovy, float aspectRatio, float near,
     P = glm::perspective(glm::radians(fovy), aspectRatio, near, far);
 }
 
+//void CAbstractCamera::Rotate(float yaw, float pitch, float roll) {
+//    this->yaw += yaw;
+//    this->pitch += pitch;
+//    this->roll += roll;
+//    glm::mat4 rot = glm::yawPitchRoll(glm::radians(this->yaw),
+//        glm::radians(this->pitch), glm::radians(this->roll));
+//    look = glm::vec3(rot * glm::vec4(look.x, look.y, look.z, 0));
+//    up = glm::vec3(rot * glm::vec4(0, 1, 0, 0));
+//    V = glm::lookAt(position, position + look, up);
+//}
+
 void CAbstractCamera::Rotate(float yaw, float pitch, float roll) {
     this->yaw += yaw;
     this->pitch += pitch;
     this->roll += roll;
+
+    // Ograniczenie pitch do zakresu [-89, 89] stopni
+    if (this->pitch > 89.0f) this->pitch = 89.0f;
+    if (this->pitch < -89.0f) this->pitch = -89.0f;
+
+    // Tworzenie macierzy rotacji na podstawie yaw, pitch, roll
     glm::mat4 rot = glm::yawPitchRoll(glm::radians(this->yaw),
-        glm::radians(this->pitch), glm::radians(this->roll));
-    look = glm::vec3(rot * glm::vec4(0, 0, 1, 0));
-    up = glm::vec3(rot * glm::vec4(0, 1, 0, 0));
+        glm::radians(this->pitch),
+        glm::radians(this->roll));
+
+    // U¿ycie domyœlnego wektora odniesienia (0,0,1) dla `look`
+    look = glm::normalize(glm::vec3(rot * glm::vec4(0, 0, 1, 0)));
+
+    // `up` musi zostaæ obliczone po `look`, by zapewniæ ortogonalnoœæ
+    up = glm::normalize(glm::vec3(rot * glm::vec4(0, 1, 0, 0)));
+
+    // Upewnienie siê, ¿e `right` jest ortogonalny do `look` i `up`
+    right = glm::normalize(glm::cross(look, up));
+
+    // Aktualizacja macierzy widoku
     V = glm::lookAt(position, position + look, up);
 }
+
 
 void CAbstractCamera::ResetRotation()
 {
