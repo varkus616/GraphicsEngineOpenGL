@@ -39,7 +39,7 @@ public:
     void setTitle(const std::string& title);
 
     void InitializeImGui(GLFWwindow* window);
-
+    void mouseCallback(double xpos, double ypos);
     GLFWwindow* const getWindowHandle() const { return m_window; }
 
     // Camera methods
@@ -58,6 +58,7 @@ private:
     int m_width;
     int m_height;
     std::string m_title;
+    bool m_enableMouseControl = true; // Domyœlnie mysz kontroluje kamerê
 
     //CFreeCamera m_camera; // Camera object
     CFreeCamera m_camera;

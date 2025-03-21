@@ -134,9 +134,10 @@ Mesh* RenderableObject::processMesh(aiMesh* mesh, const aiScene* scene)
 
 void RenderableObject::setColor(const glm::vec4& color) {
     
-    for (size_t i = 0; i < m_meshes.size(); i++) {
-        auto& mesh = m_meshes[i];
-        mesh->setColor(color);
-    }
+    this->color = color;
+    //for (size_t i = 0; i < m_meshes.size(); i++) {
+    //    auto& mesh = m_meshes[i];
+    //    mesh->setColor(color);
+    //}
 
 }

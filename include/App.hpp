@@ -42,7 +42,6 @@ public:
 
 
 	SpotLight light;
-	//PointLight pointLight;
 	DirLight dirLight;
 
 	std::vector<PointLight> pointLights;

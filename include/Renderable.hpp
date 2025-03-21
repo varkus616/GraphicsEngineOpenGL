@@ -8,6 +8,7 @@ class Renderable {
 public:
     virtual void draw(RenderTarget& target, RenderData& data) = 0;
     virtual glm::mat4& getModelMatrix() = 0;
+    virtual glm::vec4 getColor() = 0;
 };
 
 

@@ -114,7 +114,7 @@ Mesh Utils::generatePlane(const int SIZE_X, const  int SIZE_Z)
 
             v.TextureCoords = glm::vec2(float(j) / SIZE_X, float(i) / SIZE_Z);
             v.Normal = glm::vec3(0.0f, 1.0f, 0.0f); // Normal skierowany w górê
-            v.VertexColors = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); // Bia³y kolor
+            v.VertexColors = glm::vec4(1.0f); // Bia³y kolor
 
             vertexes.push_back(v);
         }

@@ -39,13 +39,14 @@ class SpotLight : public Light {
 public:
     glm::vec3 direction;
     float cutOff;
+    float outerCutOff;
 
     SpotLight() {}
 
     SpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
-        float cutOff, float constant, float linear, float quadratic)
+        float cutOff, float outerCutOff, float constant, float linear, float quadratic)
         : Light(position, ambient, diffuse, specular, constant, linear, quadratic),
-        direction(direction), cutOff(cutOff) {
+        direction(direction), cutOff(cutOff), outerCutOff(outerCutOff) {
     }
 };
 

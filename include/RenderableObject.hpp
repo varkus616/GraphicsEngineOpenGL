@@ -8,6 +8,7 @@
 #include <assimp/postprocess.h>
 #include <Renderable.hpp>
 #include <Transformable.hpp>
+#include <Texture.hpp>
 
 class RenderableObject : public Renderable, public Transformable 
 {
@@ -22,6 +23,7 @@ public:
     void processNode(aiNode* node, const aiScene* scene);
     Mesh* processMesh(aiMesh* mesh, const aiScene* scene);
     void setColor(const glm::vec4& color);
+    glm::vec4 getColor()override { return this->color; }
     
     glm::mat4& getModelMatrix() override;
 
@@ -29,6 +31,8 @@ public:
     DrawMode m_drawMode;
 
     void draw(RenderTarget& target, RenderData& data) override;
+private:
+    glm::vec4 color;
 
 };
  

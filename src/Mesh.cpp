@@ -1,4 +1,6 @@
 ﻿#include "Mesh.hpp"
+#include <Texture.hpp>
+
 
 VertexBufferLayout Mesh::m_bufferLayout = []() {
     VertexBufferLayout layout;
@@ -46,16 +48,3 @@ void Mesh::unbindTextures() const {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 }
-void Mesh::setColor(const glm::vec4& color) {
-    this->m_VBO.Bind();
-    
-    size_t vertexCount = m_VBO.GetSize() / sizeof(Vertex);
-
-    for (size_t i = 0; i < vertexCount; i++) {
-        size_t colorOffset = i * sizeof(Vertex) + offsetof(Vertex, VertexColors);
-        glBufferSubData(GL_ARRAY_BUFFER, colorOffset, sizeof(glm::vec4), &color);
-    }
-
-    this->m_VBO.Unbind();
-}
-

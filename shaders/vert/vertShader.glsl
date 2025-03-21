@@ -14,6 +14,7 @@ out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoords;
 out vec4 VertColor;
+
 void main() 
 {
 	Normal = mat3(norm_matrix) * vertNormal;

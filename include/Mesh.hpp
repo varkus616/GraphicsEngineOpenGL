@@ -3,6 +3,8 @@
 #define MESH_HPP
 
 #include <vector>
+#include <GL/Glew.h>
+#include <glm/glm.hpp>
 #include <VertexArray.hpp>
 #include <VertexBuffer.hpp>
 #include <VertexBufferLayout.hpp>
@@ -40,7 +42,6 @@ public:
     void setupBuffers();
     void bindTextures() const;
     void unbindTextures() const;
-    void setColor(const glm::vec4& color);
 
     VertexBuffer& getBuffer()  { return m_VBO; }
     IndexBuffer&  getIndexBuffer() { return m_EBO; }
