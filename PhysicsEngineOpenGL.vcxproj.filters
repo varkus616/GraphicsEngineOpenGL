@@ -227,9 +227,6 @@
     <ClInclude Include="include\TargetCamera.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="include\Spotlight.hpp">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="include\Light.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>

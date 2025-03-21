@@ -9,7 +9,6 @@
 #include <Utilities.hpp>
 #include <Window.hpp>
 #include <Shapes.hpp>
-#include <Spotlight.hpp>
 #include <Light.hpp>
 
 class App
@@ -43,10 +42,17 @@ public:
 
 
 	SpotLight light;
+	//PointLight pointLight;
+	DirLight dirLight;
+
+	std::vector<PointLight> pointLights;
+	std::vector<SpotLight> spotLights;
+
 	Material material;
 	bool m_app_running = true;
 
 private:
+	void installLights();
 	void imguiRender();
 };
 

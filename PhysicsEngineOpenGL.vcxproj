@@ -193,7 +193,6 @@
     <ClInclude Include="include\Shader.hpp" />
     <ClInclude Include="include\ShaderConfig.hpp" />
     <ClInclude Include="include\Shapes.hpp" />
-    <ClInclude Include="include\Spotlight.hpp" />
     <ClInclude Include="include\TargetCamera.hpp" />
     <ClInclude Include="include\Texture.hpp" />
     <ClInclude Include="include\Transform.hpp" />
