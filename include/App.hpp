@@ -48,6 +48,7 @@ public:
 	std::vector<SpotLight> spotLights;
 
 	Material material;
+	Shader normalShader;
 	bool m_app_running = true;
 
 private:

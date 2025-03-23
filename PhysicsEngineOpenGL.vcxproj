@@ -160,8 +160,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\frag\fragShader.glsl" />
+    <None Include="shaders\frag\fragShader2.glsl" />
+    <None Include="shaders\frag\normal.glsl" />
     <None Include="shaders\geo\geoShader.glsl" />
+    <None Include="shaders\geo\normal.glsl" />
+    <None Include="shaders\vert\normal.glsl" />
     <None Include="shaders\vert\vertShader.glsl" />
+    <None Include="shaders\vert\vertShader2.glsl" />
     <None Include="src\glew64.dll" />
   </ItemGroup>
   <ItemGroup>

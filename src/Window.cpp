@@ -169,12 +169,15 @@ void Window::processInput(float deltaTime) {
         m_camera.Strafe(-deltaTime);
     if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
         m_camera.Strafe(deltaTime);
+    if (glfwGetKey(m_window, GLFW_KEY_F) == GLFW_PRESS)
+        m_camera.Lift(deltaTime);
+    if (glfwGetKey(m_window, GLFW_KEY_G) == GLFW_PRESS)
+        m_camera.Lift(-deltaTime);
     if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS) {
         m_camera.ResetRotation();
         m_camera.SetPosition(glm::vec3(0.f, 0.f, 0.f));
     }
 }
-
 void Window::mouseCallback(double xpos, double ypos) {
     processMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
 }

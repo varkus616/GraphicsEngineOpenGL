@@ -62,6 +62,7 @@ struct PointLight {
     vec3 specular;
 };  
 
+
 uniform int numPointLights;
 uniform int numSpotLights;
 uniform DirLight dirLight;
@@ -71,11 +72,14 @@ uniform Material material;
 
 uniform vec3 viewPos;
 uniform vec4 objectColor;
+uniform mat4 mvpmatrix;
+uniform mat4 mvmatrix;
 
 in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoords;
 in vec4 VertColor;
+in vec4 vEyeSpacePos;
 
 out vec4 FragColor;
 
@@ -113,7 +117,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
-    return (ambient + diffuse + specular);
+    return vec3(1);//(ambient + diffuse + specular);
 } 
 
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
@@ -151,24 +155,28 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 result = vec3(0);
-    //result += CalcDirLight(dirLight, norm, viewDir);
-    //
-    //for (int i = 0; i < numPointLights; i++) {
-    //    result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
-    //}
+    
+
+    //result = pointLights[0].ambient;
+
+    for (int i = 0; i < numPointLights; i++) {
+        vec4 eyeSpaceLightPos = mvmatrix * vec4(pointLights[i].position, 1);
+        vec3 L = normalize(eyeSpaceLightPos.xyz - vEyeSpacePos.xyz);
+        vec3 V = normalize(viewPos.xyz - vEyeSpacePos.xyz);
+        vec3 H = normalize(L+V);
+        float diff = max(0, dot(norm, L));
+        float spec = max(0, pow(dot(norm, H), 32));
+        //
+        vec3 diffuse = diff * pointLights[i].diffuse;
+        vec3 specular = spec * pointLights[i].specular;
+        result += diffuse + specular;
+    }
     
     // Sumujemy œwiat³o od Spot Lightów
-    for (int i = 0; i < numSpotLights; i++) {
-        result += CalcSpotLight(spotLights[i], norm, FragPos, viewDir);
-    }
-
-    //result += CalcPointLight(pointLight, norm, FragPos, viewDir);
-    //result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
-    
-    //for (int i = 0; i < NR_POINT_LIGHTS; i++) {
+    //for (int i = 0; i < numSpotLights; i++) {
+    //    result += CalcSpotLight(spotLights[i], norm, FragPos, viewDir);
     //}
     
-    FragColor = vec4(result * 0.9, 1.0);// + VertColor * 0.1 + objectColor * 0.1;
-    //FragColor = VertColor;
-
+    //FragColor = vec4(result * 1, 1.0);// + VertColor * 0.1 + objectColor * 0.1;
+    FragColor = vec4(1);
 }

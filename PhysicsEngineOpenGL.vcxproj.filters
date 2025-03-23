@@ -117,6 +117,21 @@
     <None Include="shaders\geo\geoShader.glsl">
       <Filter>Shaders\Geo</Filter>
     </None>
+    <None Include="shaders\frag\fragShader2.glsl">
+      <Filter>Shaders\Frag</Filter>
+    </None>
+    <None Include="shaders\vert\vertShader2.glsl">
+      <Filter>Shaders\Vert</Filter>
+    </None>
+    <None Include="shaders\frag\normal.glsl">
+      <Filter>Shaders\Frag</Filter>
+    </None>
+    <None Include="shaders\geo\normal.glsl">
+      <Filter>Shaders\Geo</Filter>
+    </None>
+    <None Include="shaders\vert\normal.glsl">
+      <Filter>Shaders\Vert</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dependencies\imgui\imgui_impl_opengl3.h">

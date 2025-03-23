@@ -19,14 +19,23 @@ void printFPS()
 
 App::App(Window& window)
     : m_window(window),
-    cubes(200),
+    cubes(1),
     plane(Utils::generatePlane(100, 100)),
     obj(&plane, DrawMode::ELEMENTS),
     sphereObj(&sphere)
 {
-    currentRenderData.shaderProgram.addShader("shaders\\vert\\vertShader.glsl", GL_VERTEX_SHADER);
-    currentRenderData.shaderProgram.addShader("shaders\\frag\\fragShader.glsl", GL_FRAGMENT_SHADER);
+    //currentRenderData.shaderProgram.addShader("shaders\\vert\\vertShader.glsl", GL_VERTEX_SHADER);
+    //currentRenderData.shaderProgram.addShader("shaders\\frag\\fragShader.glsl", GL_FRAGMENT_SHADER);
+
+    currentRenderData.shaderProgram.addShader("shaders\\vert\\vertShader2.glsl", GL_VERTEX_SHADER);
+    currentRenderData.shaderProgram.addShader("shaders\\frag\\fragShader2.glsl", GL_FRAGMENT_SHADER);
     currentRenderData.shaderProgram.linkProgram();
+
+    normalShader.addShader("shaders\\vert\\normal.glsl", GL_VERTEX_SHADER);
+    normalShader.addShader("shaders\\geo\\normal.glsl", GL_GEOMETRY_SHADER);
+    normalShader.addShader("shaders\\frag\\normal.glsl", GL_FRAGMENT_SHADER);
+    normalShader.linkProgram();
+    
 
     Texture wallText = Texture(Utils::loadTexture("resources\\container2.png"));
     Texture wallTextSpec = Texture(Utils::loadTexture("resources\\container2_specular.png"));
@@ -38,19 +47,23 @@ App::App(Window& window)
             const GLfloat t = (GLfloat)glfwGetTime();
             glm::mat4 mvmatrix = w.getViewMatrix() * r.getModelMatrix();
             glm::mat4 proj = w.getProjectionMatrix();
+            glm::mat4 view = w.getViewMatrix();
             glm::mat4 model = r.getModelMatrix();
-            glm::vec3 viewPos = w.getCamera().GetPosition();
+            glm::vec3 cameraPos = w.getCamera().GetPosition();
             glm::mat4 invTrMat = glm::transpose(glm::inverse(model));
 
             glm::vec3 camDir = w.getCamera().GetDirection();
 
 
             // Use the Light and Material structs for uniform values
-            d.shaderConfig.uniforms["view"] = UniformValue(UniformType::MAT4, w.getViewMatrix());
-            d.shaderConfig.uniforms["viewPos"] = UniformValue(UniformType::VEC3, viewPos);
-            d.shaderConfig.uniforms["model"] = UniformValue(UniformType::MAT4, r.getModelMatrix());
+            d.shaderConfig.uniforms["vEyeSpaceCameraPos"] = UniformValue(UniformType::VEC3, cameraPos);
+            d.shaderConfig.uniforms["view"] = UniformValue(UniformType::MAT4, view);
+            d.shaderConfig.uniforms["model"] = UniformValue(UniformType::MAT4, model);
             d.shaderConfig.uniforms["proj_matrix"] = UniformValue(UniformType::MAT4, proj);
             d.shaderConfig.uniforms["norm_matrix"] = UniformValue(UniformType::MAT4, invTrMat);
+            d.shaderConfig.uniforms["mvpmatrix"] = UniformValue(UniformType::MAT4, proj*mvmatrix);
+            d.shaderConfig.uniforms["mvmatrix"] = UniformValue(UniformType::MAT4, mvmatrix);
+            
             d.shaderConfig.uniforms["objectColor"] = UniformValue(UniformType::VEC4, r.getColor());
 
             d.shaderConfig.uniforms["numPointLights"] = UniformValue(UniformType::INT, (int)pointLights.size());
@@ -58,44 +71,43 @@ App::App(Window& window)
 
             for (size_t i = 0; i < pointLights.size(); i++) {
                 std::string index = std::to_string(i);
-
-                d.shaderConfig.uniforms["pointLights[" + index + "].position"] = UniformValue(UniformType::VEC3, pointLights[i].position);
-                d.shaderConfig.uniforms["pointLights[" + index + "].constant"] = UniformValue(UniformType::FLOAT, pointLights[i].constant);
-                d.shaderConfig.uniforms["pointLights[" + index + "].linear"] = UniformValue(UniformType::FLOAT, pointLights[i].linear);
+                d.shaderConfig.uniforms["pointLights[" + index + "].position"] = UniformValue(UniformType::VEC3,   pointLights[i].position);
+                d.shaderConfig.uniforms["pointLights[" + index + "].constant"] = UniformValue(UniformType::FLOAT,  pointLights[i].constant);
+                d.shaderConfig.uniforms["pointLights[" + index + "].linear"] = UniformValue(UniformType::FLOAT,    pointLights[i].linear);
                 d.shaderConfig.uniforms["pointLights[" + index + "].quadratic"] = UniformValue(UniformType::FLOAT, pointLights[i].quadratic);
-                d.shaderConfig.uniforms["pointLights[" + index + "].ambient"] = UniformValue(UniformType::VEC3, pointLights[i].ambient);
-                d.shaderConfig.uniforms["pointLights[" + index + "].diffuse"] = UniformValue(UniformType::VEC3, pointLights[i].diffuse);
+                d.shaderConfig.uniforms["pointLights[" + index + "].ambient"] = UniformValue(UniformType::VEC3,  pointLights[i].ambient);
+                d.shaderConfig.uniforms["pointLights[" + index + "].diffuse"] = UniformValue(UniformType::VEC3,  pointLights[i].diffuse);
                 d.shaderConfig.uniforms["pointLights[" + index + "].specular"] = UniformValue(UniformType::VEC3, pointLights[i].specular);
 
             }
 
-            for (size_t i = 0; i < spotLights.size(); i++) {
-                std::string index = std::to_string(i);
-                d.shaderConfig.uniforms["spotLights[" + index + "].position"] = UniformValue(UniformType::VEC3,   viewPos);
-                d.shaderConfig.uniforms["spotLights[" + index + "].direction"] = UniformValue(UniformType::VEC3,  camDir);
-                d.shaderConfig.uniforms["spotLights[" + index + "].constant"] = UniformValue(UniformType::FLOAT,  spotLights[i].constant);
-                d.shaderConfig.uniforms["spotLights[" + index + "].linear"] = UniformValue(UniformType::FLOAT,    spotLights[i].linear);
-                d.shaderConfig.uniforms["spotLights[" + index + "].quadratic"] = UniformValue(UniformType::FLOAT, spotLights[i].quadratic);
-                d.shaderConfig.uniforms["spotLights[" + index + "].cutOff"] = UniformValue(UniformType::FLOAT,    spotLights[i].cutOff);
-                d.shaderConfig.uniforms["spotLights[" + index + "].outerCutOff"] = UniformValue(UniformType::FLOAT,spotLights[i].outerCutOff);
-                d.shaderConfig.uniforms["spotLights[" + index + "].ambient"] = UniformValue(UniformType::VEC3,    spotLights[i].ambient);
-                d.shaderConfig.uniforms["spotLights[" + index + "].diffuse"] = UniformValue(UniformType::VEC3,    spotLights[i].diffuse);
-                d.shaderConfig.uniforms["spotLights[" + index + "].specular"] = UniformValue(UniformType::VEC3,   spotLights[i].specular);
+            //for (size_t i = 0; i < spotLights.size(); i++) {
+            //    std::string index = std::to_string(i);
+            //    d.shaderConfig.uniforms["spotLights[" + index + "].position"] = UniformValue(UniformType::VEC3, cameraPos);
+            //    d.shaderConfig.uniforms["spotLights[" + index + "].direction"] = UniformValue(UniformType::VEC3,  camDir);
+            //    d.shaderConfig.uniforms["spotLights[" + index + "].constant"] = UniformValue(UniformType::FLOAT,  spotLights[i].constant);
+            //    d.shaderConfig.uniforms["spotLights[" + index + "].linear"] = UniformValue(UniformType::FLOAT,    spotLights[i].linear);
+            //    d.shaderConfig.uniforms["spotLights[" + index + "].quadratic"] = UniformValue(UniformType::FLOAT, spotLights[i].quadratic);
+            //    d.shaderConfig.uniforms["spotLights[" + index + "].cutOff"] = UniformValue(UniformType::FLOAT,    spotLights[i].cutOff);
+            //    d.shaderConfig.uniforms["spotLights[" + index + "].outerCutOff"] = UniformValue(UniformType::FLOAT,spotLights[i].outerCutOff);
+            //    d.shaderConfig.uniforms["spotLights[" + index + "].ambient"] = UniformValue(UniformType::VEC3,    spotLights[i].ambient);
+            //    d.shaderConfig.uniforms["spotLights[" + index + "].diffuse"] = UniformValue(UniformType::VEC3,    spotLights[i].diffuse);
+            //    d.shaderConfig.uniforms["spotLights[" + index + "].specular"] = UniformValue(UniformType::VEC3,   spotLights[i].specular);
+            //
+            //}
 
-            }
-
-            d.shaderConfig.uniforms["dirLight.ambient"] = UniformValue(UniformType::VEC3, dirLight.ambient);
-            d.shaderConfig.uniforms["dirLight.diffuse"] = UniformValue(UniformType::VEC3, dirLight.diffuse);
-            d.shaderConfig.uniforms["dirLight.specular"] = UniformValue(UniformType::VEC3, dirLight.specular);
-            d.shaderConfig.uniforms["dirLight.direction"] = UniformValue(UniformType::VEC3, dirLight.direction);
-            
-            d.shaderConfig.uniforms["material.ambient"] = UniformValue(UniformType::VEC3, material.ambient);
-            d.shaderConfig.uniforms["material.diffuse"] = UniformValue(UniformType::INT,  0);
-            d.shaderConfig.uniforms["material.specular"] = UniformValue(UniformType::INT,  1);
+            //d.shaderConfig.uniforms["dirLight.ambient"] = UniformValue(UniformType::VEC3, dirLight.ambient);
+            //d.shaderConfig.uniforms["dirLight.diffuse"] = UniformValue(UniformType::VEC3, dirLight.diffuse);
+            //d.shaderConfig.uniforms["dirLight.specular"] = UniformValue(UniformType::VEC3, dirLight.specular);
+            //d.shaderConfig.uniforms["dirLight.direction"] = UniformValue(UniformType::VEC3, dirLight.direction);
+            //
+            //d.shaderConfig.uniforms["material.ambient"] = UniformValue(UniformType::VEC3, material.ambient);
+            //d.shaderConfig.uniforms["material.diffuse"] = UniformValue(UniformType::INT,  0);
+            //d.shaderConfig.uniforms["material.specular"] = UniformValue(UniformType::INT,  1);
         };
 
 
-    srand(time(0));
+    srand(777);
 
     int BOUND_X = 30;
     int BOUND_Y = 30;
@@ -112,7 +124,7 @@ App::App(Window& window)
         x = rand() % 255;
         y = rand() % 255;
         z = rand() % 255;
-        cube.setColor(glm::vec4(x/255, y/255, z/255, 0));
+        //cube.setColor(glm::vec4(x/255, y/255, z/255, 0));
     }
 
     obj.setPosition(0, -2, 0);
@@ -123,8 +135,6 @@ App::App(Window& window)
 
 void App::installLights()
 {
-    PointLight pointLight;
-    pointLight.position = { 0, -40, -40 };
     light.position = { 0, 40, 40 };
     dirLight.direction = { 0, 40, 40 };
 
@@ -143,9 +153,11 @@ void App::installLights()
     light.specular = { 1.f, 1.f, 1.f };
 
 
-    pointLight.ambient = { 0.2f, 0.1f, 0.05f };
-    pointLight.diffuse = { 1.0f, 0.5f, 0.2f };
-    pointLight.specular = { 0.5f, 0.3f, 0.2f };
+    PointLight pointLight;
+    pointLight.position = { 0, 0, -40 };
+    pointLight.ambient = { 0.2f, 0.2f, 0.2f };
+    pointLight.diffuse = { 1.0f, 1.f, 1.f };
+    pointLight.specular = { 0.3f, 0.3f, 0.3f };
 
     pointLight.constant = 1.0f;
     pointLight.linear = 0.92f;
@@ -184,7 +196,7 @@ void App::update()
     float t = glfwGetTime();
 
     m_window.getCamera().Update();
-    pointLights[0].position = glm::vec3(360 * glm::sin(glfwGetTime()), 40,0);//m_window.getCamera().GetPosition();
+    //pointLights[0].position = glm::vec3(360 * glm::sin(glfwGetTime()), 40,0);//m_window.getCamera().GetPosition();
 
 }
 
@@ -196,12 +208,15 @@ void App::render()
         auto& cube = cubes[i];
         
         m_window.draw(cube, currentRenderData);
+        Shader temp = currentRenderData.shaderProgram;
+        currentRenderData.shaderProgram = normalShader;
+        m_window.draw(cube, currentRenderData);
+        currentRenderData.shaderProgram = temp;
     }
-    m_window.draw(obj, currentRenderData);
+    //m_window.draw(obj, currentRenderData);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
-
-    renderImGui();
+    //renderImGui();
 
     m_window.display();
 }
@@ -216,7 +231,7 @@ void App::renderImGui()
 
     // Light Controls
     ImGui::Text("Light Properties");
-    ImGui::SliderFloat3("Light Position", &spotLights[0].position[0], -40.0f, 40.0f);
+    ImGui::SliderFloat3("Light Position", &pointLights[0].position[0], -40.0f, 40.0f);
     float cutOffAngle = glm::degrees(glm::acos(spotLights[0].cutOff));  // Przekszta³æ cosinus na stopnie
     float outerCutOffAngle = glm::degrees(glm::acos(spotLights[0].outerCutOff));
 
