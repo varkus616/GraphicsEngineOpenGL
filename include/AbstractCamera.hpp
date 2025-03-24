@@ -29,6 +29,9 @@ public:
 	const float	GetFov() const { return fov; }
 	const float GetAspectRatio() const { return aspect_ratio; }
 
+	const float GetNearPlane() const { return Znear; }
+	const float GetFarPlane() const { return Zfar; }
+
 	void CalcFrustumPlanes();
 	bool IsPointInFrustum(const glm::vec3& point) const;
 	bool IsSphereInFrustum(const glm::vec3& center, const float radius) const;

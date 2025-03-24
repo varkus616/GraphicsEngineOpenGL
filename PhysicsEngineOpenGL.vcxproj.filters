@@ -105,15 +105,12 @@
     <ClCompile Include="src\TargetCamera.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="src\FrameBuffer.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\glew64.dll" />
-    <None Include="shaders\frag\fragShader.glsl">
-      <Filter>Shaders\Frag</Filter>
-    </None>
-    <None Include="shaders\vert\vertShader.glsl">
-      <Filter>Shaders\Vert</Filter>
-    </None>
     <None Include="shaders\geo\geoShader.glsl">
       <Filter>Shaders\Geo</Filter>
     </None>
@@ -123,13 +120,19 @@
     <None Include="shaders\vert\vertShader2.glsl">
       <Filter>Shaders\Vert</Filter>
     </None>
-    <None Include="shaders\frag\normal.glsl">
-      <Filter>Shaders\Frag</Filter>
-    </None>
     <None Include="shaders\geo\normal.glsl">
       <Filter>Shaders\Geo</Filter>
     </None>
-    <None Include="shaders\vert\normal.glsl">
+    <None Include="shaders\frag\shadowsFrag.glsl">
+      <Filter>Shaders\Frag</Filter>
+    </None>
+    <None Include="shaders\vert\shadowsVert.glsl">
+      <Filter>Shaders\Vert</Filter>
+    </None>
+    <None Include="shaders\frag\shadowMappingFrag.glsl">
+      <Filter>Shaders\Frag</Filter>
+    </None>
+    <None Include="shaders\vert\shadowMappingVert.glsl">
       <Filter>Shaders\Vert</Filter>
     </None>
   </ItemGroup>
@@ -237,6 +240,9 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="include\Light.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FrameBuffer.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

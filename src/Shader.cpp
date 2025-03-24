@@ -22,25 +22,16 @@ Shader::Shader(const Shader& other) {
 
 Shader& Shader::operator=(const Shader& other) {
     if (this != &other) {
-        for (GLuint shader : shaders) {
-            glDeleteShader(shader);
-        }
-        glDeleteProgram(ID);
-
+     
         copyFrom(other);
     }
     return *this;
 }
 
 void Shader::copyFrom(const Shader& other) {
-    ID = glCreateProgram();
+    ID = other.getID();
     shaders = other.shaders;
 
-    for (GLuint shader : shaders) {
-        glAttachShader(ID, shader);
-    }
-
-    glLinkProgram(ID);
 }
 
 void Shader::addShader(const char* shaderPath, GLenum shaderType) {

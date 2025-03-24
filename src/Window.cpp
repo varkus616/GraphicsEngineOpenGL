@@ -173,17 +173,30 @@ void Window::processInput(float deltaTime) {
         m_camera.Lift(deltaTime);
     if (glfwGetKey(m_window, GLFW_KEY_G) == GLFW_PRESS)
         m_camera.Lift(-deltaTime);
+
+    if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        m_camera.Rotate(deltaTime, 0, 0);
+    if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+        m_camera.Rotate(-deltaTime, 0, 0);
+
+    if (glfwGetKey(m_window, GLFW_KEY_Z) == GLFW_PRESS)
+        m_camera.Rotate(0, deltaTime, 0);
+    if (glfwGetKey(m_window, GLFW_KEY_X) == GLFW_PRESS)
+        m_camera.Rotate(0, -deltaTime, 0);
+
     if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS) {
         m_camera.ResetRotation();
         m_camera.SetPosition(glm::vec3(0.f, 0.f, 0.f));
     }
+
+
 }
 void Window::mouseCallback(double xpos, double ypos) {
     processMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
 }
 
 void Window::processMouseMovement(float xpos, float ypos) {
-    if (!m_enableMouseControl) return; // Jeœli mysz nie ma sterowaæ, pomijamy aktualizacjê kamery
+    if (!m_enableMouseControl) return;
 
     static float lastX = m_width / 2.0f;
     static float lastY = m_height / 2.0f;

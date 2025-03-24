@@ -10,6 +10,7 @@
 #include <Window.hpp>
 #include <Shapes.hpp>
 #include <Light.hpp>
+#include <ShadowMapFBO.hpp>
 
 class App
 {
@@ -48,11 +49,17 @@ public:
 	std::vector<SpotLight> spotLights;
 
 	Material material;
-	Shader normalShader;
+	Shader shadowShader;
+	ShaderConfig shadowShaderConfig;
+
+	ShadowMapFBO shadowMap;
+
 	bool m_app_running = true;
 
 private:
 	void installLights();
+	void initShadows();
+	void renderShadows();
 	void imguiRender();
 };
 
