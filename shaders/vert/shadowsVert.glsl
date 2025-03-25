@@ -1,4 +1,4 @@
-#version 420 core
+#version 430
 layout (location = 1) in vec3 aPos;
 
 uniform mat4 lightSpaceMatrix;

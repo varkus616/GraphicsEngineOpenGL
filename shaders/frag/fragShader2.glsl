@@ -1,4 +1,5 @@
-#version 420
+#version 430
+
 #define MAX_LIGHTS 20
 
 struct PointLight {    
@@ -55,6 +56,8 @@ uniform sampler2D shadowMap;
 in vec3 FragPos;
 in vec3 Normal;
 
+out vec4 FragColor;
+
 in VS_OUT {
     vec3 FragPos;
     vec3 Normal;
@@ -81,6 +84,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 vec3 CalcDirLight(DirLight light, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.direction);
+
 
     float diff = max(0, dot(Normal, lightDir));
 
@@ -128,8 +132,10 @@ vec3 CalcPointLight(PointLight light, vec3 viewDir)
     vec3 specular = light.specular * spec;
     vec3 diffuse = light.diffuse * diff;
 
-
-    return (specular + diffuse + ambient);
+    float shadow = ShadowCalculation(fs_in.FragPosLightSpace);                      
+    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));    
+    return lighting;
+    //return (specular + diffuse + ambient);
 }
 
 vec3 CalcSpotLight(SpotLight light, vec3 viewDir) 
@@ -175,8 +181,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 viewDir)
 }
 
 
-
-
 void main()
 {
     vec4 result = vec4(0);
@@ -186,16 +190,17 @@ void main()
         
         for (int i = 0; i < numPointLights; i++)
         {
-          //  lightResult += CalcPointLight(pointLights[i], viewDir);   
+            lightResult += CalcPointLight(pointLights[i], viewDir);   
         }
         for (int i = 0; i < numSpotLights; i++)
         {
-          //  lightResult += CalcSpotLight(spotLights[i], viewDir);   
+           // lightResult += CalcSpotLight(spotLights[i], viewDir);   
         }
-        lightResult += CalcDirLight(dirLight, viewDir);
-       result += vec4(lightResult, 1) * 0.9;
+        //lightResult += CalcDirLight(dirLight, viewDir);
+       result += vec4(lightResult, 1) ;
     }
-
+    
     //result += objectColor * 0.5;
-    gl_FragColor = result;// * 0.5 + objectColor * 0.5;
+    FragColor = result;// * 0.5 + objectColor * 0.5;
+
 }

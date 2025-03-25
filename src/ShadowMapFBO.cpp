@@ -1,4 +1,6 @@
 #include <ShadowMapFBO.hpp>
+#include <stdio.h>
+#include <stdlib.h>
 
 
 ShadowMapFBO::ShadowMapFBO(GLuint width, GLuint height) :
@@ -19,21 +21,30 @@ ShadowMapFBO::ShadowMapFBO(GLuint width, GLuint height) :
         GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_shadowMapID, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
+
+    GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+    if (Status != GL_FRAMEBUFFER_COMPLETE)
+    {
+        printf("FrameBuffer error, status: 0x%x\n", Status);
+        exit(0);
+    }
     m_fbo.UnBind();
 
 }
 
 void ShadowMapFBO::BindForWrite()
 {
-    glViewport(0, 0, m_width, m_height);
     m_fbo.Bind();
-    glActiveTexture(GL_TEXTURE0);
+    glViewport(0, 0, m_width, m_height);
+    //glActiveTexture(GL_TEXTURE0);
     glClear(GL_DEPTH_BUFFER_BIT);
 
 }
 
 void ShadowMapFBO::BindForRead()
 {
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_shadowMapID);
 }
 

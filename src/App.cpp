@@ -21,7 +21,7 @@ void printFPS()
 
 App::App(Window& window)
     : m_window(window),
-    cubes(100),
+    cubes(50),
     plane(Utils::generatePlane(100, 100)),
     obj(&plane, DrawMode::ELEMENTS),
     shadowMap(1024, 1024)
@@ -135,7 +135,7 @@ App::App(Window& window)
         y = rand() % 255;
         z = rand() % 255;
 
-        //cube.setColor(glm::vec4(x/255, y/255, z/255, 0));
+        cube.setColor(glm::vec4(x/255, y/255, z/255, 0));
     }
 
     obj.setPosition(0, -16, 0);
@@ -146,22 +146,23 @@ App::App(Window& window)
 
 void App::renderShadows()
 {
-    shadowMap.BindForWrite();  // Zwi¹zanie tekstury mapy cieni
     float near = m_window.getCamera().GetNearPlane();
     float far = m_window.getCamera().GetFarPlane();
     float w = m_window.getWidth();
     float h = m_window.getHeight();
-    
-    glm::mat4 lightProjection = glm::ortho(0.f, w, 0.f, h, near, far);
-    glm::mat4 lightView = glm::lookAt(light.position,
+
+    glm::mat4 lightProjection = glm::ortho(
+        -10.0f, 10.f, -10.0f, 10.f, near, far);
+    glm::mat4 lightView = glm::lookAt(
+        pointLights[0].position,
         glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f)); 
-    glm::mat4 lightSpaceMatrix = lightProjection * lightView; 
+        glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
+    shadowMap.BindForWrite();  
+
+    glClear(GL_DEPTH_BUFFER_BIT);
     
-    auto uni = [&](Renderable& r, RenderData& d, Window& w) {
-        d.shaderConfig.uniforms["lightSpaceMatrix"] = UniformValue(UniformType::MAT4, lightSpaceMatrix);
-        d.shaderConfig.uniforms["model"] = UniformValue(UniformType::MAT4, r.getModelMatrix());
-        };
     shadowShader.use();
     shadowShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
@@ -176,18 +177,20 @@ void App::renderShadows()
     m_window.draw(obj, shadowShader);
 
     shadowMap.Unbind();
+
     glViewport(0, 0, w, h);
+    
     shadowMap.BindForRead();  
 }
 
 void App::installLights()
 {
-    light.position = { 0, 7, 13 };
+    light.position = { 0, 4, 5 };
     dirLight.direction = { 0, 0, 0 };
 
-    dirLight.ambient = { 0.2, 0.2, 0.25 };
+    dirLight.ambient = { 0.6, 0.6, 0.6 };
     dirLight.diffuse = { 0.3, 0.3, 0.3 };
-    dirLight.specular = { 0.5f, 0.5f, 0.5f };
+    dirLight.specular = { 0.3f, 0.3f, 0.3f };
 
     light.constant = 1.f;
     light.linear = 0.09f;
@@ -201,10 +204,10 @@ void App::installLights()
 
 
     PointLight pointLight;
-    pointLight.position = { 0, 3, -19 };
-    pointLight.ambient = { 0.0f, 0.0f, 0.2f };
-    pointLight.diffuse = { 0.0f, 0.0f, 0.5f };
-    pointLight.specular = { 0.0f , 0.0f , 1.f };
+    pointLight.position = { 0, 4, 3 };
+    pointLight.ambient = { 0.6, 0.6, 0.6 };
+    pointLight.diffuse = { 0.3, 0.3, 0.3 };
+    pointLight.specular = { 0.3f, 0.3f, 0.3f };
 
     pointLight.constant = 1.0f;
     pointLight.linear = 0.092f;
@@ -214,6 +217,7 @@ void App::installLights()
     spotLights.emplace_back(light);
 
 }
+
 void App::run()
 {
     while (isRunning())
@@ -243,8 +247,7 @@ void App::update()
     float t = glfwGetTime();
 
     m_window.getCamera().Update();
-    //pointLights[0].position = glm::vec3(360 * glm::sin(glfwGetTime()), 40,0);//m_window.getCamera().GetPosition();
-
+    pointLights[0].position = glm::vec3(25 * glm::sin(glfwGetTime() / 2), 5, 0);//m_window.getCamera().GetPosition();
 }
 
 void App::render()
@@ -255,6 +258,7 @@ void App::render()
    glViewport(0, 0, w, h);
    m_window.clear(Color(0.1f, 0.1f, 0.1f, 1.f));
 
+   currentRenderData.shaderProgram.use();
    currentRenderData.shaderProgram.setInt("shadowMap", 1);
 
    for (int i = 0; i < cubes.size(); i++) {
@@ -263,10 +267,10 @@ void App::render()
        m_window.draw(cube, currentRenderData);
    }
    m_window.draw(obj, currentRenderData);
+
    glEnable(GL_DEPTH_TEST);
    glDepthFunc(GL_LEQUAL);
-   //glEnable(GL_CULL_FACE);
-   //glCullFace(GL_BACK);
+   
    //renderImGui();
 
     m_window.display();

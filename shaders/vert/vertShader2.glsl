@@ -1,13 +1,9 @@
-#version 420
+#version 430
 
 #define MAX_SPOT_LIGHTS 10
 
 layout (location=1) in vec3 vertPos;
 layout (location=2) in vec3 vertNormal;
-
-
-
-
 
 uniform mat4 mvpmatrix;
 uniform mat4 model;
@@ -24,16 +20,15 @@ out VS_OUT {
     vec4 FragPosLightSpace;
 } vs_out;
 
+
 void main()
 {
     FragPos = vec3(model * vec4(vertPos, 1));
     vs_out.FragPos = FragPos;
-
 
     Normal = normalize(mat3(inverse(transpose(model)))* vertNormal);
     vs_out.Normal = Normal;
     
     vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);
     gl_Position = mvpmatrix * vec4(vertPos, 1);
-
 }

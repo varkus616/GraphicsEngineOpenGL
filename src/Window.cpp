@@ -70,16 +70,14 @@ void Window::clear(const Color& color) {
 
 void Window::draw(Renderable& renderable, RenderData& data)
 {
-    if (data.uniformUpdater) {
+    if (data.uniformUpdater) 
         data.uniformUpdater(renderable, data, *this);
-    } 
 
     data.shaderProgram.use();
 
     data.shaderConfig.apply(data.shaderProgram);
 
     renderable.draw(*this, data);
-   
 }
 
 void Window::draw(Renderable& renderable, Shader& shader)
