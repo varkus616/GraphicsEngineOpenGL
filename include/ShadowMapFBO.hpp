@@ -13,6 +13,7 @@ public:
 	~ShadowMapFBO() = default;
 
 	void BindForWrite();
+	void BindForRead();
 	void Unbind();
 
 	GLuint m_width = 0;

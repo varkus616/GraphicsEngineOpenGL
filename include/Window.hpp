@@ -31,6 +31,7 @@ public:
 
     void draw(Renderable& renderable, RenderData& data) override;
     void draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& data) override;
+    void draw(Renderable& renderable, Shader& shader);
 
     int getWidth() const;
     int getHeight() const;

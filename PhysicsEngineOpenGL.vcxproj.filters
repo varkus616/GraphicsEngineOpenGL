@@ -108,6 +108,9 @@
     <ClCompile Include="src\FrameBuffer.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="src\ShadowMapFBO.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\glew64.dll" />
@@ -127,12 +130,6 @@
       <Filter>Shaders\Frag</Filter>
     </None>
     <None Include="shaders\vert\shadowsVert.glsl">
-      <Filter>Shaders\Vert</Filter>
-    </None>
-    <None Include="shaders\frag\shadowMappingFrag.glsl">
-      <Filter>Shaders\Frag</Filter>
-    </None>
-    <None Include="shaders\vert\shadowMappingVert.glsl">
       <Filter>Shaders\Vert</Filter>
     </None>
   </ItemGroup>
@@ -243,6 +240,9 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="include\FrameBuffer.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShadowMapFBO.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

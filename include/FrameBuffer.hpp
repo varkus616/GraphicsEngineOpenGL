@@ -2,7 +2,6 @@
 #ifndef FRAME_BUFFER_HPP
 #define FRAME_BUFFER_HPP
 
-#include <GLFW/glfw3.h>
 #include <GL/glew.h>
 
 class FrameBuffer

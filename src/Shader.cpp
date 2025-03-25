@@ -22,7 +22,10 @@ Shader::Shader(const Shader& other) {
 
 Shader& Shader::operator=(const Shader& other) {
     if (this != &other) {
-     
+        for (GLuint shader : shaders) {
+        glDeleteShader(shader);
+    }
+        glDeleteProgram(ID);
         copyFrom(other);
     }
     return *this;
@@ -49,7 +52,7 @@ void Shader::addShader(const char* shaderPath, GLenum shaderType) {
         code = shaderStream.str();
     }
     catch (std::ifstream::failure& e) {
-        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
+        std::cerr << "\033[1;31mERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ \033[0m [" << shaderPath << "]" << std::endl;
     }
     const char* shaderCode = code.c_str();
 

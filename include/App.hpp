@@ -25,6 +25,7 @@ public:
 	void processInput();
 	void update();
 	void render();
+	void renderShadows();
 	void renderImGui();
 
 	Window& m_window;
@@ -50,6 +51,8 @@ public:
 
 	Material material;
 	Shader shadowShader;
+	Shader basicShader;
+
 	ShaderConfig shadowShaderConfig;
 
 	ShadowMapFBO shadowMap;
@@ -59,7 +62,6 @@ public:
 private:
 	void installLights();
 	void initShadows();
-	void renderShadows();
 	void imguiRender();
 };
 

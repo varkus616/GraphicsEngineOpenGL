@@ -8,7 +8,7 @@ ShadowMapFBO::ShadowMapFBO(GLuint width, GLuint height) :
     glGenTextures(1, &m_shadowMapID);
     glBindTexture(GL_TEXTURE_2D, m_shadowMapID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-        m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -27,6 +27,17 @@ void ShadowMapFBO::BindForWrite()
 {
     glViewport(0, 0, m_width, m_height);
     m_fbo.Bind();
+    glActiveTexture(GL_TEXTURE0);
     glClear(GL_DEPTH_BUFFER_BIT);
 
+}
+
+void ShadowMapFBO::BindForRead()
+{
+    glBindTexture(GL_TEXTURE_2D, m_shadowMapID);
+}
+
+void ShadowMapFBO::Unbind()
+{
+    m_fbo.UnBind();
 }

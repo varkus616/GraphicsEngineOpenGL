@@ -115,4 +115,66 @@ struct ShaderConfig {
             }
         }
     }
+
+    
+    void printUniforms() const {
+        for (const auto& it : uniforms) {
+            const std::string& name = it.first;
+            const UniformValue& value = it.second;
+
+            std::cout << "Uniform Name: " << name << ", Type: ";
+
+            switch (value.dataType) {
+            case UniformType::BOOL:
+                std::cout << "BOOL\n";
+                break;
+            case UniformType::INT:
+                std::cout << "INT\n";
+                break;
+            case UniformType::FLOAT:
+                std::cout << "FLOAT\n";
+                break;
+            case UniformType::VEC2:
+                std::cout << "VEC2\n";
+                break;
+            case UniformType::VEC3:
+                std::cout << "VEC3\n";
+                break;
+            case UniformType::VEC4:
+                std::cout << "VEC4\n";
+                break;
+            case UniformType::MAT2:
+                std::cout << "MAT2\n";
+                break;
+            case UniformType::MAT3:
+                std::cout << "MAT3\n";
+                break;
+            case UniformType::MAT4:
+                std::cout << "MAT4\n";
+                break;
+            case UniformType::INT_ARRAY:
+                std::cout << "INT_ARRAY\n";
+                break;
+            case UniformType::FLOAT_ARRAY:
+                std::cout << "FLOAT_ARRAY\n";
+                break;
+            case UniformType::VEC2_ARRAY:
+                std::cout << "VEC2_ARRAY\n";
+                break;
+            case UniformType::VEC3_ARRAY:
+                std::cout << "VEC3_ARRAY\n";
+                break;
+            case UniformType::VEC4_ARRAY:
+                std::cout << "VEC4_ARRAY\n";
+                break;
+            case UniformType::MAT4_ARRAY:
+                std::cout << "MAT4_ARRAY\n";
+                break;
+            default:
+                std::cout << "UNKNOWN\n";
+                break;
+            }
+        }
+    }
+
 };

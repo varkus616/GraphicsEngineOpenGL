@@ -151,6 +151,7 @@
     <ClCompile Include="src\RenderableObject.cpp" />
     <ClCompile Include="src\RenderContext.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\ShadowMapFBO.cpp" />
     <ClCompile Include="src\Shapes.cpp" />
     <ClCompile Include="src\TargetCamera.cpp" />
     <ClCompile Include="src\Transformable.cpp" />
@@ -161,11 +162,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\frag\fragShader2.glsl" />
-    <None Include="shaders\frag\shadowMappingFrag.glsl" />
     <None Include="shaders\frag\shadowsFrag.glsl" />
     <None Include="shaders\geo\geoShader.glsl" />
     <None Include="shaders\geo\normal.glsl" />
-    <None Include="shaders\vert\shadowMappingVert.glsl" />
     <None Include="shaders\vert\shadowsVert.glsl" />
     <None Include="shaders\vert\vertShader2.glsl" />
     <None Include="src\glew64.dll" />
@@ -197,6 +196,7 @@
     <ClInclude Include="include\RenderTarget.hpp" />
     <ClInclude Include="include\Shader.hpp" />
     <ClInclude Include="include\ShaderConfig.hpp" />
+    <ClInclude Include="include\ShadowMapFBO.hpp" />
     <ClInclude Include="include\Shapes.hpp" />
     <ClInclude Include="include\TargetCamera.hpp" />
     <ClInclude Include="include\Texture.hpp" />

@@ -82,6 +82,18 @@ void Window::draw(Renderable& renderable, RenderData& data)
    
 }
 
+void Window::draw(Renderable& renderable, Shader& shader)
+{
+
+    shader.use();
+    RenderData data;
+    data.drawMode = DrawMode::ARRAYS;
+    data.primitiveType = PrimitiveType::TRIANGLES;
+    renderable.draw(*this, data);
+
+}
+
+
 void Window::draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& data) 
 {
     switch (data.drawMode) {

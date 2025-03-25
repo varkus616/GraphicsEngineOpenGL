@@ -31,8 +31,10 @@ App::App(Window& window)
     currentRenderData.shaderProgram.addShader("shaders\\frag\\fragShader2.glsl", GL_FRAGMENT_SHADER);
     currentRenderData.shaderProgram.linkProgram();
 
-    shadowShader.addShader("shaders\\vert\\shadows.glsl", GL_VERTEX_SHADER);
-    shadowShader.addShader("shaders\\frag\\shadows.glsl", GL_FRAGMENT_SHADER);
+    basicShader = currentRenderData.shaderProgram;
+
+    shadowShader.addShader("shaders\\vert\\shadowsVert.glsl", GL_VERTEX_SHADER);
+    shadowShader.addShader("shaders\\frag\\shadowsFrag.glsl", GL_FRAGMENT_SHADER);
     shadowShader.linkProgram();
 
 
@@ -104,7 +106,6 @@ App::App(Window& window)
             //d.shaderConfig.uniforms["material.specular"] = UniformValue(UniformType::INT,  1);
         };
 
-
     srand(777);
 
     int BOUND_X = 15;
@@ -137,81 +138,51 @@ App::App(Window& window)
         //cube.setColor(glm::vec4(x/255, y/255, z/255, 0));
     }
 
-
     obj.setPosition(0, -16, 0);
     epicT.setPosition(0, 0, 8);
     m_window.getCamera().SetPosition(glm::vec3(0, 0, 3));
     obj.setColor(glm::vec4(0, 1, 0, 0));
 }
 
-void App::initShadows()
+void App::renderShadows()
 {
-    
-    shadowMap.BindForWrite();
-
-    // 1. first render to depth map
-    glViewport(0, 0, shadowMap.m_width, shadowMap.m_height);
-    fb.Bind();
-    glClear(GL_DEPTH_BUFFER_BIT);
-
+    shadowMap.BindForWrite();  // Zwi¹zanie tekstury mapy cieni
     float near = m_window.getCamera().GetNearPlane();
     float far = m_window.getCamera().GetFarPlane();
-
     float w = m_window.getWidth();
     float h = m_window.getHeight();
-
-    glm::mat4 lightProjection = glm::ortho(0.f, w, 0.f, h, near, far);
-    glm::mat4 lightView = glm::lookAt(pointLights[0].position,
-                                      glm::vec3(0.0f, 0.0f, 0.0f),
-                                      glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-
-    auto shadowUniUpdater = [&](Renderable& r, RenderData& d, Window& w) {
-        shadowShaderConfig.uniforms["lightSpaceMatrix"] = UniformValue(UniformType::MAT4, lightSpaceMatrix);
-        shadowShaderConfig.uniforms["model"] = UniformValue(UniformType::MAT4, r.getModelMatrix());
-        };
-
-    m_window.clear(Color(0.1f, 0.1f, 0.1f, 1.f));
-
-    auto tempConfig = currentRenderData.shaderConfig;
-    currentRenderData.shaderConfig = shadowShaderConfig;
-
-    auto& tempUpdater = currentRenderData.uniformUpdater;
-    currentRenderData.uniformUpdater = shadowUniUpdater;
     
+    glm::mat4 lightProjection = glm::ortho(0.f, w, 0.f, h, near, far);
+    glm::mat4 lightView = glm::lookAt(light.position,
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f)); 
+    glm::mat4 lightSpaceMatrix = lightProjection * lightView; 
+    
+    auto uni = [&](Renderable& r, RenderData& d, Window& w) {
+        d.shaderConfig.uniforms["lightSpaceMatrix"] = UniformValue(UniformType::MAT4, lightSpaceMatrix);
+        d.shaderConfig.uniforms["model"] = UniformValue(UniformType::MAT4, r.getModelMatrix());
+        };
+    shadowShader.use();
+    shadowShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
     for (int i = 0; i < cubes.size(); i++) {
         auto& cube = cubes[i];
+        shadowShader.setMat4("model",cube.getModelMatrix());
 
-        m_window.draw(cube, currentRenderData);
+        m_window.draw(cube, shadowShader);
     }
-    m_window.draw(obj, currentRenderData);
+    shadowShader.setMat4("model", obj.getModelMatrix());
 
-    m_window.display();
-    fb.UnBind();
+    m_window.draw(obj, shadowShader);
 
-    // 2. then render scene as normal with shadow mapping (using depth map)
+    shadowMap.Unbind();
     glViewport(0, 0, w, h);
-    m_window.clear(Color(0.1f, 0.1f, 0.1f, 1.f));
-
-    currentRenderData.shaderConfig = tempConfig;
-    currentRenderData.uniformUpdater = tempUpdater;
-
-    glBindTexture(GL_TEXTURE_2D, depthMap);
-
-    for (int i = 0; i < cubes.size(); i++) {
-        auto& cube = cubes[i];
-
-        m_window.draw(cube, currentRenderData);
-    }
-    m_window.draw(obj, currentRenderData);
-
-    m_window.display();
-
+    shadowMap.BindForRead();  
 }
 
 void App::installLights()
 {
-    light.position = { 0, 5, 20 };
+    light.position = { 0, 7, 13 };
     dirLight.direction = { 0, 0, 0 };
 
     dirLight.ambient = { 0.2, 0.2, 0.25 };
@@ -224,7 +195,7 @@ void App::installLights()
     light.cutOff = glm::cos(glm::radians(12.5f));
     light.outerCutOff = glm::cos(glm::radians(17.5));
 
-    light.ambient = { 0.1, 0.1, 0.1 };
+    light.ambient = { 0.2, 0.2, 0.2 };
     light.diffuse = { 0.8, 0.8, 0.8 };
     light.specular = { 1.f, 1.f, 1.f };
 
@@ -278,19 +249,25 @@ void App::update()
 
 void App::render()
 {
-    m_window.clear(Color(0.1f, 0.1f, 0.1f, 1.f));
+   renderShadows();
+   float w = m_window.getWidth();
+   float h = m_window.getHeight();
+   glViewport(0, 0, w, h);
+   m_window.clear(Color(0.1f, 0.1f, 0.1f, 1.f));
 
-    for (int i = 0; i < cubes.size(); i++) {
-        auto& cube = cubes[i];
-        
-        m_window.draw(cube, currentRenderData);
-    }
-    m_window.draw(obj, currentRenderData);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
-    //renderImGui();
+   currentRenderData.shaderProgram.setInt("shadowMap", 1);
+
+   for (int i = 0; i < cubes.size(); i++) {
+       auto& cube = cubes[i];
+       
+       m_window.draw(cube, currentRenderData);
+   }
+   m_window.draw(obj, currentRenderData);
+   glEnable(GL_DEPTH_TEST);
+   glDepthFunc(GL_LEQUAL);
+   //glEnable(GL_CULL_FACE);
+   //glCullFace(GL_BACK);
+   //renderImGui();
 
     m_window.display();
 }

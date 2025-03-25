@@ -7,6 +7,7 @@ FrameBuffer::FrameBuffer()
 {
 	GLCall(glGenFramebuffers(1, &id));
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
+
 }
 
 FrameBuffer::~FrameBuffer()
