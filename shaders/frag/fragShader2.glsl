@@ -64,6 +64,33 @@ in VS_OUT {
     vec4 FragPosLightSpace;
 } fs_in;
 
+float CalcShadowFactor()
+{
+    vec3 ProjCoords = fs_in.FragPosLightSpace.xyz / fs_in.FragPosLightSpace.w;
+    
+    ProjCoords = ProjCoords * 0.5 + 0.5; // [-1,1] -> [0,1]
+    //vec2 UVCoords;
+    //UVCoords.x = 0.5 * ProjCoords.x + 0.5;
+    //UVCoords.y = 0.5 * ProjCoords.y + 0.5;
+
+    if(ProjCoords.z > 1.0 
+    || ProjCoords.x < 0.0 || ProjCoords.x > 1.0 
+    || ProjCoords.y < 0.0 || ProjCoords.y > 1.0) {
+        return 1.0; // No shadow
+    }
+
+    float z = 0.5 * ProjCoords.z + 0.5;
+    //float Depth = texture(shadowMap, UVCoords).x;
+    float shadow = texture(shadowMap, ProjCoords.xy).r;
+    float current = ProjCoords.z;
+
+    float bias = 0.0025;
+    //if (Depth + bias < z)
+    //    return 0.0;
+    //else return 1.0f;
+    return current - bias > shadow ? 1.0 : 0.0;
+}
+
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
     // perform perspective divide
@@ -95,7 +122,9 @@ vec3 CalcDirLight(DirLight light, vec3 viewDir)
     vec3 diffuse = light.diffuse * diff;
     vec3 specular = light.specular * spec;
     
-    float shadow = ShadowCalculation(fs_in.FragPosLightSpace);       
+    //float shadow = ShadowCalculation(fs_in.FragPosLightSpace);       
+    
+    float shadow = CalcShadowFactor();
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));    
 
     return (lighting);
@@ -132,7 +161,8 @@ vec3 CalcPointLight(PointLight light, vec3 viewDir)
     vec3 specular = light.specular * spec;
     vec3 diffuse = light.diffuse * diff;
 
-    float shadow = ShadowCalculation(fs_in.FragPosLightSpace);                      
+    //float shadow = ShadowCalculation(fs_in.FragPosLightSpace);                      
+        float shadow = CalcShadowFactor();
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));    
     return lighting;
     //return (specular + diffuse + ambient);
@@ -190,17 +220,16 @@ void main()
         
         for (int i = 0; i < numPointLights; i++)
         {
-            lightResult += CalcPointLight(pointLights[i], viewDir);   
+            //lightResult += CalcPointLight(pointLights[i], viewDir);   
         }
         for (int i = 0; i < numSpotLights; i++)
         {
            // lightResult += CalcSpotLight(spotLights[i], viewDir);   
         }
-        //lightResult += CalcDirLight(dirLight, viewDir);
+        lightResult += CalcDirLight(dirLight, viewDir);
        result += vec4(lightResult, 1) ;
     }
     
-    //result += objectColor * 0.5;
-    FragColor = result;// * 0.5 + objectColor * 0.5;
-
+    result += objectColor * 0.5;
+    FragColor = result;
 }

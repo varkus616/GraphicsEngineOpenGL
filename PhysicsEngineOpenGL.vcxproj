@@ -143,6 +143,7 @@
     <ClCompile Include="src\AbstractCamera.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Color.cpp" />
+    <ClCompile Include="src\Cubemap.cpp" />
     <ClCompile Include="src\FrameBuffer.cpp" />
     <ClCompile Include="src\FreeCamera.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
@@ -161,12 +162,16 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\frag\cubemapFrag.glsl" />
     <None Include="shaders\frag\fragShader2.glsl" />
     <None Include="shaders\frag\shadowsFrag.glsl" />
+    <None Include="shaders\frag\viewShadowFrag.glsl" />
     <None Include="shaders\geo\geoShader.glsl" />
     <None Include="shaders\geo\normal.glsl" />
+    <None Include="shaders\vert\cubemapVert.glsl" />
     <None Include="shaders\vert\shadowsVert.glsl" />
     <None Include="shaders\vert\vertShader2.glsl" />
+    <None Include="shaders\vert\viewShadowVert.glsl" />
     <None Include="src\glew64.dll" />
   </ItemGroup>
   <ItemGroup>
@@ -183,6 +188,7 @@
     <ClInclude Include="include\App.hpp" />
     <ClInclude Include="include\Color.hpp" />
     <ClInclude Include="include\CPlane.hpp" />
+    <ClInclude Include="include\Cubemap.hpp" />
     <ClInclude Include="include\FrameBuffer.hpp" />
     <ClInclude Include="include\FreeCamera.hpp" />
     <ClInclude Include="include\GeometryData.hpp" />

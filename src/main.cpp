@@ -11,9 +11,8 @@ int main() {
     Window window(context, WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL Renderer");
 
     App app(window);
-
+    
     app.run();  
 
     return 0;
 }
-

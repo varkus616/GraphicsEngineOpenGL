@@ -13,13 +13,12 @@ void RenderableObject::draw(RenderTarget& target, RenderData& data)
         auto& mesh = m_meshes[i];
         if (mesh != nullptr) {
             mesh->setupBuffers();
-            mesh->bindTextures();
-            mesh->getIndexBuffer().Bind();
+            //mesh->bindTextures();
             data.drawMode = m_drawMode;
 
             target.draw(mesh->getBuffer(), mesh->getIndexBuffer(), data);
 
-            mesh->unbindTextures();
+            //mesh->unbindTextures();
             mesh->getVertexArray().Reset();
         }
     }
@@ -128,7 +127,7 @@ Mesh* RenderableObject::processMesh(aiMesh* mesh, const aiScene* scene)
     //textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // return a mesh object created from the extracted mesh data
-
+    std::cout << "INDI:" << mesh->mNumFaces << " " << "VERT:" << mesh->mNumVertices << std::endl;
     return new Mesh(vertexes, indices);
 }
 

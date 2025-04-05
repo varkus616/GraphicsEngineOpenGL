@@ -1,7 +1,9 @@
 #include "App.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
 
+
 bool calculateLightFlag = true;
+glm::mat4 lightSpaceMatrix;
 
 void printFPS()
 {
@@ -18,14 +20,46 @@ void printFPS()
         lastTime = currentTime;
     }
 }
+std::vector<std::string> faces = {
+    "resources\\right.jpg",
+    "resources\\left.jpg",
+    "resources\\top.jpg",
+    "resources\\bottom.jpg",
+    "resources\\front.jpg",
+    "resources\\back.jpg" };
 
 App::App(Window& window)
     : m_window(window),
-    cubes(50),
+    cubes(10),
     plane(Utils::generatePlane(100, 100)),
     obj(&plane, DrawMode::ELEMENTS),
-    shadowMap(1024, 1024)
+    shadowMap(1024, 1024),
+    m_skybox(faces)
 {
+
+    //float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+    //    // positions   // texCoords
+    //    -1.0f,  1.0f,  0.0f, 1.0f,
+    //    -1.0f, -1.0f,  0.0f, 0.0f,
+    //     1.0f, -1.0f,  1.0f, 0.0f,
+    //
+    //    -1.0f,  1.0f,  0.0f, 1.0f,
+    //     1.0f, -1.0f,  1.0f, 0.0f,
+    //     1.0f,  1.0f,  1.0f, 1.0f
+    //};
+    //
+    //
+    //glGenVertexArrays(1, &quadVAO);
+    //glGenBuffers(1, &quadVBO);
+    //glBindVertexArray(quadVAO);
+    //
+    //glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    //
+    //glEnableVertexAttribArray(0);
+    //glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    //glEnableVertexAttribArray(1);
+    //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
     currentRenderData.shaderProgram.addShader("shaders\\vert\\vertShader2.glsl", GL_VERTEX_SHADER);
     currentRenderData.shaderProgram.addShader("shaders\\frag\\fragShader2.glsl", GL_FRAGMENT_SHADER);
@@ -33,10 +67,19 @@ App::App(Window& window)
 
     basicShader = currentRenderData.shaderProgram;
 
+    shadowView.addShader("shaders\\vert\\viewShadowVert.glsl", GL_VERTEX_SHADER);
+    shadowView.addShader("shaders\\frag\\viewShadowFrag.glsl", GL_FRAGMENT_SHADER);
+    shadowView.linkProgram();
+
+    //currentRenderData.shaderProgram = shadowView;
+
     shadowShader.addShader("shaders\\vert\\shadowsVert.glsl", GL_VERTEX_SHADER);
     shadowShader.addShader("shaders\\frag\\shadowsFrag.glsl", GL_FRAGMENT_SHADER);
     shadowShader.linkProgram();
 
+    skyboxShader.addShader("shaders\\vert\\cubemapVert.glsl", GL_VERTEX_SHADER);
+    skyboxShader.addShader("shaders\\frag\\cubemapFrag.glsl", GL_FRAGMENT_SHADER);
+    skyboxShader.linkProgram();
 
     Texture wallText = Texture(Utils::loadTexture("resources\\container2.png"));
     Texture wallTextSpec = Texture(Utils::loadTexture("resources\\container2_specular.png"));
@@ -109,7 +152,7 @@ App::App(Window& window)
     srand(777);
 
     int BOUND_X = 15;
-    int BOUND_Y = 15;
+    int BOUND_Y = 0;
     int BOUND_Z = 15;
 
 
@@ -122,7 +165,7 @@ App::App(Window& window)
         float z = rand() % (BOUND_Z + 1 - (-BOUND_Z)) + (-BOUND_Z);
 
         cube.addTexture(wallText, 0);
-        cube.setPosition(x, y, z);
+        cube.setPosition(x, y + 0.55, z);
 
         float angleX = rand() % 360;
         float angleY = rand() % 360;
@@ -135,34 +178,38 @@ App::App(Window& window)
         y = rand() % 255;
         z = rand() % 255;
 
-        cube.setColor(glm::vec4(x/255, y/255, z/255, 0));
+        //cube.setColor(glm::vec4(x/255 * 0.5, y/255 * 0.5, z/255 * 0.5, 0));
+        cube.setColor(glm::vec4(1, 0, 0, 0));
     }
 
-    obj.setPosition(0, -16, 0);
+    obj.setPosition(0, 0, 0);
     epicT.setPosition(0, 0, 8);
-    m_window.getCamera().SetPosition(glm::vec3(0, 0, 3));
-    obj.setColor(glm::vec4(0, 1, 0, 0));
+    m_window.getCamera().SetPosition(glm::vec3(0, 1, 3));
+    //obj.setColor(glm::vec4(0, 1, 0, 0));
+    miku.loadModel("resources\\miku.obj");
+    miku.m_drawMode = DrawMode::ELEMENTS;
+   
 }
 
 void App::renderShadows()
 {
-    float near = m_window.getCamera().GetNearPlane();
-    float far = m_window.getCamera().GetFarPlane();
-    float w = m_window.getWidth();
-    float h = m_window.getHeight();
-
     glm::mat4 lightProjection = glm::ortho(
-        -10.0f, 10.f, -10.0f, 10.f, near, far);
+        -orthoSize, orthoSize,
+        -orthoSize, orthoSize,
+        lightNear, lightFar);
+
+    //lightProjection = glm::perspective(glm::radians(90.f), (float)(w/h), lightNear, lightFar);
+
     glm::mat4 lightView = glm::lookAt(
-        pointLights[0].position,
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+        glm::vec3(0.0f, 1.0f, 0.0f),
+        -dirLight.direction, 
+        glm::vec3(0.0f, 1.0f, 0.0f));  
 
+    lightSpaceMatrix = lightProjection * lightView;
     shadowMap.BindForWrite();  
-
-    glClear(GL_DEPTH_BUFFER_BIT);
     
+    glClear(GL_DEPTH_BUFFER_BIT);
+
     shadowShader.use();
     shadowShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
@@ -176,21 +223,19 @@ void App::renderShadows()
 
     m_window.draw(obj, shadowShader);
 
-    shadowMap.Unbind();
 
-    glViewport(0, 0, w, h);
-    
-    shadowMap.BindForRead();  
-}
+    shadowMap.Unbind();
+    glViewport(0, 0, m_window.getWidth(), m_window.getHeight());
+ }
 
 void App::installLights()
 {
     light.position = { 0, 4, 5 };
     dirLight.direction = { 0, 0, 0 };
 
-    dirLight.ambient = { 0.6, 0.6, 0.6 };
-    dirLight.diffuse = { 0.3, 0.3, 0.3 };
-    dirLight.specular = { 0.3f, 0.3f, 0.3f };
+    dirLight.ambient = { 0.2, 0.2, 0.25 };
+    dirLight.diffuse = { 0.2, 0.2, 0.2 };
+    dirLight.specular = { 0.2, 0.2, 0.2 };
 
     light.constant = 1.f;
     light.linear = 0.09f;
@@ -204,9 +249,9 @@ void App::installLights()
 
 
     PointLight pointLight;
-    pointLight.position = { 0, 4, 3 };
-    pointLight.ambient = { 0.6, 0.6, 0.6 };
-    pointLight.diffuse = { 0.3, 0.3, 0.3 };
+    pointLight.position = { 0, 2, 3 };
+    pointLight.ambient = { 0.9, 0.9, 0.9 };
+    pointLight.diffuse = { 0.5, 0.5, 0.5 };
     pointLight.specular = { 0.3f, 0.3f, 0.3f };
 
     pointLight.constant = 1.0f;
@@ -247,31 +292,32 @@ void App::update()
     float t = glfwGetTime();
 
     m_window.getCamera().Update();
-    pointLights[0].position = glm::vec3(25 * glm::sin(glfwGetTime() / 2), 5, 0);//m_window.getCamera().GetPosition();
-}
 
+}
 void App::render()
 {
-   renderShadows();
-   float w = m_window.getWidth();
-   float h = m_window.getHeight();
-   glViewport(0, 0, w, h);
-   m_window.clear(Color(0.1f, 0.1f, 0.1f, 1.f));
+   //renderShadows();
+   m_window.clear();
 
-   currentRenderData.shaderProgram.use();
-   currentRenderData.shaderProgram.setInt("shadowMap", 1);
-
-   for (int i = 0; i < cubes.size(); i++) {
-       auto& cube = cubes[i];
-       
-       m_window.draw(cube, currentRenderData);
-   }
-   m_window.draw(obj, currentRenderData);
-
-   glEnable(GL_DEPTH_TEST);
-   glDepthFunc(GL_LEQUAL);
+   //currentRenderData.shaderProgram.use();
+   //shadowMap.BindForRead(GL_TEXTURE0);
+   //
+   //currentRenderData.shaderProgram.setInt("shadowMap", 0);
+   //currentRenderData.shaderProgram.setMat4("lightSpaceMatrix", lightSpaceMatrix);
    
-   //renderImGui();
+   m_skybox.render(skyboxShader, m_window.getViewMatrix(), m_window.getCamera().GetProjectionMatrix());
+   
+   //for (int i = 0; i < cubes.size(); i++) {
+   //    auto& cube = cubes[i];
+   //    
+   //    m_window.draw(cube, currentRenderData);
+   //}
+   m_window.draw(obj, currentRenderData);
+   m_window.draw(miku, currentRenderData);
+   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+   openGlFLags();
+   
+   renderImGui();
 
     m_window.display();
 }
@@ -281,27 +327,70 @@ void App::renderImGui()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-        
-    if(ImGui::CollapsingHeader("Directional Light Settings")) {
-        // Kontrola kierunku œwiat³a (wektor 3D)
-        ImGui::Text("Light Direction");
-        ImGui::SliderFloat("X", &dirLight.direction.x, -10.0f, 10.0f);
-        ImGui::SliderFloat("Y", &dirLight.direction.y, -10.0f, 10.0f);
-        ImGui::SliderFloat("Z", &dirLight.direction.z, -10.0f, 10.0f);
 
-        // Kontrola ambientu
-        ImGui::Text("Ambient Light");
-        ImGui::ColorEdit3("Ambient Color", &dirLight.ambient[0]);
+    ImGui::Begin("Shadow Map Controls");
 
-        // Kontrola diffuse
-        ImGui::Text("Diffuse Light");
-        ImGui::ColorEdit3("Diffuse Color", &dirLight.diffuse[0]);
+    // Kontrola pozycji œwiat³a z przyciskami +/-
+    ImGui::Text("Light Settings");
+    ImGui::PushID("LightPos");
+    {
+        ImGui::Text("Light Position:");
+        ImGui::SliderFloat("X", &dirLight.position.x, -50.0f, 50.0f);
+        ImGui::SameLine(); if (ImGui::SmallButton("-1")) pointLights[0].position.x -= 1.0f;
+        ImGui::SameLine(); if (ImGui::SmallButton("+1")) pointLights[0].position.x += 1.0f;
 
-        // Kontrola specular
-        ImGui::Text("Specular Light");
-        ImGui::ColorEdit3("Specular Color", &dirLight.specular[0]);
+        ImGui::SliderFloat("Y", &dirLight.position.y, -50.0f, 50.0f);
+        ImGui::SameLine(); if (ImGui::SmallButton("-1")) pointLights[0].position.y -= 1.0f;
+        ImGui::SameLine(); if (ImGui::SmallButton("+1")) pointLights[0].position.y += 1.0f;
+
+        ImGui::SliderFloat("Z", &dirLight.position.z, -50.0f, 50.0f);
+        ImGui::SameLine(); if (ImGui::SmallButton("-1")) pointLights[0].position.z -= 1.0f;
+        ImGui::SameLine(); if (ImGui::SmallButton("+1")) pointLights[0].position.z += 1.0f;
     }
+    ImGui::PopID();
+
+    // Kontrola celu œwiat³a z przyciskami +/-
+    ImGui::PushID("LightTarget");
+    {
+        ImGui::Text("Light Target:");
+        ImGui::SliderFloat("X##Target", &dirLight.direction.x, -50.0f, 50.0f);
+        ImGui::SameLine(); if (ImGui::SmallButton("-1##TX")) lightTarget.x -= 1.0f;
+        ImGui::SameLine(); if (ImGui::SmallButton("+1##TX")) lightTarget.x += 1.0f;
+
+        ImGui::SliderFloat("Y##Target", &dirLight.direction.y, -50.0f, 50.0f);
+        ImGui::SameLine(); if (ImGui::SmallButton("-1##TY")) lightTarget.y -= 1.0f;
+        ImGui::SameLine(); if (ImGui::SmallButton("+1##TY")) lightTarget.y += 1.0f;
+
+        ImGui::SliderFloat("Z##Target", &dirLight.direction.z, -50.0f, 50.0f);
+        ImGui::SameLine(); if (ImGui::SmallButton("-1##TZ")) lightTarget.z -= 1.0f;
+        ImGui::SameLine(); if (ImGui::SmallButton("+1##TZ")) lightTarget.z += 1.0f;
+    }
+    ImGui::PopID();
+
+    // Kontrola parametrów rzutowania z przyciskami +/-
+    ImGui::Text("Projection Settings");
+    ImGui::SliderFloat("Near Plane", &lightNear, 0.1f, 50.0f);
+    ImGui::SameLine(); if (ImGui::SmallButton("-1##Near")) lightNear = glm::max(0.1f, lightNear - 1.0f);
+    ImGui::SameLine(); if (ImGui::SmallButton("+1##Near")) lightNear += 1.0f;
+
+    ImGui::SliderFloat("Far Plane", &lightFar, 50.0f, 500.0f);
+    ImGui::SameLine(); if (ImGui::SmallButton("-1##Far")) lightFar = glm::max(lightNear + 1.0f, lightFar - 1.0f);
+    ImGui::SameLine(); if (ImGui::SmallButton("+1##Far")) lightFar += 1.0f;
+
+    ImGui::SliderFloat("Ortho Size", &orthoSize, 10.0f, 200.0f);
+    ImGui::SameLine(); if (ImGui::SmallButton("-1##Ortho")) orthoSize = glm::max(1.0f, orthoSize - 1.0f);
+    ImGui::SameLine(); if (ImGui::SmallButton("+1##Ortho")) orthoSize += 1.0f;
+
+    ImGui::End();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+
+void App::openGlFLags()
+{
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+
 }

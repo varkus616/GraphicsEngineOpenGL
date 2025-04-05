@@ -13,7 +13,7 @@ public:
 	~ShadowMapFBO() = default;
 
 	void BindForWrite();
-	void BindForRead();
+	void BindForRead(GLenum textureUnit);
 	void Unbind();
 
 	GLuint m_width = 0;

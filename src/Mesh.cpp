@@ -33,6 +33,7 @@ Mesh::Mesh() :
 
 void Mesh::setupBuffers() {
     m_VAO.AddBuffer(m_VBO, m_bufferLayout);
+    m_EBO.Bind();
 }
 
 void Mesh::bindTextures() const {

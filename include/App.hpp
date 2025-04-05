@@ -11,6 +11,8 @@
 #include <Shapes.hpp>
 #include <Light.hpp>
 #include <ShadowMapFBO.hpp>
+#include <Cubemap.hpp>
+
 
 class App
 {
@@ -34,6 +36,10 @@ public:
 	Sphere sphere;
 
 	Mesh	plane;
+
+	RenderableObject miku;
+
+
 	Triangle epicT;
 
 	RenderableObject sphereObj;
@@ -52,15 +58,33 @@ public:
 	Material material;
 	Shader shadowShader;
 	Shader basicShader;
+	Shader shadowView;
+	Shader skyboxShader;
 
 	ShaderConfig shadowShaderConfig;
 
 	ShadowMapFBO shadowMap;
+	unsigned int quadVAO, quadVBO;
+	unsigned int textureColorbuffer;
+	float w = m_window.getWidth();
+	float h = m_window.getHeight();
+	// W sekcji private klasy App
+	//m_window.getCamera().GetNearPlane();
+	//m_window.getCamera().GetFarPlane();
+	float orthoSize = 120.0f;
+	float lightNear = 1;
+	float lightFar = 1500;
 
+	glm::vec3 lightTarget;
 	bool m_app_running = true;
+
+	
+	Cubemap m_skybox;
+
 
 private:
 	void installLights();
+	void openGlFLags();
 	void initShadows();
 	void imguiRender();
 };
