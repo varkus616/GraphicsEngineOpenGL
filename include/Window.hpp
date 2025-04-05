@@ -31,7 +31,6 @@ public:
 
     void draw(Renderable& renderable, RenderData& data) override;
     void draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& data) override;
-    void draw(Renderable& renderable, Shader& shader);
 
     int getWidth() const;
     int getHeight() const;
@@ -51,8 +50,8 @@ public:
     void processMouseMovement(float xoffset, float yoffset);
     void processMouseScroll(float yoffset);
 
-    glm::mat4 getProjectionMatrix() const;
-    glm::mat4 getViewMatrix() const;
+    const glm::mat4& getProjectionMatrix() const;
+    const glm::mat4& getViewMatrix() const;
 
 private:
     GLFWwindow* m_window;
@@ -61,7 +60,6 @@ private:
     std::string m_title;
     bool m_enableMouseControl = true; // Domyœlnie mysz kontroluje kamerê
 
-    //CFreeCamera m_camera; // Camera object
     CFreeCamera m_camera;
     glm::mat4 m_projection_matrix;
 

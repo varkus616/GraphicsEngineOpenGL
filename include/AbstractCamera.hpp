@@ -19,7 +19,7 @@ public:
 	virtual void ResetRotation();
 	
 	const glm::mat4 GetViewMatrix() const { return V; }
-	const glm::mat4 GetProjectionMatrix() const { return P; }
+	const glm::mat4& GetProjectionMatrix() const { return P; }
 
 	void SetPosition(const glm::vec3& v);
 	glm::vec3 GetPosition()const { return this->position; }

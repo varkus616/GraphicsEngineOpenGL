@@ -4,17 +4,16 @@
 
 #include <vector>
 #include <RenderableObject.hpp>
+#include <Mesh.hpp>
 
-
-extern std::vector<Vertex> cubeVertexes;
+extern std::vector<glm::vec3> cubePositions;
+extern std::vector<glm::vec3> cubeNormals;
 extern std::vector<Vertex> triangleVertexes;
-
 
 static Mesh* sharedCubeMesh = nullptr;
 static Mesh* sharedPyramidMesh = nullptr;
 static Mesh* sharedTriangleMesh = nullptr;
 static Mesh* sharedSquareMesh = nullptr;
-
 
 //class Pyramid : public RenderableObject {
 //public:
@@ -26,7 +25,6 @@ static Mesh* sharedSquareMesh = nullptr;
 //        }
 //    }
 //};
-//
 
 class Sphere : public Mesh {
 private:
@@ -37,27 +35,27 @@ public:
         init(prec);
     }
     Sphere() : Sphere(48) {}
-
-
 };
 
 class Cube : public RenderableObject {
 public:
     Cube() : RenderableObject(sharedCubeMesh) {
         if (!sharedCubeMesh) {
-            sharedCubeMesh = new Mesh(cubeVertexes);
+            sharedCubeMesh = new Mesh(Mesh::CreateWithPositionsAndNormals(cubePositions, cubeNormals));
+            
             addMesh(sharedCubeMesh);
         }
     }
 };
+
 class Triangle : public RenderableObject {
 public:
-    Triangle() : RenderableObject(sharedTriangleMesh) {
-        if (!sharedTriangleMesh) {
-            sharedTriangleMesh = new Mesh(triangleVertexes);
-            addMesh(sharedTriangleMesh);
-        }
-    }
+    //Triangle() : RenderableObject(sharedTriangleMesh) {
+    //    if (!sharedTriangleMesh) {
+    //        sharedTriangleMesh = new Mesh(triangleVertexes);
+    //        addMesh(sharedTriangleMesh);
+    //    }
+    //}
 };
 //
 //class Square : public RenderableObject {

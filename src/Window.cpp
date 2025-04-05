@@ -52,8 +52,7 @@ void Window::initialize(GLFWwindow* window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-    // Ustawienie backendów (dla OpenGL + GLFW)
+    
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 430");
     ImGui::StyleColorsDark();
@@ -70,27 +69,14 @@ void Window::clear(const Color& color) {
 
 void Window::draw(Renderable& renderable, RenderData& data)
 {
-    if (data.uniformUpdater) 
-        data.uniformUpdater(renderable, data, *this);
-
+    
     data.shaderProgram.use();
 
-    data.shaderConfig.apply(data.shaderProgram);
+    if (data.uniformUpdater)
+        data.uniformUpdater(renderable, data, *this);
 
     renderable.draw(*this, data);
 }
-
-void Window::draw(Renderable& renderable, Shader& shader)
-{
-
-    shader.use();
-    RenderData data;
-    data.drawMode = DrawMode::ARRAYS;
-    data.primitiveType = PrimitiveType::TRIANGLES;
-    renderable.draw(*this, data);
-
-}
-
 
 void Window::draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& data) 
 {
@@ -139,7 +125,6 @@ void Window::draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& d
         break;
     }
 }
-
 
 void Window::display() {
     glfwSwapBuffers(m_window);
@@ -202,6 +187,7 @@ void Window::processInput(float deltaTime) {
 
 
 }
+
 void Window::mouseCallback(double xpos, double ypos) {
     processMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
 }
@@ -234,10 +220,10 @@ void Window::processMouseMovement(float xpos, float ypos) {
 void Window::processMouseScroll(float yoffset) {
 }
 
-glm::mat4 Window::getProjectionMatrix() const {
+const glm::mat4& Window::getProjectionMatrix() const {
     return m_camera.GetProjectionMatrix();
 }
 
-glm::mat4 Window::getViewMatrix() const {
+const glm::mat4& Window::getViewMatrix() const {
     return m_camera.GetViewMatrix();
 }

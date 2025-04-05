@@ -201,7 +201,6 @@
     <ClInclude Include="include\RenderData.hpp" />
     <ClInclude Include="include\RenderTarget.hpp" />
     <ClInclude Include="include\Shader.hpp" />
-    <ClInclude Include="include\ShaderConfig.hpp" />
     <ClInclude Include="include\ShadowMapFBO.hpp" />
     <ClInclude Include="include\Shapes.hpp" />
     <ClInclude Include="include\TargetCamera.hpp" />

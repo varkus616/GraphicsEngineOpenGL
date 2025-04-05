@@ -39,13 +39,12 @@ struct SpotLight {
 };
 
 
-uniform DirLight dirLight;
-
 uniform int numPointLights;
 uniform int numSpotLights;
 
 uniform PointLight pointLights[MAX_LIGHTS];
 uniform SpotLight spotLights[MAX_LIGHTS];
+uniform DirLight dirLight;
 
 uniform vec4 objectColor;
 uniform vec3 viewPos;
