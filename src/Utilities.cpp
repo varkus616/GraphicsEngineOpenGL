@@ -96,27 +96,43 @@ std::string Utils::vec4ToString(const glm::vec4& vector)
 
 Mesh Utils::generatePlane(const int SIZE_X, const  int SIZE_Z)
 {
-    std::vector<Vertex> vertexes;
+    std::vector<GLfloat> vertexData;
     std::vector<GLuint> indices;
-
-    //GLuint* id = &indices[0];
 
     int count = 0;
     int HALF_SIZE_X = SIZE_X / 2;
     int HALF_SIZE_Z = SIZE_Z / 2;
+    float x, y, z = 0;
+
     for (int i = 0; i <= SIZE_Z; i++) {
         for (int j = 0; j <= SIZE_X; j++) {
+
+            x, y, z = 0;
             
-            Vertex v;
-            v.Position.x = ((float(j) / (SIZE_X - 1)) * 2 - 1) * HALF_SIZE_X;
-            v.Position.y = 0;
-            v.Position.z = ((float(i) / (SIZE_Z - 1)) * 2 - 1) * HALF_SIZE_Z;
+            //position
+            x = ((float(j) / (SIZE_X - 1)) * 2 - 1) * HALF_SIZE_X;
+            y = 0;
+            z = ((float(i) / (SIZE_Z - 1)) * 2 - 1) * HALF_SIZE_Z;
 
-            v.TextureCoords = glm::vec2(float(j) / SIZE_X, float(i) / SIZE_Z);
-            v.Normal = glm::vec3(0.0f, 1.0f, 0.0f); // Normal skierowany w górê
-            v.VertexColors = glm::vec4(1.0f); // Bia³y kolor
+            vertexData.push_back(x);
+            vertexData.push_back(y);
+            vertexData.push_back(z);
+            
+            //normals ( always point up duh ) 
+            x, y, z = 0;
+            y = 1.f;
 
-            vertexes.push_back(v);
+            vertexData.push_back(x);
+            vertexData.push_back(y);
+            vertexData.push_back(z);
+            
+            //texture coords
+            x = float(j) / SIZE_X;
+            y = float(i) / SIZE_Z;
+
+
+            vertexData.push_back(x);
+            vertexData.push_back(y);
         }
     }
     
@@ -135,9 +151,6 @@ Mesh Utils::generatePlane(const int SIZE_X, const  int SIZE_Z)
                 indices.push_back(i1);
                 indices.push_back(i2);
                 indices.push_back(i3);
-
-                //*id++ = i0; *id++ = i2; *id++ = i1;
-                //*id++ = i1; *id++ = i2; *id++ = i3;
             }
             else {
                 indices.push_back(i0);
@@ -148,13 +161,15 @@ Mesh Utils::generatePlane(const int SIZE_X, const  int SIZE_Z)
                 indices.push_back(i0);
                 indices.push_back(i3);
                 indices.push_back(i1);
-                //*id++ = i0; *id++ = i2; *id++ = i3;
-                //*id++ = i0; *id++ = i3; *id++ = i1;
             }
         }
     }
+    VertexBufferLayout layout;
+    layout.Push<GLfloat>(3);
+    layout.Push<GLfloat>(3);
+    layout.Push<GLfloat>(2);
 
-    return Mesh(vertexes, indices);
+    return Mesh(vertexData.data(), vertexData.size(), sizeof(GLfloat) , indices, layout);
 }
 
 // GOLD material

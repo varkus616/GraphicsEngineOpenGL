@@ -13,7 +13,7 @@ void RenderableObject::draw(RenderTarget& target, RenderData& data)
         auto& mesh = m_meshes[i];
         if (mesh != nullptr) {
             mesh->setupBuffers();
-            //mesh->bindTextures();
+            mesh->bindTextures();
             data.drawMode = m_drawMode;
 
             target.draw(mesh->getBuffer(), mesh->getIndexBuffer(), data);
@@ -62,7 +62,7 @@ void RenderableObject::processNode(aiNode* node, const aiScene* scene)
 
 Mesh* RenderableObject::processMesh(aiMesh* mesh, const aiScene* scene)
 {
-    //std::vector<GLfloat> vertices;
+    /*//std::vector<GLfloat> vertices;
     std::vector<GLuint> indices;
     //std::vector<GLfloat> textCoords;
 
@@ -128,7 +128,8 @@ Mesh* RenderableObject::processMesh(aiMesh* mesh, const aiScene* scene)
 
     // return a mesh object created from the extracted mesh data
     std::cout << "INDI:" << mesh->mNumFaces << " " << "VERT:" << mesh->mNumVertices << std::endl;
-    return new Mesh(vertexes, indices);
+    */
+    return new Mesh();
 }
 
 void RenderableObject::setColor(const glm::vec4& color) {

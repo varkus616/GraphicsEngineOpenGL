@@ -101,7 +101,53 @@ std::vector<glm::vec3> cubeNormals =
 	{0.0f,  1.0f,  0.0f},
 };
 
-std::vector<Vertex> cubeVertexes =
+
+std::vector<glm::vec2> cubeTextCoords =
+{
+	{0.0f, 0.0f},
+	{1.0f, 0.0f},
+	{1.0f, 1.0f},
+	{1.0f, 1.0f},
+	{0.0f, 1.0f},
+	{0.0f, 0.0f},
+
+	{0.0f, 0.0f},
+	{1.0f, 0.0f},
+	{1.0f, 1.0f},
+	{1.0f, 1.0f},
+	{0.0f, 1.0f},
+	{0.0f, 0.0f},
+
+	{1.0f, 0.0f},
+	{1.0f, 1.0f},
+	{0.0f, 1.0f},
+	{0.0f, 1.0f},
+	{0.0f, 0.0f},
+	{1.0f, 0.0f},
+
+	{1.0f, 0.0f},
+	{1.0f, 1.0f},
+	{0.0f, 1.0f},
+	{0.0f, 1.0f},
+	{0.0f, 0.0f},
+	{1.0f, 0.0f},
+
+	{0.0f, 1.0f},
+	{1.0f, 1.0f},
+	{1.0f, 0.0f},
+	{1.0f, 0.0f},
+	{0.0f, 0.0f},
+	{0.0f, 1.0f},
+
+	{0.0f, 1.0f},
+	{1.0f, 1.0f},
+	{1.0f, 0.0f},
+	{1.0f, 0.0f},
+	{0.0f, 0.0f},
+	{0.0f, 1.0f},
+};
+
+/*std::vector<Vertex> cubeVertexes =
 {
 	// Front face
 	{{0.0f, 0.0f}, {-0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {}}, // 0
@@ -152,16 +198,10 @@ std::vector<Vertex> cubeVertexes =
 	{{0.0f, 1.0f}, {-0.5f,  0.5f, -0.5f}, {0.0f,  1.0f,  0.0f}, {}}, // 20
 };
 
-std::vector<Vertex> triangleVertexes =
-{
-	{{0.f, 0.f}, {0.0f, 0.5f, 0.0f},   {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 0.f} },
-	{{0.f, 0.f}, {-0.5f, -0.5f, 0.0f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 0.f} },
-	{{0.f, 0.f}, { 0.5f, -0.5f, 0.0f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 0.f} }
-};
-
+*/
 void Sphere::init(GLint prec) {
 
-	std::vector<Vertex> vertexes;
+	/*std::vector<Vertex> vertexes;
 	std::vector<GLfloat> indices;
 
 	size_t numVertices = (prec + 1) * (prec + 1);
@@ -198,5 +238,5 @@ void Sphere::init(GLint prec) {
 
 
 	this->getBuffer().BufferData(vertexes.data(), vertexes.size() * sizeof(Vertex));
-
+	*/
 }

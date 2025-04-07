@@ -4,11 +4,12 @@
 Mesh::Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
     const std::vector<GLuint>& indices,
     const VertexBufferLayout& layout)
-    : m_VBO(vertexData, vertexCount* vertexSize),
+    : m_VBO(vertexData, vertexCount * vertexSize),
     m_EBO(indices.data(), indices.size() * sizeof(GLuint)),
     m_layout(layout)
 {
     setupBuffers();
+    m_VAO.Reset();
 }
 
 Mesh::Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
@@ -104,6 +105,35 @@ Mesh Mesh::CreateWithPositionsAndNormals(const std::vector<glm::vec3>& positions
 
     return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), layout);
 }
+
+
+Mesh Mesh::CreateWithPositionsNormalsAndTextures(const std::vector<glm::vec3>& positions,
+    const std::vector<glm::vec3>& normals,
+    const std::vector<glm::vec2>& textCoords)
+{
+    struct Vertex {
+        glm::vec3 Position;
+        glm::vec3 Normal;
+        glm::vec2 TextCoords;
+    };
+
+    assert(positions.size() == normals.size() && "Positions and normals must match");
+
+    std::vector<Vertex> vertices(positions.size());
+    for (size_t i = 0; i < positions.size(); ++i) {
+        vertices[i].Position = positions[i];
+        vertices[i].Normal = normals[i];
+        vertices[i].TextCoords = textCoords[i];
+    }
+
+    VertexBufferLayout layout;
+    layout.Push<GLfloat>(3); // Position
+    layout.Push<GLfloat>(3); // Normal
+    layout.Push<GLfloat>(2); // Normal
+
+    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), layout);
+}
+
 
 Mesh Mesh::CreateWithFullData(const std::vector<glm::vec2>& uvs,
     const std::vector<glm::vec3>& positions,

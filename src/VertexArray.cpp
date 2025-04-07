@@ -27,7 +27,7 @@ VertexArray& VertexArray::operator=(const VertexArray& other)
 
 VertexArray::VertexArray(VertexArray&& other) noexcept
 	: _rendererID(other._rendererID)
-{
+{ 
 	other._rendererID = 0;
 }
 
@@ -52,10 +52,11 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 
 	for (GLuint i = 0; i < elements.size(); i++)
 	{
+		//printf("ID: %d | I:%d | Index:%d\n",this->_rendererID, i, _currentAttribIndex);
 		const auto& element = elements[i];
-		GLCall(glEnableVertexAttribArray(_currentAttribIndex));
+		GLCall(glEnableVertexAttribArray(i));
 
-		GLCall(glVertexAttribPointer(_currentAttribIndex, element.count, element.type,
+		GLCall(glVertexAttribPointer(i, element.count, element.type,
 			element.normalized, layout.GetStride(),
 			reinterpret_cast<const void*>(offset)));
 

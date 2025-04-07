@@ -33,15 +33,10 @@ public:
 	Window& m_window;
 	
 	Texture testTexture;
-	Sphere sphere;
 
 	Mesh	plane;
 
 	Cubemap m_skybox;
-
-	Triangle epicT;
-
-	RenderableObject sphereObj;
 
 	RenderableObject obj;
 	std::vector<Cube> cubes;

@@ -8,7 +8,7 @@
 
 extern std::vector<glm::vec3> cubePositions;
 extern std::vector<glm::vec3> cubeNormals;
-extern std::vector<Vertex> triangleVertexes;
+extern std::vector<glm::vec2> cubeTextCoords;
 
 static Mesh* sharedCubeMesh = nullptr;
 static Mesh* sharedPyramidMesh = nullptr;
@@ -41,7 +41,7 @@ class Cube : public RenderableObject {
 public:
     Cube() : RenderableObject(sharedCubeMesh) {
         if (!sharedCubeMesh) {
-            sharedCubeMesh = new Mesh(Mesh::CreateWithPositionsAndNormals(cubePositions, cubeNormals));
+            sharedCubeMesh = new Mesh(Mesh::CreateWithPositionsNormalsAndTextures(cubePositions, cubeNormals, cubeTextCoords));
             
             addMesh(sharedCubeMesh);
         }

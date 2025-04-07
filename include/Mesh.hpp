@@ -12,15 +12,6 @@
 #include <Texture.hpp>
 
 
-struct Vertex
-{
-    glm::vec2   TextureCoords;
-    glm::vec3   Position;
-    glm::vec3   Normal;
-    glm::vec4   VertexColors;
-};
-
-
 class Mesh {
 
 public:
@@ -48,6 +39,10 @@ public:
 
     static Mesh CreateWithPositionsAndNormals(const std::vector<glm::vec3>& positions,
         const std::vector<glm::vec3>& normals);
+
+    static Mesh CreateWithPositionsNormalsAndTextures(const std::vector<glm::vec3>& positions,
+        const std::vector<glm::vec3>& normals,
+        const std::vector<glm::vec2>& textCoords);
 
     static Mesh CreateWithFullData(const std::vector<glm::vec2>& uvs,
         const std::vector<glm::vec3>& positions,

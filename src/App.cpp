@@ -112,7 +112,6 @@ App::App(Window& window)
     randomCubes();
 
     obj.setPosition(0, 0, 0);
-    epicT.setPosition(0, 0, 8);
     m_window.getCamera().SetPosition(glm::vec3(0, 1, 3));
 }
 
@@ -188,13 +187,15 @@ void App::render()
    
    //m_skybox.render(skyboxShader, m_window.getViewMatrix(), m_window.getCamera().GetProjectionMatrix());
    
-   //for (int i = 0; i < cubes.size(); i++) {
-   //    auto& cube = cubes[i];
-   //    
-   //    m_window.draw(cube, currentRenderData);
-   //}
-   m_window.draw(obj, currentRenderData);
+   for (int i = 0; i < cubes.size(); i++) {
+       auto& cube = cubes[i];
+       
+       m_window.draw(cube, currentRenderData);
+   }
+   //m_window.draw(obj, currentRenderData);
    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+   
+   
    openGlFLags();
    
    renderImGui();
@@ -269,6 +270,8 @@ void App::renderImGui()
 
 void App::openGlFLags()
 {
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 

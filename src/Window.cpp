@@ -22,11 +22,11 @@ Window::Window(RenderContext& context, int width, int height, const std::string&
     context.createContext(m_window);
     initialize(m_window);
 
-    //glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    //glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos) {
-    //    static_cast<Window*>(glfwGetWindowUserPointer(window))->mouseCallback(xpos, ypos);
-    //    });
-    //glfwSetWindowUserPointer(m_window, this);
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos) {
+        static_cast<Window*>(glfwGetWindowUserPointer(window))->mouseCallback(xpos, ypos);
+        });
+    glfwSetWindowUserPointer(m_window, this);
 }
 
 Window::Window(RenderContext& context, int width, int height)

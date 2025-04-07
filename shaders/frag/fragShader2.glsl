@@ -51,9 +51,11 @@ uniform vec3 viewPos;
 uniform bool calculateLight;
 
 uniform sampler2D shadowMap;
+uniform sampler2D ambientTexture;
 
 in vec3 FragPos;
 in vec3 Normal;
+in vec2 textCoords;
 
 out vec4 FragColor;
 
@@ -209,7 +211,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 viewDir)
     //return (ambient + diffuse + specular);
 }
 
-
 void main()
 {
     vec4 result = vec4(0);
@@ -229,6 +230,7 @@ void main()
        result += vec4(lightResult, 1) ;
     }
     
-    result += objectColor * 0.5;
+    result = texture(ambientTexture, textCoords);
+    //result += objectColor * 0.5;
     FragColor = result;
 }
