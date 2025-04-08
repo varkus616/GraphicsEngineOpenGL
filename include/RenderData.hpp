@@ -20,7 +20,9 @@ enum class DrawMode {
 
 enum class PrimitiveType {
     TRIANGLES,
-    QUADS
+    QUADS,
+    TRIANGLE_FAN,
+    TRIANGLE_STRIP
 };
 
 struct RenderData {

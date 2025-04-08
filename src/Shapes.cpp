@@ -147,58 +147,106 @@ std::vector<glm::vec2> cubeTextCoords =
 	{0.0f, 1.0f},
 };
 
-/*std::vector<Vertex> cubeVertexes =
+// Trójk¹t
+std::vector<glm::vec3> trianglePositions =
 {
-	// Front face
-	{{0.0f, 0.0f}, {-0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {}}, // 0
-	{{1.0f, 0.0f}, { 0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {}}, // 1
-	{{1.0f, 1.0f}, { 0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {}}, // 2
-	{{1.0f, 1.0f}, { 0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {}}, // 2
-	{{0.0f, 1.0f}, {-0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {}}, // 3
-	{{0.0f, 0.0f}, {-0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {}}, // 0
-
-	// Back face
-	{{0.0f, 0.0f}, {-0.5f, -0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {}}, // 4
-	{{1.0f, 0.0f}, { 0.5f, -0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {}}, // 5
-	{{1.0f, 1.0f}, { 0.5f,  0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {}}, // 6
-	{{1.0f, 1.0f}, { 0.5f,  0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {}}, // 6
-	{{0.0f, 1.0f}, {-0.5f,  0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {}}, // 7
-	{{0.0f, 0.0f}, {-0.5f, -0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {}}, // 4
-
-	// Left face
-	{{1.0f, 0.0f}, {-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {}}, // 8
-	{{1.0f, 1.0f}, {-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {}}, // 9
-	{{0.0f, 1.0f}, {-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {}}, // 10
-	{{0.0f, 1.0f}, {-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {}}, // 10
-	{{0.0f, 0.0f}, {-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {}}, // 11
-	{{1.0f, 0.0f}, {-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {}}, // 8
-
-	// Right face
-	{{1.0f, 0.0f}, { 0.5f,  0.5f,  0.5f}, {1.0f,  0.0f,  0.0f}, {}}, // 12
-	{{1.0f, 1.0f}, { 0.5f,  0.5f, -0.5f}, {1.0f,  0.0f,  0.0f}, {}}, // 13
-	{{0.0f, 1.0f}, { 0.5f, -0.5f, -0.5f}, {1.0f,  0.0f,  0.0f}, {}}, // 14
-	{{0.0f, 1.0f}, { 0.5f, -0.5f, -0.5f}, {1.0f,  0.0f,  0.0f}, {}}, // 14
-	{{0.0f, 0.0f}, { 0.5f, -0.5f,  0.5f}, {1.0f,  0.0f,  0.0f}, {}}, // 15
-	{{1.0f, 0.0f}, { 0.5f,  0.5f,  0.5f}, {1.0f,  0.0f,  0.0f}, {}}, // 12
-
-	// Top face
-	{{0.0f, 1.0f}, {-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f,  0.0f}, {}}, // 16
-	{{1.0f, 1.0f}, { 0.5f, -0.5f, -0.5f}, {0.0f, -1.0f,  0.0f}, {}}, // 17
-	{{1.0f, 0.0f}, { 0.5f, -0.5f,  0.5f}, {0.0f, -1.0f,  0.0f}, {}}, // 18
-	{{1.0f, 0.0f}, { 0.5f, -0.5f,  0.5f}, {0.0f, -1.0f,  0.0f}, {}}, // 18
-	{{0.0f, 0.0f}, {-0.5f, -0.5f,  0.5f}, {0.0f, -1.0f,  0.0f}, {}}, // 19
-	{{0.0f, 1.0f}, {-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f,  0.0f}, {}}, // 16
-
-	// Bottom face
-	{{0.0f, 1.0f}, {-0.5f,  0.5f, -0.5f}, {0.0f,  1.0f,  0.0f}, {}}, // 20
-	{{1.0f, 1.0f}, { 0.5f,  0.5f, -0.5f}, {0.0f,  1.0f,  0.0f}, {}}, // 21
-	{{1.0f, 0.0f}, { 0.5f,  0.5f,  0.5f}, {0.0f,  1.0f,  0.0f}, {}}, // 22
-	{{1.0f, 0.0f}, { 0.5f,  0.5f,  0.5f}, {0.0f,  1.0f,  0.0f}, {}}, // 22
-	{{0.0f, 0.0f}, {-0.5f,  0.5f,  0.5f}, {0.0f,  1.0f,  0.0f}, {}}, // 23
-	{{0.0f, 1.0f}, {-0.5f,  0.5f, -0.5f}, {0.0f,  1.0f,  0.0f}, {}}, // 20
+	{0.0f,  0.5f,  0.0f},  // Wierzcho³ek 1
+	{-0.5f, -0.5f,  0.0f}, // Wierzcho³ek 2
+	{0.5f, -0.5f,  0.0f},  // Wierzcho³ek 3
 };
 
-*/
+std::vector<glm::vec3> triangleNormals =
+{
+	{0.0f, 0.0f, 1.0f}, // Normalna w górê
+	{0.0f, 0.0f, 1.0f}, // Normalna w górê
+	{0.0f, 0.0f, 1.0f}, // Normalna w górê
+};
+
+std::vector<glm::vec2> triangleTextCoords =
+{
+	{0.5f, 1.0f}, // Wierzcho³ek 1
+	{0.0f, 0.0f}, // Wierzcho³ek 2
+	{1.0f, 0.0f}, // Wierzcho³ek 3
+};
+
+// Kwadrat
+std::vector<glm::vec3> squarePositions =
+{
+	{-0.5f, -0.5f,  0.0f}, // Lewy dolny róg
+	{ 0.5f, -0.5f,  0.0f}, // Prawy dolny róg
+	{ 0.5f,  0.5f,  0.0f}, // Prawy górny róg
+	{ 0.5f,  0.5f,  0.0f}, // Prawy górny róg
+	{-0.5f,  0.5f,  0.0f}, // Lewy górny róg
+	{-0.5f, -0.5f,  0.0f}, // Lewy dolny róg
+};
+
+std::vector<glm::vec3> squareNormals =
+{
+	{0.0f, 0.0f, 1.0f}, // Wszystkie normalne w stronê kamery
+	{0.0f, 0.0f, 1.0f},
+	{0.0f, 0.0f, 1.0f},
+	{0.0f, 0.0f, 1.0f},
+	{0.0f, 0.0f, 1.0f},
+	{0.0f, 0.0f, 1.0f},
+};
+
+std::vector<glm::vec2> squareTextCoords =
+{
+	{0.0f, 0.0f}, // Lewy dolny róg
+	{1.0f, 0.0f}, // Prawy dolny róg
+	{1.0f, 1.0f}, // Prawy górny róg
+	{1.0f, 1.0f}, // Prawy górny róg
+	{0.0f, 1.0f}, // Lewy górny róg
+	{0.0f, 0.0f}, // Lewy dolny róg
+};
+
+// Piramida (prosta piramida o podstawie kwadratu)
+std::vector<glm::vec3> pyramidPositions =
+{
+	// Podstawa piramidy (kwadrat)
+	{-0.5f, -0.5f, -0.5f}, // Lewy dolny róg
+	{ 0.5f, -0.5f, -0.5f}, // Prawy dolny róg
+	{ 0.5f, -0.5f,  0.5f}, // Prawy górny róg
+	{-0.5f, -0.5f,  0.5f}, // Lewy górny róg
+
+	// Wierzcho³ek piramidy
+	{0.0f,  0.5f,  0.0f},  // Wierzcho³ek
+};
+
+
+//std::vector<glm::vec3> pyramidPositions =
+//{ {-1.0f, -1.0f, 1.0f}, {1.0f, -1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, // front face
+//{1.0f, -1.0f, 1.0f}, {1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, // right face
+//{1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, // back face
+//{-1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, // left face
+//{-1.0f, -1.0f, -1.0f}, {1.0f, -1.0f, 1.0f}, {-1.0f, -1.0f, 1.0f}, // base – left front
+//{1.0f, -1.0f, 1.0f}, {-1.0f, -1.0f, -1.0f}, {1.0f, -1.0f, -1.0f }// base – right back
+//};
+
+std::vector<glm::vec3> pyramidNormals =
+{
+	{0.0f, -1.0f, 0.0f}, // Normalna do podstawy
+	{0.0f, -1.0f, 0.0f},
+	{0.0f, -1.0f, 0.0f},
+	{0.0f, -1.0f, 0.0f},
+
+	// Normalne do œcian piramidy (na przyk³ad wektor skierowany w górê w stronê wierzcho³ka)
+	{0.0f,  1.0f,  0.0f},
+};
+
+std::vector<glm::vec2> pyramidTextCoords =
+{
+	{0.0f, 0.0f}, // Lewy dolny róg
+	{1.0f, 0.0f}, // Prawy dolny róg
+	{1.0f, 1.0f}, // Prawy górny róg
+	{0.0f, 1.0f}, // Lewy górny róg
+
+	// Wierzcho³ek piramidy
+	{0.5f, 0.5f}, // Wierzcho³ek
+};
+
+
+
 void Sphere::init(GLint prec) {
 
 	/*std::vector<Vertex> vertexes;

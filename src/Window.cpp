@@ -89,6 +89,12 @@ void Window::draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& d
         case PrimitiveType::QUADS:
             GLCall(glDrawElements(GL_QUADS, EBO.GetSize() / sizeof(GLuint), GL_UNSIGNED_INT, nullptr));
             break;
+        case PrimitiveType::TRIANGLE_FAN:
+            GLCall(glDrawElements(GL_TRIANGLE_FAN, EBO.GetSize() / sizeof(GLuint), GL_UNSIGNED_INT, nullptr));
+            break;
+        case PrimitiveType::TRIANGLE_STRIP:
+            GLCall(glDrawElements(GL_TRIANGLE_STRIP, EBO.GetSize() / sizeof(GLuint), GL_UNSIGNED_INT, nullptr));
+            break;
         default:
             break;
         }
@@ -102,6 +108,12 @@ void Window::draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& d
         case PrimitiveType::QUADS:
             GLCall(glDrawArrays(GL_QUADS, 0, VBO.GetSize() / sizeof(GLfloat)));
             break;
+        case PrimitiveType::TRIANGLE_FAN:
+            GLCall(glDrawArrays(GL_TRIANGLE_FAN, 0, VBO.GetSize() / sizeof(GLfloat)));
+            break;
+        case PrimitiveType::TRIANGLE_STRIP:
+            GLCall(glDrawArrays(GL_TRIANGLE_STRIP, 0, VBO.GetSize() / sizeof(GLfloat)));
+            break;
         default:
             break;
         }
@@ -113,9 +125,14 @@ void Window::draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& d
         case PrimitiveType::TRIANGLES:
             GLCall(glDrawArraysInstanced(GL_TRIANGLES, 0, VBO.GetSize() / sizeof(GLfloat), data.instancedDrawModeSize));            
             break;
-
         case PrimitiveType::QUADS:
             GLCall(glDrawArraysInstanced(GL_QUADS, 0, VBO.GetSize() / sizeof(GLfloat), data.instancedDrawModeSize));
+            break;
+        case PrimitiveType::TRIANGLE_FAN:
+            GLCall(glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, VBO.GetSize() / sizeof(GLfloat), data.instancedDrawModeSize));
+            break;
+        case PrimitiveType::TRIANGLE_STRIP:
+            GLCall(glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, VBO.GetSize() / sizeof(GLfloat), data.instancedDrawModeSize));
             break;
         }
         break;

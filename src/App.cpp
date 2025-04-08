@@ -162,7 +162,7 @@ void App::run()
 
 void App::processInput() 
 {
-    m_window.processInput(0.55f);
+    m_window.processInput(0.025f);
     if (m_window.shouldClose())
         m_app_running = false;
 }
@@ -270,11 +270,8 @@ void App::renderImGui()
 
 void App::openGlFLags()
 {
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
-
 }
 
 void App::randomCubes()

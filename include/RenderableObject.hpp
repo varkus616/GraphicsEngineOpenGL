@@ -31,6 +31,7 @@ public:
 
     std::vector<Mesh*> m_meshes;
     DrawMode m_drawMode;
+    PrimitiveType m_primType;
 
     void draw(RenderTarget& target, RenderData& data) override;
 private:

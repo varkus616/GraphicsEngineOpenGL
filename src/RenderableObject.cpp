@@ -15,6 +15,7 @@ void RenderableObject::draw(RenderTarget& target, RenderData& data)
             mesh->setupBuffers();
             mesh->bindTextures();
             data.drawMode = m_drawMode;
+            data.primitiveType = m_primType;
 
             target.draw(mesh->getBuffer(), mesh->getIndexBuffer(), data);
 

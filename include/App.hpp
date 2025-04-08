@@ -39,7 +39,7 @@ public:
 	Cubemap m_skybox;
 
 	RenderableObject obj;
-	std::vector<Cube> cubes;
+	std::vector<Pyramid> cubes;
 	RenderData currentRenderData;
 
 	SpotLight light;
