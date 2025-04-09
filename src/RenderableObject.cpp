@@ -1,12 +1,45 @@
 #include <RenderableObject.hpp>
-
-
-RenderableObject::RenderableObject(Mesh* mesh, DrawMode mode) : m_drawMode(mode)
+#include <Logger.hpp>
+#include <sstream>
+RenderableObject::RenderableObject(Mesh* mesh, DrawMode mode)
+    : m_drawMode(mode)
 {
-    if (mesh != nullptr)
+    if (mesh) {
         m_meshes.push_back(mesh);
+    }
+    else {
+        Logger& logger = Logger::getInstance();
+        logger.log(LogLevel::ERROR, "[RenderableObject] Warning: Constructor received null Mesh pointer.");
+    }
 }
-    
+
+void RenderableObject::addMesh(Mesh* mesh)
+{
+    if (mesh) {
+        m_meshes.push_back(mesh);
+    }
+    else {
+        Logger& logger = Logger::getInstance();
+        logger.log(LogLevel::ERROR, "[RenderableObject] Warning: Tried to add null Mesh pointer.");
+    }
+}
+
+void RenderableObject::addTexture(const Texture& texture, size_t meshIndex)
+{
+    if (meshIndex >= m_meshes.size()) {
+        Logger& logger = Logger::getInstance();
+        std::stringstream ss;
+
+        ss << "[RenderableObject] Error: Mesh index out of bounds (" << meshIndex
+            << " / " << m_meshes.size() << ")";
+        logger.log(LogLevel::ERROR, ss.str());
+        return;
+    }
+
+    m_meshes[meshIndex]->textures.push_back(texture);
+}
+
+
 void RenderableObject::draw(RenderTarget& target, RenderData& data)
 {
     for (size_t i = 0; i < m_meshes.size(); i++) {
@@ -39,7 +72,10 @@ void RenderableObject::loadModel(std::string path)
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+        Logger& logger = Logger::getInstance();
+        std::stringstream ss;
+        ss << "ERROR::ASSIMP::" << import.GetErrorString();
+        logger.log(LogLevel::ERROR, ss.str());
         return;
     }
 
@@ -63,10 +99,14 @@ void RenderableObject::processNode(aiNode* node, const aiScene* scene)
 
 Mesh* RenderableObject::processMesh(aiMesh* mesh, const aiScene* scene)
 {
-    /*//std::vector<GLfloat> vertices;
+    //std::vector<GLfloat> vertices;
     std::vector<GLuint> indices;
     //std::vector<GLfloat> textCoords;
-
+    struct Vertex {
+        glm::vec3 Position;
+        glm::vec3 Normals;
+        glm::vec2 TextureCoords;
+    };
 
     std::vector<Vertex> vertexes;
 
@@ -83,18 +123,18 @@ Mesh* RenderableObject::processMesh(aiMesh* mesh, const aiScene* scene)
         // normals
         if (mesh->HasNormals())
         {
-            //v.Position.x = mesh->mNormals[i].x;
-            //v.Position.x = mesh->mNormals[i].y;
-            //v.Position.x = mesh->mNormals[i].z;
+            v.Normals.x = mesh->mNormals[i].x;
+            v.Normals.x = mesh->mNormals[i].y;
+            v.Normals.x = mesh->mNormals[i].z;
         }
 
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
-            //v.TextureCoords.x = mesh->mTextureCoords[0][i].x;
-            //v.TextureCoords.y = mesh->mTextureCoords[0][i].y;
-            //textCoords.push_back(mesh->mTextureCoords[0][i].x);
+            v.TextureCoords.x = mesh->mTextureCoords[0][i].x;
+            v.TextureCoords.y = mesh->mTextureCoords[0][i].y;
             //textCoords.push_back(mesh->mTextureCoords[0][i].y);
+            //textCoords.push_back(mesh->mTextureCoords[0][i].x);
         }
     }
     // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
@@ -129,8 +169,9 @@ Mesh* RenderableObject::processMesh(aiMesh* mesh, const aiScene* scene)
 
     // return a mesh object created from the extracted mesh data
     std::cout << "INDI:" << mesh->mNumFaces << " " << "VERT:" << mesh->mNumVertices << std::endl;
-    */
-    return new Mesh();
+    VertexBufferLayout layout;
+    layout.Push<GLfloat>(3);
+    return new Mesh(vertexes.data(), vertexes.size(), sizeof(Vertex), layout);
 }
 
 void RenderableObject::setColor(const glm::vec4& color) {

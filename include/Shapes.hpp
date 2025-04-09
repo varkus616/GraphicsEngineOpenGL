@@ -6,6 +6,8 @@
 #include <RenderableObject.hpp>
 #include <Mesh.hpp>
 
+extern Mesh CreateSphere(GLfloat radius, GLint stackCount, GLint sectorCount);
+
 extern std::vector<glm::vec3> cubePositions;
 extern std::vector<glm::vec3> cubeNormals;
 extern std::vector<glm::vec2> cubeTextCoords;
@@ -26,6 +28,7 @@ static Mesh* sharedCubeMesh = nullptr;
 static Mesh* sharedPyramidMesh = nullptr;
 static Mesh* sharedTriangleMesh = nullptr;
 static Mesh* sharedSquareMesh = nullptr;
+static Mesh* sharedSphereMesh = nullptr;
 
 class Pyramid : public RenderableObject {
 public:
@@ -39,20 +42,25 @@ public:
     }
 };
 
-class Sphere : public Mesh {
-private:
-    void init(int prec);
+class Sphere : public RenderableObject {
 public:
 
-    Sphere(int prec) {
-        init(prec);
+    Sphere() : RenderableObject(sharedSphereMesh) {
+        this->m_drawMode = DrawMode::ELEMENTS;
+        this->m_primType = PrimitiveType::TRIANGLES;
+        if (!sharedSphereMesh) {
+            sharedSphereMesh = new Mesh(CreateSphere(1.f, 36, 12));
+            addMesh(sharedSphereMesh);
+        }
     }
-    Sphere() : Sphere(48) {}
 };
+
 
 class Cube : public RenderableObject {
 public:
     Cube() : RenderableObject(sharedCubeMesh) {
+        this->m_drawMode = DrawMode::ARRAYS;
+        this->m_primType = PrimitiveType::TRIANGLES;
         if (!sharedCubeMesh) {
             sharedCubeMesh = new Mesh(Mesh::CreateWithPositionsNormalsAndTextures(cubePositions, cubeNormals, cubeTextCoords));
             addMesh(sharedCubeMesh);

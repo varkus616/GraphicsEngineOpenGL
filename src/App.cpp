@@ -39,7 +39,7 @@ App::App(Window& window)
 {
     initializeShaders();
 
-    Texture wallTextSpec = Texture(Utils::loadTexture("resources\\container2_specular.png"));
+    Texture wallTextSpec = Texture("resources\\container2_specular.png");
    
     installLights();
 
@@ -113,6 +113,7 @@ App::App(Window& window)
 
     obj.setPosition(0, 0, 0);
     m_window.getCamera().SetPosition(glm::vec3(0, 1, 3));
+    s.addTexture()
 }
 
 void App::renderShadows()
@@ -155,6 +156,7 @@ void App::run()
     {
         processInput();
         update();
+        renderShadows();
         render();
         printFPS();
     }
@@ -162,7 +164,7 @@ void App::run()
 
 void App::processInput() 
 {
-    m_window.processInput(0.025f);
+    m_window.processInput(0.55f);
     if (m_window.shouldClose())
         m_app_running = false;
 }
@@ -192,6 +194,7 @@ void App::render()
        
        m_window.draw(cube, currentRenderData);
    }
+   m_window.draw(s, currentRenderData);
    //m_window.draw(obj, currentRenderData);
    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
    
@@ -279,7 +282,6 @@ void App::randomCubes()
     int BOUND_X = 15;
     int BOUND_Y = 0;
     int BOUND_Z = 15;
-    Texture wallText = Texture(Utils::loadTexture("resources\\container2.png"));
 
 
     for (int i = 0; i < cubes.size(); i++) {

@@ -35,7 +35,7 @@ void Mesh::setupBuffers() {
 void Mesh::bindTextures() const {
     for (size_t i = 0; i < textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i));
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
+        glBindTexture(GL_TEXTURE_2D, textures[i].getID());
     }
 }
 

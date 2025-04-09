@@ -1,4 +1,4 @@
-#include <cmath>
+ï»¿#include <cmath>
 #include <vector>
 #include <iostream>
 #include <glm/glm.hpp>
@@ -147,42 +147,42 @@ std::vector<glm::vec2> cubeTextCoords =
 	{0.0f, 1.0f},
 };
 
-// Trójk¹t
+// TrÃ³jkÄ…t
 std::vector<glm::vec3> trianglePositions =
 {
-	{0.0f,  0.5f,  0.0f},  // Wierzcho³ek 1
-	{-0.5f, -0.5f,  0.0f}, // Wierzcho³ek 2
-	{0.5f, -0.5f,  0.0f},  // Wierzcho³ek 3
+	{0.0f,  0.5f,  0.0f},  // WierzchoÅ‚ek 1
+	{-0.5f, -0.5f,  0.0f}, // WierzchoÅ‚ek 2
+	{0.5f, -0.5f,  0.0f},  // WierzchoÅ‚ek 3
 };
 
 std::vector<glm::vec3> triangleNormals =
 {
-	{0.0f, 0.0f, 1.0f}, // Normalna w górê
-	{0.0f, 0.0f, 1.0f}, // Normalna w górê
-	{0.0f, 0.0f, 1.0f}, // Normalna w górê
+	{0.0f, 0.0f, 1.0f}, // Normalna w gÃ³rÄ™
+	{0.0f, 0.0f, 1.0f}, // Normalna w gÃ³rÄ™
+	{0.0f, 0.0f, 1.0f}, // Normalna w gÃ³rÄ™
 };
 
 std::vector<glm::vec2> triangleTextCoords =
 {
-	{0.5f, 1.0f}, // Wierzcho³ek 1
-	{0.0f, 0.0f}, // Wierzcho³ek 2
-	{1.0f, 0.0f}, // Wierzcho³ek 3
+	{0.5f, 1.0f}, // WierzchoÅ‚ek 1
+	{0.0f, 0.0f}, // WierzchoÅ‚ek 2
+	{1.0f, 0.0f}, // WierzchoÅ‚ek 3
 };
 
 // Kwadrat
 std::vector<glm::vec3> squarePositions =
 {
-	{-0.5f, -0.5f,  0.0f}, // Lewy dolny róg
-	{ 0.5f, -0.5f,  0.0f}, // Prawy dolny róg
-	{ 0.5f,  0.5f,  0.0f}, // Prawy górny róg
-	{ 0.5f,  0.5f,  0.0f}, // Prawy górny róg
-	{-0.5f,  0.5f,  0.0f}, // Lewy górny róg
-	{-0.5f, -0.5f,  0.0f}, // Lewy dolny róg
+	{-0.5f, -0.5f,  0.0f}, // Lewy dolny rÃ³g
+	{ 0.5f, -0.5f,  0.0f}, // Prawy dolny rÃ³g
+	{ 0.5f,  0.5f,  0.0f}, // Prawy gÃ³rny rÃ³g
+	{ 0.5f,  0.5f,  0.0f}, // Prawy gÃ³rny rÃ³g
+	{-0.5f,  0.5f,  0.0f}, // Lewy gÃ³rny rÃ³g
+	{-0.5f, -0.5f,  0.0f}, // Lewy dolny rÃ³g
 };
 
 std::vector<glm::vec3> squareNormals =
 {
-	{0.0f, 0.0f, 1.0f}, // Wszystkie normalne w stronê kamery
+	{0.0f, 0.0f, 1.0f}, // Wszystkie normalne w stronÄ™ kamery
 	{0.0f, 0.0f, 1.0f},
 	{0.0f, 0.0f, 1.0f},
 	{0.0f, 0.0f, 1.0f},
@@ -192,25 +192,25 @@ std::vector<glm::vec3> squareNormals =
 
 std::vector<glm::vec2> squareTextCoords =
 {
-	{0.0f, 0.0f}, // Lewy dolny róg
-	{1.0f, 0.0f}, // Prawy dolny róg
-	{1.0f, 1.0f}, // Prawy górny róg
-	{1.0f, 1.0f}, // Prawy górny róg
-	{0.0f, 1.0f}, // Lewy górny róg
-	{0.0f, 0.0f}, // Lewy dolny róg
+	{0.0f, 0.0f}, // Lewy dolny rÃ³g
+	{1.0f, 0.0f}, // Prawy dolny rÃ³g
+	{1.0f, 1.0f}, // Prawy gÃ³rny rÃ³g
+	{1.0f, 1.0f}, // Prawy gÃ³rny rÃ³g
+	{0.0f, 1.0f}, // Lewy gÃ³rny rÃ³g
+	{0.0f, 0.0f}, // Lewy dolny rÃ³g
 };
 
 // Piramida (prosta piramida o podstawie kwadratu)
 std::vector<glm::vec3> pyramidPositions =
 {
 	// Podstawa piramidy (kwadrat)
-	{-0.5f, -0.5f, -0.5f}, // Lewy dolny róg
-	{ 0.5f, -0.5f, -0.5f}, // Prawy dolny róg
-	{ 0.5f, -0.5f,  0.5f}, // Prawy górny róg
-	{-0.5f, -0.5f,  0.5f}, // Lewy górny róg
+	{-0.5f, -0.5f, -0.5f}, // Lewy dolny rÃ³g
+	{ 0.5f, -0.5f, -0.5f}, // Prawy dolny rÃ³g
+	{ 0.5f, -0.5f,  0.5f}, // Prawy gÃ³rny rÃ³g
+	{-0.5f, -0.5f,  0.5f}, // Lewy gÃ³rny rÃ³g
 
-	// Wierzcho³ek piramidy
-	{0.0f,  0.5f,  0.0f},  // Wierzcho³ek
+	// WierzchoÅ‚ek piramidy
+	{0.0f,  0.5f,  0.0f},  // WierzchoÅ‚ek
 };
 
 
@@ -219,8 +219,8 @@ std::vector<glm::vec3> pyramidPositions =
 //{1.0f, -1.0f, 1.0f}, {1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, // right face
 //{1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, // back face
 //{-1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, // left face
-//{-1.0f, -1.0f, -1.0f}, {1.0f, -1.0f, 1.0f}, {-1.0f, -1.0f, 1.0f}, // base – left front
-//{1.0f, -1.0f, 1.0f}, {-1.0f, -1.0f, -1.0f}, {1.0f, -1.0f, -1.0f }// base – right back
+//{-1.0f, -1.0f, -1.0f}, {1.0f, -1.0f, 1.0f}, {-1.0f, -1.0f, 1.0f}, // base â€“ left front
+//{1.0f, -1.0f, 1.0f}, {-1.0f, -1.0f, -1.0f}, {1.0f, -1.0f, -1.0f }// base â€“ right back
 //};
 
 std::vector<glm::vec3> pyramidNormals =
@@ -230,61 +230,128 @@ std::vector<glm::vec3> pyramidNormals =
 	{0.0f, -1.0f, 0.0f},
 	{0.0f, -1.0f, 0.0f},
 
-	// Normalne do œcian piramidy (na przyk³ad wektor skierowany w górê w stronê wierzcho³ka)
+	// Normalne do Å›cian piramidy (na przykÅ‚ad wektor skierowany w gÃ³rÄ™ w stronÄ™ wierzchoÅ‚ka)
 	{0.0f,  1.0f,  0.0f},
 };
 
 std::vector<glm::vec2> pyramidTextCoords =
 {
-	{0.0f, 0.0f}, // Lewy dolny róg
-	{1.0f, 0.0f}, // Prawy dolny róg
-	{1.0f, 1.0f}, // Prawy górny róg
-	{0.0f, 1.0f}, // Lewy górny róg
+	{0.0f, 0.0f}, // Lewy dolny rÃ³g
+	{1.0f, 0.0f}, // Prawy dolny rÃ³g
+	{1.0f, 1.0f}, // Prawy gÃ³rny rÃ³g
+	{0.0f, 1.0f}, // Lewy gÃ³rny rÃ³g
 
-	// Wierzcho³ek piramidy
-	{0.5f, 0.5f}, // Wierzcho³ek
+	// WierzchoÅ‚ek piramidy
+	{0.5f, 0.5f}, // WierzchoÅ‚ek
 };
 
 
 
-void Sphere::init(GLint prec) {
+Mesh CreateSphere(GLfloat radius, GLint stackCount, GLint sectorCount) {
 
-	/*std::vector<Vertex> vertexes;
-	std::vector<GLfloat> indices;
+	struct Vertex {
+		glm::vec3 Position;
+		glm::vec3 Normal;
+		glm::vec2 TextureCoords;
+	};
 
-	size_t numVertices = (prec + 1) * (prec + 1);
-	size_t numIndices = prec * prec * 6;
-	for (size_t i = 0; i < numVertices; i++) { vertexes.push_back(Vertex()); }	
-	for (size_t i = 0; i < numIndices; i++) { indices.push_back(0); }			
+	//std::vector<Vertex> vertexes;
+	//std::vector<GLuint> indices;
+	//
+	//size_t numVertices = (prec + 1) * (prec + 1);
+	//size_t numIndices = prec * prec * 6;
+	//for (size_t i = 0; i < numVertices; i++) { vertexes.push_back(Vertex()); }	
+	//for (size_t i = 0; i < numIndices; i++) { indices.push_back(0); }			
+	//
+	//// calculate triangle vertices
+	//for (size_t i = 0; i <= prec; i++) {
+	//	for (size_t j = 0; j <= prec; j++) {
+	//		GLfloat y = (GLfloat)cos(glm::radians(180.0f - i * 180.0f / prec));
+	//		GLfloat x = -(GLfloat)cos(glm::radians(j * 360.0f / prec)) * (GLfloat)abs(cos(asin(y)));
+	//		GLfloat z = (GLfloat)sin(glm::radians(j * 360.0f / prec)) * (GLfloat)abs(cos(asin(y)));
+	//		
+	//		vertexes[i * (prec + 1) + j].Position = glm::vec3(x, y, z);
+	//
+	//		vertexes[i * (prec + 1) + j].TextureCoords = glm::vec2(((GLfloat)j / prec), ((GLfloat)i / prec));
+	//
+	//		vertexes[i * (prec + 1) + j].Normal = glm::vec3(x, y, z);
+	//	}
+	//}
+	//
+	//// calculate triangle indices
+	//for (int i = 0; i < prec; i++) {
+	//	for (int j = 0; j < prec; j++) {
+	//		indices[6 * (i * prec + j) + 0] = i * (prec + 1) + j;
+	//		indices[6 * (i * prec + j) + 1] = i * (prec + 1) + j + 1;
+	//		indices[6 * (i * prec + j) + 2] = (i + 1) * (prec + 1) + j;
+	//		indices[6 * (i * prec + j) + 3] = i * (prec + 1) + j + 1;
+	//		indices[6 * (i * prec + j) + 4] = (i + 1) * (prec + 1) + j + 1;
+	//		indices[6 * (i * prec + j) + 5] = (i + 1) * (prec + 1) + j;
+	//	}
+	//}
+	//
+	//
+	////this->getBuffer().BufferData(vertexes.data(), vertexes.size() * sizeof(Vertex));
+	//VertexBufferLayout layout;
+	//layout.Push<GLfloat>(3);
+	//layout.Push<GLfloat>(3);
+	//layout.Push<GLfloat>(2);
+	//return Mesh(vertexes.data(), vertexes.size(), sizeof(Vertex), indices, layout);
+	
+	std::vector<Vertex> vertices;
 
-	// calculate triangle vertices
-	for (size_t i = 0; i <= prec; i++) {
-		for (size_t j = 0; j <= prec; j++) {
-			GLfloat y = (GLfloat)cos(glm::radians(180.0f - i * 180.0f / prec));
-			GLfloat x = -(GLfloat)cos(glm::radians(j * 360.0f / prec)) * (GLfloat)abs(cos(asin(y)));
-			GLfloat z = (GLfloat)sin(glm::radians(j * 360.0f / prec)) * (GLfloat)abs(cos(asin(y)));
-			
-			vertexes[i * (prec + 1) + j].Position = glm::vec3(x, y, z);
+	const float PI = 3.14159265359f;
 
-			vertexes[i * (prec + 1) + j].TextureCoords = glm::vec2(((GLfloat)j / prec), ((GLfloat)i / prec));
+	for (int i = 0; i <= stackCount; ++i) {
+		float stackAngle = PI / 2 - i * PI / stackCount;   // Ï†: od +Ï€/2 do -Ï€/2
+		float xy = radius * cosf(stackAngle);              // promieÅ„ okrÄ™gu na tej szerokoÅ›ci
+		float z = radius * sinf(stackAngle);               // wysokoÅ›Ä‡
 
-			vertexes[i * (prec + 1) + j].Normal = glm::vec3(x, y, z);
+		for (int j = 0; j <= sectorCount; ++j) {
+			float sectorAngle = j * 2 * PI / sectorCount;  // Î¸: od 0 do 2Ï€
+
+			// Pozycja
+			float x = xy * cosf(sectorAngle);
+			float y = xy * sinf(sectorAngle);
+
+			// Normalna (dla sfery jednostkowej = pozycja znormalizowana)
+			float nx = x / radius;
+			float ny = y / radius;
+			float nz = z / radius;
+
+			// UV (u od 0 do 1, v od 0 do 1)
+			float u = (float)j / sectorCount;
+			float v = (float)i / stackCount;
+
+			vertices.push_back({ {x, y, z }, {nx, ny, nz}, {u, v}
+		});
 		}
 	}
+	std::vector<GLuint> indices;
+	int k1, k2;
 
-	// calculate triangle indices
-	for (int i = 0; i < prec; i++) {
-		for (int j = 0; j < prec; j++) {
-			indices[6 * (i * prec + j) + 0] = i * (prec + 1) + j;
-			indices[6 * (i * prec + j) + 1] = i * (prec + 1) + j + 1;
-			indices[6 * (i * prec + j) + 2] = (i + 1) * (prec + 1) + j;
-			indices[6 * (i * prec + j) + 3] = i * (prec + 1) + j + 1;
-			indices[6 * (i * prec + j) + 4] = (i + 1) * (prec + 1) + j + 1;
-			indices[6 * (i * prec + j) + 5] = (i + 1) * (prec + 1) + j;
+	for (int i = 0; i < stackCount; ++i) {
+		k1 = i * (sectorCount + 1);     // poczÄ…tek bieÅ¼Ä…cego rzÄ™du
+		k2 = k1 + sectorCount + 1;      // poczÄ…tek nastÄ™pnego rzÄ™du
+
+		for (int j = 0; j < sectorCount; ++j, ++k1, ++k2) {
+			if (i != 0) {
+				// pierwsze trÃ³jkÄ…t
+				indices.push_back(k1);
+				indices.push_back(k2);
+				indices.push_back(k1 + 1);
+			}
+			if (i != (stackCount - 1)) {
+				// drugie trÃ³jkÄ…t
+				indices.push_back(k1 + 1);
+				indices.push_back(k2);
+				indices.push_back(k2 + 1);
+			}
 		}
 	}
-
-
-	this->getBuffer().BufferData(vertexes.data(), vertexes.size() * sizeof(Vertex));
-	*/
+	VertexBufferLayout layout;
+	layout.Push<GLfloat>(3);
+	layout.Push<GLfloat>(3);
+	layout.Push<GLfloat>(2);
+	return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), indices, layout);
 }

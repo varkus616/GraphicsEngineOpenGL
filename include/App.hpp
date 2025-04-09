@@ -13,7 +13,6 @@
 #include <ShadowMapFBO.hpp>
 #include <Cubemap.hpp>
 
-
 class App
 {
 public:
@@ -31,15 +30,16 @@ public:
 	void renderImGui();
 
 	Window& m_window;
-	
-	Texture testTexture;
+	Texture wallText = Texture("resources\\container2.png");
+
 
 	Mesh	plane;
 
 	Cubemap m_skybox;
 
 	RenderableObject obj;
-	std::vector<Pyramid> cubes;
+	Sphere s;
+	std::vector<Cube> cubes;
 	RenderData currentRenderData;
 
 	SpotLight light;
@@ -66,6 +66,7 @@ public:
 
 
 private:
+
 	void initializeShaders();
 	void randomCubes();
 	void installLights();

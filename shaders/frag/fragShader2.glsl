@@ -213,6 +213,10 @@ vec3 CalcSpotLight(SpotLight light, vec3 viewDir)
 
 void main()
 {
+
+
+    vec3 rgb_normal = Normal * 0.5 + 0.5; // transforms from [-1,1] to [0,1]  
+
     vec4 result = vec4(0);
     if ( calculateLight ) {
        vec3 lightResult = vec3(0);

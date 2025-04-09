@@ -29,7 +29,7 @@ void main()
     FragPos = vec3(model * vec4(vertPos, 1));
     vs_out.FragPos = FragPos;
 
-    Normal = normalize(mat3(inverse(transpose(model)))* vertNormal);
+    //Normal = normalize(mat3(inverse(transpose(model)))* vertNormal);
     vs_out.Normal = Normal;
     
     vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);
