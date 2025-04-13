@@ -9,6 +9,7 @@
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexBufferLayout.hpp"
+
 #define M_PI 3.14159265358979323846   
 
 
@@ -171,6 +172,143 @@ Mesh Utils::generatePlane(const int SIZE_X, const  int SIZE_Z)
 
     return Mesh(vertexData.data(), vertexData.size(), sizeof(GLfloat) , indices, layout);
 }
+
+void Utils::loadModel(std::string path, 
+    std::vector<Mesh*>& meshes,
+    std::vector<GLuint>& startIndincies)
+{
+    Assimp::Importer import;
+    const aiScene* scene = import.ReadFile(path,
+        aiProcess_Triangulate |
+        aiProcess_FlipUVs |
+        aiProcess_GenNormals);
+
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    {
+        Logger& logger = Logger::getInstance();
+        std::stringstream ss;
+        ss << "ERROR::ASSIMP::" << import.GetErrorString();
+        logger.log(LogLevel::ERROR, ss.str());
+        return;
+    }
+    processNode(scene->mRootNode, scene, meshes, startIndincies);
+}
+
+void Utils::processNode(aiNode* node, const aiScene* scene,
+    std::vector<Mesh*>& meshes,
+    std::vector<GLuint>& startIndincies)
+{
+    // process all the node's meshes (if any)
+    int iSizeBefore = 0;
+    const int VertexTotalSize = sizeof(aiVector3D)*2 + sizeof(aiVector2D);
+
+    for (size_t i = 0; i < node->mNumMeshes; i++)
+    {
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        if (mesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE) {
+            std::cerr << "Uwaga: Mesh nr: " << i << " nie jest triangulowana!" << std::endl;
+            exit(1);
+        }
+        
+        startIndincies.push_back(iSizeBefore / VertexTotalSize);
+        
+        auto mptr = processMesh(mesh, scene);
+        meshes.push_back(mptr);
+        
+        iSizeBefore += mptr->getBuffer().GetSize() / sizeof(GLuint);
+    }
+
+    // then do the same for each of its children
+    for (size_t i = 0; i < node->mNumChildren; i++)
+    {
+        processNode(node->mChildren[i], scene, 
+            meshes, startIndincies);
+    }
+}
+
+Mesh* Utils::processMesh(aiMesh* mesh, 
+    const aiScene* scene)
+{
+    std::vector<GLuint> indices;
+    struct Vertex {
+        glm::vec3 Position;
+        glm::vec3 Normals;
+        glm::vec2 TextureCoords;
+    };
+
+    std::vector<Vertex> vertexes;
+
+    for (size_t i = 0; i < mesh->mNumVertices; i++)
+    {
+        Vertex v;
+        v.Position.x = mesh->mVertices[i].x;
+        v.Position.y = mesh->mVertices[i].y;
+        v.Position.z = mesh->mVertices[i].z;
+
+        // normals
+        if (mesh->HasNormals())
+        {
+            v.Normals.x = mesh->mNormals[i].x;
+            v.Normals.y = mesh->mNormals[i].y;
+            v.Normals.z = mesh->mNormals[i].z;
+        }
+
+        // texture coordinates
+        if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
+        {
+            v.TextureCoords.x = mesh->mTextureCoords[0][i].x;
+            v.TextureCoords.y = mesh->mTextureCoords[0][i].y;
+        }
+        vertexes.push_back(v);
+    }
+    // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
+    for (size_t i = 0; i < mesh->mNumFaces; i++)
+    {
+        aiFace face = mesh->mFaces[i];
+        // retrieve all indices of the face and store them in the indices vector
+        if (face.mNumIndices != 3) {
+            std::cerr << "B³¹d: Œciana " << i << " ma " << face.mNumIndices << " indeksów!" << std::endl;
+            exit(1);
+        }
+        for (size_t j = 0; j < face.mNumIndices; j++)
+            indices.push_back(face.mIndices[j]);
+    }
+    // process materials
+    //aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+    // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
+    // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
+    // Same applies to other texture as the following list summarizes:
+    // diffuse: texture_diffuseN
+    // specular: texture_specularN
+    // normal: texture_normalN
+
+    // 1. diffuse maps
+    //vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    //textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+    //// 2. specular maps
+    //vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    //textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+    //// 3. normal maps
+    //std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+    //textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+    //// 4. height maps
+    //std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+    //textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+
+    // return a mesh object created from the extracted mesh data
+    VertexBufferLayout layout;
+    layout.Push<GLfloat>(3);
+    layout.Push<GLfloat>(3);
+    layout.Push<GLfloat>(2);
+    return new Mesh(vertexes.data(), vertexes.size(), sizeof(Vertex), indices, layout);
+    
+}
+
+
+
+
+
+
 
 // GOLD material
 glm::vec4* Utils::goldAmbient() { static glm::vec4 a = { 0.2473f, 0.1995f, 0.0745f, 1 }; return &a; }

@@ -1,9 +1,9 @@
-#include "Window.hpp"
+#include <Window.hpp>
 #include <stdexcept>
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/glm.hpp"
-#include "Utilities.hpp"
-#include "IndexBuffer.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
+#include <Utilities.hpp>
+#include <IndexBuffer.hpp>
 #include <functional>
 
 Window::Window(RenderContext& context, int width, int height, const std::string& title)
@@ -69,7 +69,6 @@ void Window::clear(const Color& color) {
 
 void Window::draw(Renderable& renderable, RenderData& data)
 {
-    
     data.shaderProgram.use();
 
     if (data.uniformUpdater)
@@ -78,69 +77,25 @@ void Window::draw(Renderable& renderable, RenderData& data)
     renderable.draw(*this, data);
 }
 
-void Window::draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& data) 
+void Window::draw(const VertexArray& VAO, RenderData& data)
 {
+    VAO.Bind();
     switch (data.drawMode) {
     case DrawMode::ELEMENTS:
-        switch (data.primitiveType) {
-        case PrimitiveType::TRIANGLES:
-            GLCall(glDrawElements(GL_TRIANGLES, EBO.GetSize() / sizeof(GLuint), GL_UNSIGNED_INT, nullptr));
-            break;
-        case PrimitiveType::QUADS:
-            GLCall(glDrawElements(GL_QUADS, EBO.GetSize() / sizeof(GLuint), GL_UNSIGNED_INT, nullptr));
-            break;
-        case PrimitiveType::TRIANGLE_FAN:
-            GLCall(glDrawElements(GL_TRIANGLE_FAN, EBO.GetSize() / sizeof(GLuint), GL_UNSIGNED_INT, nullptr));
-            break;
-        case PrimitiveType::TRIANGLE_STRIP:
-            GLCall(glDrawElements(GL_TRIANGLE_STRIP, EBO.GetSize() / sizeof(GLuint), GL_UNSIGNED_INT, nullptr));
-            break;
-        default:
-            break;
-        }
+        GLCall(glDrawElements(GetGLPrimitiveType(data.primitiveType), data.indexCount, GL_UNSIGNED_INT, nullptr));
         break;
-
     case DrawMode::ARRAYS:
-        switch (data.primitiveType) {
-        case PrimitiveType::TRIANGLES:
-            GLCall(glDrawArrays(GL_TRIANGLES, 0, VBO.GetSize() / sizeof(GLfloat)));
-            break;
-        case PrimitiveType::QUADS:
-            GLCall(glDrawArrays(GL_QUADS, 0, VBO.GetSize() / sizeof(GLfloat)));
-            break;
-        case PrimitiveType::TRIANGLE_FAN:
-            GLCall(glDrawArrays(GL_TRIANGLE_FAN, 0, VBO.GetSize() / sizeof(GLfloat)));
-            break;
-        case PrimitiveType::TRIANGLE_STRIP:
-            GLCall(glDrawArrays(GL_TRIANGLE_STRIP, 0, VBO.GetSize() / sizeof(GLfloat)));
-            break;
-        default:
-            break;
-        }
+        GLCall(glDrawArrays(GetGLPrimitiveType(data.primitiveType), data.startPosition, data.vertexCount));
         break;
-
     case DrawMode::INSTANCED:
-        switch (data.primitiveType)
-        {
-        case PrimitiveType::TRIANGLES:
-            GLCall(glDrawArraysInstanced(GL_TRIANGLES, 0, VBO.GetSize() / sizeof(GLfloat), data.instancedDrawModeSize));            
-            break;
-        case PrimitiveType::QUADS:
-            GLCall(glDrawArraysInstanced(GL_QUADS, 0, VBO.GetSize() / sizeof(GLfloat), data.instancedDrawModeSize));
-            break;
-        case PrimitiveType::TRIANGLE_FAN:
-            GLCall(glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, VBO.GetSize() / sizeof(GLfloat), data.instancedDrawModeSize));
-            break;
-        case PrimitiveType::TRIANGLE_STRIP:
-            GLCall(glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, VBO.GetSize() / sizeof(GLfloat), data.instancedDrawModeSize));
-            break;
-        }
+        GLCall(glDrawArraysInstanced(GetGLPrimitiveType(data.primitiveType), 0, data.vertexCount, data.instancedDrawModeSize));
         break;
     default:
         std::cerr << "Error: No such drawMode" << std::endl;
         exit(1);
         break;
     }
+    VAO.Unbind();
 }
 
 void Window::display() {

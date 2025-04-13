@@ -1,8 +1,9 @@
 #include "App.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
 
-
 bool calculateLightFlag = true;
+bool calculateShadows = false;
+bool hasTextureFlag = true;
 glm::mat4 lightSpaceMatrix;
 
 void printFPS()
@@ -31,7 +32,7 @@ std::vector<std::string> faces = {
 
 App::App(Window& window)
     : m_window(window),
-    cubes(10),
+    cubes(100),
     plane(Utils::generatePlane(100, 100)),
     obj(&plane, DrawMode::ELEMENTS),
     shadowMap(1024, 1024),
@@ -39,8 +40,6 @@ App::App(Window& window)
 {
     initializeShaders();
 
-    Texture wallTextSpec = Texture("resources\\container2_specular.png");
-   
     installLights();
 
     auto func = [&](Renderable& r, RenderData& d, Window& w) -> void 
@@ -103,6 +102,8 @@ App::App(Window& window)
             d.shaderProgram.setVec4("objectColor", r.getColor());
 
             d.shaderProgram.setBool("calculateLight", calculateLightFlag);
+            d.shaderProgram.setBool("calculateShadows", calculateShadows);
+            d.shaderProgram.setBool("hasTexture", hasTextureFlag);
         };
 
     currentRenderData.uniformUpdater = func;
@@ -111,9 +112,29 @@ App::App(Window& window)
 
     randomCubes();
 
-    obj.setPosition(0, 0, 0);
     m_window.getCamera().SetPosition(glm::vec3(0, 1, 3));
-    s.addTexture()
+    s.addTexture(&earthText, 0);
+    Miku.loadModel("resources\\crusader.max");
+    Miku2.loadModel("resources\\miku.obj");
+    Miku.m_drawMode = DrawMode::ELEMENTS;
+    Miku.m_primType = PrimitiveType::TRIANGLES;
+    Miku2.m_drawMode = DrawMode::ELEMENTS;
+    Miku2.m_primType = PrimitiveType::TRIANGLES;
+    Miku.setColor(glm::vec4(1, 0, 1, 1));
+    
+    Miku.setPosition(2,0,0);
+    Miku.rotate(-90, Axis::X);
+    Miku.addTexture(&wallText, 0);
+    Miku.addTexture(&mikuText2, 1);
+    Miku.addTexture(&mikuText, 2);
+
+    Miku2.addTexture(&wallText, 0);
+    Miku2.addTexture(&wallText, 1);
+    Miku2.addTexture(&wallText, 2);
+    Miku2.setScale(0.1, 0.1, 0.1);
+
+   // Miku.setScale(0.1f, 0.1f, 0.1f);  // Dostosuj skalê
+
 }
 
 void App::renderShadows()
@@ -164,7 +185,7 @@ void App::run()
 
 void App::processInput() 
 {
-    m_window.processInput(0.55f);
+    m_window.processInput(0.05f);
     if (m_window.shouldClose())
         m_app_running = false;
 }
@@ -174,11 +195,11 @@ void App::update()
     float t = glfwGetTime();
 
     m_window.getCamera().Update();
+   // s.setAngle(sin(t) * 180);
 }
 
 void App::render()
 {
-   //renderShadows();
    m_window.clear();
 
    //currentRenderData.shaderProgram.use();
@@ -187,23 +208,25 @@ void App::render()
    //currentRenderData.shaderProgram.setInt("shadowMap", 0);
    //currentRenderData.shaderProgram.setMat4("lightSpaceMatrix", lightSpaceMatrix);
    
-   //m_skybox.render(skyboxShader, m_window.getViewMatrix(), m_window.getCamera().GetProjectionMatrix());
-   
+   m_skybox.render(skyboxShader, m_window.getViewMatrix(), m_window.getCamera().GetProjectionMatrix());
+   //currentRenderData.shaderProgram.setBool("hasTexture", hasTextureFlag);
+
    for (int i = 0; i < cubes.size(); i++) {
        auto& cube = cubes[i];
        
        m_window.draw(cube, currentRenderData);
    }
    m_window.draw(s, currentRenderData);
-   //m_window.draw(obj, currentRenderData);
-   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-   
-   
+   m_window.draw(Miku, currentRenderData);
+   hasTextureFlag = false;
+   m_window.draw(Miku2, currentRenderData);
+   hasTextureFlag = true;
+
    openGlFLags();
    
    renderImGui();
 
-    m_window.display();
+   m_window.display();
 }
 
 void App::renderImGui()
@@ -274,6 +297,7 @@ void App::renderImGui()
 void App::openGlFLags()
 {
     glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_CULL_FACE);glCullFace(GL_BACK);glFrontFace(GL_CW);
     glDepthFunc(GL_LEQUAL);
 }
 
@@ -283,30 +307,28 @@ void App::randomCubes()
     int BOUND_Y = 0;
     int BOUND_Z = 15;
 
-
     for (int i = 0; i < cubes.size(); i++) {
         auto& cube = cubes[i];
-
+    
         // Losowanie pozycji
         float x = rand() % (BOUND_X + 1 - (-BOUND_X)) + (-BOUND_X);
         float y = rand() % (BOUND_Y + 1 - (-BOUND_Y)) + (-BOUND_Y);
         float z = rand() % (BOUND_Z + 1 - (-BOUND_Z)) + (-BOUND_Z);
-
-        cube.addTexture(wallText, 0);
-        cube.setPosition(x, y + 0.55, z);
-
+    
+        cube.addTexture(&wallText, 0);
+        cube.setPosition(x, y + 2.55, z);
+    
         float angleX = rand() % 360;
         float angleY = rand() % 360;
         float angleZ = rand() % 360;
-
+    
         cube.rotate(angleX, Axis::X);
         cube.rotate(angleY, Axis::Y);
         cube.rotate(angleZ, Axis::Z);
         x = rand() % 255;
         y = rand() % 255;
         z = rand() % 255;
-
-        //cube.setColor(glm::vec4(x/255 * 0.5, y/255 * 0.5, z/255 * 0.5, 0));
+    
         cube.setColor(glm::vec4(1, 0, 0, 0));
     }
 }
@@ -334,13 +356,13 @@ void App::initializeShaders()
 void App::installLights()
 {
     light.position = { 0, 4, 5 };
-    dirLight.direction = { 0, 0, 0 };
+    dirLight.direction = { 30, -10, 0 };
 
-    dirLight.ambient = { 0.2, 0.2, 0.25 };
-    dirLight.diffuse = { 0.2, 0.2, 0.2 };
-    dirLight.specular = { 0.2, 0.2, 0.2 };
+    dirLight.ambient =  {   0.2, 0.2, 0.2 };
+    dirLight.diffuse =  {   0.2, 0.2, 0.2 };
+    dirLight.specular = {   0.2, 0.2, 0.2 };
 
-    light.constant = 1.f;
+    light.constant = 2.f;
     light.linear = 0.09f;
     light.quadratic = 0.032f;
     light.cutOff = glm::cos(glm::radians(12.5f));
@@ -361,7 +383,7 @@ void App::installLights()
     pointLight.linear = 0.092f;
     pointLight.quadratic = 0.032f;
 
-    pointLights.emplace_back(pointLight);
+    //pointLights.emplace_back(pointLight);
     spotLights.emplace_back(light);
 
 }

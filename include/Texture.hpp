@@ -6,6 +6,8 @@
 #include <SOIL2/SOIL2.h>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <Logger.hpp>
 
 class Texture {
 public:
@@ -20,7 +22,7 @@ public:
         }
     }
 
-    Texture(const Texture&) = delete;               // nie kopiujemy tekstur
+    Texture(const Texture&) = default;
     Texture& operator=(const Texture&) = delete;
 
     Texture(Texture&& other) noexcept {
@@ -43,7 +45,10 @@ public:
         );
 
         if (id == 0) {
-            std::cerr << "[Texture] Warning: could not load texture: " << path << std::endl;
+            Logger& logger = Logger::getInstance();
+            std::stringstream ss;
+            ss << "[Texture]: could not load texture: " << path;
+            logger.log(LogLevel::WARNING, ss.str());
             return false;
         }
 

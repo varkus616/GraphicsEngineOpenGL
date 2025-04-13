@@ -31,13 +31,16 @@ public:
 
 	Window& m_window;
 	Texture wallText = Texture("resources\\container2.png");
-
+	Texture earthText = Texture("resources\\earth2048.bmp");
+	Texture mikuText = Texture("resources\\mikuText1.png");
+	Texture mikuText2 = Texture("resources\\mikuText2.png");
 
 	Mesh	plane;
-
 	Cubemap m_skybox;
 
 	RenderableObject obj;
+	RenderableObject Miku;
+	RenderableObject Miku2;
 	Sphere s;
 	std::vector<Cube> cubes;
 	RenderData currentRenderData;

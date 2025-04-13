@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 #include <Shapes.hpp>
 
-
 std::vector<glm::vec3> cubePositions =
 {
 	// Front face
@@ -100,7 +99,6 @@ std::vector<glm::vec3> cubeNormals =
 	{0.0f,  1.0f,  0.0f},
 	{0.0f,  1.0f,  0.0f},
 };
-
 
 std::vector<glm::vec2> cubeTextCoords =
 {
@@ -247,7 +245,7 @@ std::vector<glm::vec2> pyramidTextCoords =
 
 
 
-Mesh CreateSphere(GLfloat radius, GLint stackCount, GLint sectorCount) {
+const Mesh CreateSphere(GLfloat radius, GLint stackCount, GLint sectorCount) {
 
 	struct Vertex {
 		glm::vec3 Position;
@@ -255,49 +253,6 @@ Mesh CreateSphere(GLfloat radius, GLint stackCount, GLint sectorCount) {
 		glm::vec2 TextureCoords;
 	};
 
-	//std::vector<Vertex> vertexes;
-	//std::vector<GLuint> indices;
-	//
-	//size_t numVertices = (prec + 1) * (prec + 1);
-	//size_t numIndices = prec * prec * 6;
-	//for (size_t i = 0; i < numVertices; i++) { vertexes.push_back(Vertex()); }	
-	//for (size_t i = 0; i < numIndices; i++) { indices.push_back(0); }			
-	//
-	//// calculate triangle vertices
-	//for (size_t i = 0; i <= prec; i++) {
-	//	for (size_t j = 0; j <= prec; j++) {
-	//		GLfloat y = (GLfloat)cos(glm::radians(180.0f - i * 180.0f / prec));
-	//		GLfloat x = -(GLfloat)cos(glm::radians(j * 360.0f / prec)) * (GLfloat)abs(cos(asin(y)));
-	//		GLfloat z = (GLfloat)sin(glm::radians(j * 360.0f / prec)) * (GLfloat)abs(cos(asin(y)));
-	//		
-	//		vertexes[i * (prec + 1) + j].Position = glm::vec3(x, y, z);
-	//
-	//		vertexes[i * (prec + 1) + j].TextureCoords = glm::vec2(((GLfloat)j / prec), ((GLfloat)i / prec));
-	//
-	//		vertexes[i * (prec + 1) + j].Normal = glm::vec3(x, y, z);
-	//	}
-	//}
-	//
-	//// calculate triangle indices
-	//for (int i = 0; i < prec; i++) {
-	//	for (int j = 0; j < prec; j++) {
-	//		indices[6 * (i * prec + j) + 0] = i * (prec + 1) + j;
-	//		indices[6 * (i * prec + j) + 1] = i * (prec + 1) + j + 1;
-	//		indices[6 * (i * prec + j) + 2] = (i + 1) * (prec + 1) + j;
-	//		indices[6 * (i * prec + j) + 3] = i * (prec + 1) + j + 1;
-	//		indices[6 * (i * prec + j) + 4] = (i + 1) * (prec + 1) + j + 1;
-	//		indices[6 * (i * prec + j) + 5] = (i + 1) * (prec + 1) + j;
-	//	}
-	//}
-	//
-	//
-	////this->getBuffer().BufferData(vertexes.data(), vertexes.size() * sizeof(Vertex));
-	//VertexBufferLayout layout;
-	//layout.Push<GLfloat>(3);
-	//layout.Push<GLfloat>(3);
-	//layout.Push<GLfloat>(2);
-	//return Mesh(vertexes.data(), vertexes.size(), sizeof(Vertex), indices, layout);
-	
 	std::vector<Vertex> vertices;
 
 	const float PI = 3.14159265359f;
@@ -353,5 +308,5 @@ Mesh CreateSphere(GLfloat radius, GLint stackCount, GLint sectorCount) {
 	layout.Push<GLfloat>(3);
 	layout.Push<GLfloat>(3);
 	layout.Push<GLfloat>(2);
-	return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), indices, layout);
+	return 	Mesh(vertices.data(), vertices.size(), sizeof(Vertex), indices, layout);
 }

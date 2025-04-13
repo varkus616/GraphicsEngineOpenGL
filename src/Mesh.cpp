@@ -6,17 +6,20 @@ Mesh::Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
     const VertexBufferLayout& layout)
     : m_VBO(vertexData, vertexCount * vertexSize),
     m_EBO(indices.data(), indices.size() * sizeof(GLuint)),
-    m_layout(layout)
+    m_layout(layout),
+    m_vertexCount(vertexCount),
+    m_indexCount(indices.size())
 {
     setupBuffers();
-    m_VAO.Reset();
 }
 
 Mesh::Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
     const VertexBufferLayout& layout)
     : m_VBO(vertexData, vertexCount* vertexSize),
     m_EBO(nullptr, 0),
-    m_layout(layout)
+    m_layout(layout),
+    m_vertexCount(vertexCount),
+    m_indexCount(0)
 {
     setupBuffers();
 }
@@ -24,25 +27,83 @@ Mesh::Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
 Mesh::Mesh() :
     m_VBO(0, 0),
     m_EBO(0, 0)
-{}
+{
+}
+
+Mesh::Mesh(const Mesh& other)
+{
+    this->m_EBO = other.m_EBO;
+    this->m_VBO = other.m_VBO;
+    this->m_layout = other.m_layout;
+    this->m_VAO = other.m_VAO;
+}
+
+Mesh::Mesh(Mesh&& other) noexcept
+{
+    this->m_EBO = std::move(other.m_EBO);
+    this->m_VBO = std::move(other.m_VBO);
+    this->m_layout = std::move(other.m_layout);
+    this->m_VAO    = std::move(other.m_VAO);
+}
+
+Mesh& Mesh::operator=(Mesh&& other) noexcept
+{
+    this->m_EBO = std::move(other.m_EBO);
+    this->m_VBO = std::move(other.m_VBO);
+    this->m_layout = std::move(other.m_layout);
+    this->m_VAO = std::move(other.m_VAO);
+    return *this;
+}
+
+Mesh& Mesh::operator=(const Mesh& other)
+{
+    this->m_EBO = other.m_EBO;
+    this->m_VBO = other.m_VBO;
+    this->m_layout = other.m_layout;
+    this->m_VAO = other.m_VAO;
+    return *this;
+}
 
 void Mesh::setupBuffers() {
+    m_EBO.Bind();
     m_VAO.AddBuffer(m_VBO, m_layout);
-    if (m_EBO.GetSize() > 0)
-        m_EBO.Bind();
+        m_VAO.Unbind();
+}
+
+void Mesh::bindBuffers()
+{
+    m_VBO.Bind();
+    m_EBO.Bind();
+    m_VAO.Bind();
+}
+
+void Mesh::unbindBuffers()
+{
+    m_VBO.Unbind();
+    m_VAO.Unbind();
+    m_EBO.Unbind();
+}
+
+void Mesh::addTexture(const Texture* texture)
+{
+    if (texture != nullptr){
+        m_textures.push_back(texture);
+    }
+    else {
+        Logger& loger = Logger::getInstance();
+        loger.log(LogLevel::WARNING, "[Mesh] Added Texture is null.");
+    }
 }
 
 void Mesh::bindTextures() const {
-    for (size_t i = 0; i < textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i));
-        glBindTexture(GL_TEXTURE_2D, textures[i].getID());
+    for (size_t i = 0; i < m_textures.size(); i++) {
+        m_textures[i]->bind();
     }
 }
 
 void Mesh::unbindTextures() const {
-    for (size_t i = 0; i < textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i));
-        glBindTexture(GL_TEXTURE_2D, 0);
+    for (size_t i = 0; i < m_textures.size(); i++) {
+        m_textures[i]->unbind();
     }
 }
 

@@ -6,7 +6,7 @@
 #include <RenderableObject.hpp>
 #include <Mesh.hpp>
 
-extern Mesh CreateSphere(GLfloat radius, GLint stackCount, GLint sectorCount);
+extern const Mesh CreateSphere(GLfloat radius, GLint stackCount, GLint sectorCount);
 
 extern std::vector<glm::vec3> cubePositions;
 extern std::vector<glm::vec3> cubeNormals;
@@ -32,7 +32,7 @@ static Mesh* sharedSphereMesh = nullptr;
 
 class Pyramid : public RenderableObject {
 public:
-    Pyramid() : RenderableObject(sharedPyramidMesh) {
+    Pyramid() : RenderableObject() {
         this->m_drawMode = DrawMode::ARRAYS;
         this->m_primType = PrimitiveType::TRIANGLE_FAN;
         if (!sharedPyramidMesh) {
@@ -45,46 +45,46 @@ public:
 class Sphere : public RenderableObject {
 public:
 
-    Sphere() : RenderableObject(sharedSphereMesh) {
+    Sphere() : RenderableObject() {
         this->m_drawMode = DrawMode::ELEMENTS;
         this->m_primType = PrimitiveType::TRIANGLES;
         if (!sharedSphereMesh) {
             sharedSphereMesh = new Mesh(CreateSphere(1.f, 36, 12));
-            addMesh(sharedSphereMesh);
         }
+        addMesh(sharedSphereMesh);
     }
 };
 
 
 class Cube : public RenderableObject {
 public:
-    Cube() : RenderableObject(sharedCubeMesh) {
+    Cube() : RenderableObject() {
         this->m_drawMode = DrawMode::ARRAYS;
         this->m_primType = PrimitiveType::TRIANGLES;
         if (!sharedCubeMesh) {
             sharedCubeMesh = new Mesh(Mesh::CreateWithPositionsNormalsAndTextures(cubePositions, cubeNormals, cubeTextCoords));
-            addMesh(sharedCubeMesh);
         }
+        addMesh(sharedCubeMesh);
     }
 };
 
 class Triangle : public RenderableObject {
 public:
-    Triangle() : RenderableObject(sharedTriangleMesh) {
+    Triangle() : RenderableObject() {
         if (!sharedTriangleMesh) {
             sharedTriangleMesh = new Mesh(Mesh::CreateWithPositionsNormalsAndTextures(trianglePositions, triangleNormals, triangleTextCoords));
-            addMesh(sharedTriangleMesh);
         }
+        addMesh(sharedTriangleMesh);
     }
 };
 
 class Square : public RenderableObject {
 public:
-    Square() : RenderableObject(sharedSquareMesh) {
+    Square() : RenderableObject() {
         if (!sharedSquareMesh) {
             sharedSquareMesh = new Mesh(Mesh::CreateWithPositionsNormalsAndTextures(squarePositions, squareNormals, squareTextCoords));
-            addMesh(sharedSquareMesh);
         }
+        addMesh(sharedSquareMesh);
     }
 };
 #endif // !SHAPES_HPP

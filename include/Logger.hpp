@@ -11,6 +11,7 @@
 #include <ctime>
 #include <sstream>
 #include <set>
+#include <chrono>
 
 enum class LogLevel {
     INFO,
@@ -50,7 +51,7 @@ public:
     void log(LogLevel level, const std::string& message) {
         std::lock_guard<std::mutex> lock(mutex);
         if (logLevels[level]) {
-            std::string formattedMessage = getTimestamp() + " " + getLogLevelString(level) + " " + message;
+            std::string formattedMessage = getLogLevelString(level) + " " + message;
 
             if (keywordsFilter.empty() || containsKeyword(message)) {
                 std::cout << formattedMessage << std::endl;  // Loguj do konsoli
@@ -93,14 +94,6 @@ private:
     std::mutex mutex;
     std::ofstream logFile;  // Plik do zapisywania logów
     std::set<std::string> keywordsFilter;  // Filtr s³ów kluczowych
-
-    std::string getTimestamp() {
-        std::time_t now = std::time(nullptr);
-        std::tm tm = *std::localtime(&now);
-        std::ostringstream oss;
-        oss << std::put_time(&tm, "[%Y-%m-%d %H:%M:%S]");
-        return oss.str();
-    }
 
     std::string getLogLevelString(LogLevel level) {
         switch (level) {

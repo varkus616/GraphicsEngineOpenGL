@@ -5,15 +5,15 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-#include "RenderContext.hpp"
-#include "Color.hpp"
-#include "RenderTarget.hpp"
-#include "Renderable.hpp"
-#include "RenderData.hpp"
+#include <RenderContext.hpp>
+#include <Color.hpp>
+#include <RenderTarget.hpp>
+#include <Renderable.hpp>
+#include <RenderData.hpp>
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <FreeCamera.hpp>
 #include <TargetCamera.hpp>
 
@@ -30,7 +30,7 @@ public:
     void display() override;
 
     void draw(Renderable& renderable, RenderData& data) override;
-    void draw(const VertexBuffer& VBO, const IndexBuffer& EBO, RenderData& data) override;
+    void draw(const VertexArray& VAO, RenderData& data) override;
 
     int getWidth() const;
     int getHeight() const;

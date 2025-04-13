@@ -25,6 +25,16 @@ enum class PrimitiveType {
     TRIANGLE_STRIP
 };
 
+inline GLenum GetGLPrimitiveType(PrimitiveType type) {
+    switch (type) {
+    case PrimitiveType::TRIANGLES:      return GL_TRIANGLES;
+    case PrimitiveType::QUADS:          return GL_QUADS;
+    case PrimitiveType::TRIANGLE_FAN:   return GL_TRIANGLE_FAN;
+    case PrimitiveType::TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
+    default:                            return GL_TRIANGLES; // Fallback
+    }
+}
+
 struct RenderData {
     //RenderData(const Shader& shader, const Transform& transform, const VertexBufferLayout& layout);
     //RenderData(const Shader& shader, const Transform& transform);
@@ -37,6 +47,10 @@ struct RenderData {
 
 
     GLuint instancedDrawModeSize = 0;
+    GLuint startPosition = 0;
+    GLuint indexCount = 0;
+    GLuint vertexCount = 0;
+
     DrawMode drawMode = DrawMode::ARRAYS;
     PrimitiveType primitiveType = PrimitiveType::TRIANGLES;
 };

@@ -149,6 +149,7 @@
     <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Physics.cpp" />
     <ClCompile Include="src\RenderableObject.cpp" />
     <ClCompile Include="src\RenderContext.cpp" />
     <ClCompile Include="src\Shader.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="include\GeometryData.hpp" />
     <ClInclude Include="include\Light.hpp" />
     <ClInclude Include="include\Logger.hpp" />
+    <ClInclude Include="include\Physics.hpp" />
     <ClInclude Include="include\Renderable.hpp" />
     <ClInclude Include="include\IndexBuffer.hpp" />
     <ClInclude Include="include\Mesh.hpp" />

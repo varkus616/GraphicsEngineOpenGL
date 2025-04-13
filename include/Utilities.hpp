@@ -10,6 +10,9 @@
 #include "glm/glm.hpp"
 #include <string>
 #include <GL/glew.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 class VertexBuffer;
 class VertexArray;
@@ -44,6 +47,16 @@ namespace Utils {
 	float  bronzeShininess();
 
 
+	void loadModel(std::string path, 
+		std::vector<Mesh*>& meshes,
+		std::vector<GLuint>& startIndincies);
+
+	void processNode(aiNode* node, const aiScene* scene,
+		std::vector<Mesh*>& meshes,
+		std::vector<GLuint>& startIndincies);
+
+	Mesh* processMesh(aiMesh* mesh, const aiScene* scene);
+		
 }
 
 #endif // ! UTILITIES_HPP

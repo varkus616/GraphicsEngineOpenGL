@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Utilities.hpp"
 
-VertexBuffer::VertexBuffer(const void* data, GLsizeiptr size)
+VertexBuffer::VertexBuffer(const void* data, GLuint size)
     : _size(size)
 {
     GLCall(glGenBuffers(1, &_rendererID));

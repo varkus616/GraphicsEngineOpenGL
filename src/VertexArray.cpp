@@ -52,7 +52,6 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 
 	for (GLuint i = 0; i < elements.size(); i++)
 	{
-		//printf("ID: %d | I:%d | Index:%d\n",this->_rendererID, i, _currentAttribIndex);
 		const auto& element = elements[i];
 		GLCall(glEnableVertexAttribArray(i));
 
@@ -61,6 +60,7 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 			reinterpret_cast<const void*>(offset)));
 
 		offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
+
 		_currentAttribIndex++;
 	}
 }

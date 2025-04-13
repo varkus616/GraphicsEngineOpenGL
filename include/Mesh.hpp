@@ -25,12 +25,12 @@ public:
 
     Mesh();
 
-    Mesh(const Mesh& other) = default;
+    Mesh(const Mesh& other);
 
-    Mesh& operator=(const Mesh& other) = default ;
+    Mesh& operator=(const Mesh& other);
 
-    Mesh(Mesh&& other) = default;
-
+    Mesh(Mesh&& other) noexcept;
+    Mesh& operator=(Mesh&& other)noexcept;
     ~Mesh() = default;
 
     static Mesh CreateWithPositions(const std::vector<glm::vec3>& positions);
@@ -54,14 +54,21 @@ public:
     void setupBuffers();
     void bindTextures() const;
     void unbindTextures() const;
+    void addTexture(const Texture* texture);
+    void bindBuffers();
+    void unbindBuffers();
 
     VertexBuffer& getBuffer()  { return m_VBO; }
     IndexBuffer&  getIndexBuffer() { return m_EBO; }
     VertexArray&  getVertexArray() { return m_VAO; }
 
+    const GLuint getVertexCount() const { return m_vertexCount; }
+    const GLuint getIndexCount() const { return m_indexCount; }
 
-    std::vector<Texture>  textures;
+    std::vector<const Texture*>  m_textures;
 private:
+    GLuint m_vertexCount;
+    GLuint m_indexCount;
     VertexBufferLayout m_layout;
     VertexArray     m_VAO;
     VertexBuffer    m_VBO;
