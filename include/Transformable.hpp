@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TRANSFORMABLE_HPP
 #define TRANSFORMABLE_HPP
 

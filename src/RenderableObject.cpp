@@ -39,7 +39,6 @@ void RenderableObject::addTexture(const Texture* texture, size_t meshIndex)
     m_meshes[meshIndex]->addTexture(texture);
 }
 
-
 void RenderableObject::draw(RenderTarget& target, RenderData& data)
 {
     for (size_t i = 0; i < m_meshes.size(); i++) {

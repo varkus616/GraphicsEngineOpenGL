@@ -17,6 +17,8 @@
 #include <FreeCamera.hpp>
 #include <TargetCamera.hpp>
 
+#include <VertexArray.hpp>
+
 class Window : public RenderTarget {
 public:
     Window(RenderContext& context, int width, int height, const std::string& title);
@@ -31,7 +33,7 @@ public:
 
     void draw(Renderable& renderable, RenderData& data) override;
     void draw(const VertexArray& VAO, RenderData& data) override;
-
+    void drawGeneric(const VertexArray& VAO, RenderData& data);
     int getWidth() const;
     int getHeight() const;
 

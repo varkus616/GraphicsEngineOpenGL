@@ -1,15 +1,16 @@
 #pragma once
 #ifndef PHYSICS_HPP
 #define PHYSICS_HPP
+
+
+#define P_ZAW	0x00000001
+#define P_NORM	0x00000002
 #include <glm/glm.hpp>
 
-
-
-glm::vec3 W_Euler(glm::vec3 f, float h)
+inline glm::vec3 W_Euler(glm::vec3 f, float h)
 {
 	return f * h;
 }
-
 
 typedef struct Point{
 

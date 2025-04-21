@@ -97,6 +97,7 @@ void Shader::linkProgram() {
         glDeleteShader(shader);
     }
     shaders.clear();
+    shaders.shrink_to_fit();
 }
 
 void Shader::use() const {
@@ -226,9 +227,6 @@ void Shader::setMat4Array(const std::string& name, const glm::mat4* values, cons
         glUniformMatrix4fv(location, size, transpose_flag, reinterpret_cast<const float*>(values));
     }
 }
-
-
-
 
 void Shader::checkCompileErrors(GLuint shader, std::string type) {
     int success;

@@ -8,9 +8,10 @@ VertexArray::VertexArray()
 }
 VertexArray::~VertexArray()
 {
-	GLCall(glDeleteVertexArrays(1, &_rendererID));
-	_rendererID = 0;
-
+	if (_rendererID) {
+		GLCall(glDeleteVertexArrays(1, &_rendererID));
+		_rendererID = 0;
+	}
 }
 
 VertexArray::VertexArray(const VertexArray& other) :
@@ -42,7 +43,8 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
 	return *this;
 }
 
-void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout)
+void VertexArray::AddBuffer(const VertexBuffer& vb,
+	const VertexBufferLayout& layout)
 {
 	Bind();  
 	vb.Bind();  
@@ -60,8 +62,6 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 			reinterpret_cast<const void*>(offset)));
 
 		offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
-
-		_currentAttribIndex++;
 	}
 }
 

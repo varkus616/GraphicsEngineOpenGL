@@ -2,31 +2,42 @@
 #include <iostream>
 #include "Utilities.hpp"
 
-VertexBuffer::VertexBuffer(const void* data, GLuint size)
-    : _size(size)
+VertexBuffer::VertexBuffer(const void* data, GLuint size, GLuint vertexSize, GLint bufferType, GLint drawHint)
+    : m_uiSize(size), m_iBufferType(bufferType)
 {
-    GLCall(glGenBuffers(1, &_rendererID));
-    Bind();
-    GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
+    this->CreateVBO();
+    this->Bind();
+    this->UploadDataToGPU(data, size, drawHint);
 }
 
 VertexBuffer::~VertexBuffer()
 {
-    if (_rendererID)
+    if (m_uiRendererID)
     {
-        GLCall(glDeleteBuffers(1, &_rendererID));
-        _rendererID = 0;
+        this->DeleteVBO();
+        m_uiRendererID = 0;
     }
 }
 
-VertexBuffer::VertexBuffer(const VertexBuffer& other)
-    : _size(other._size)
+void VertexBuffer::CreateVBO()
 {
-    GLCall(glGenBuffers(1, &_rendererID));
-    GLCall(glBindBuffer(GL_COPY_READ_BUFFER, other._rendererID));
-    GLCall(glBindBuffer(GL_COPY_WRITE_BUFFER, _rendererID));
-    GLCall(glBufferData(GL_COPY_WRITE_BUFFER, other._size, nullptr, GL_STATIC_DRAW));
-    GLCall(glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, other._size));
+    GLCall(glGenBuffers(1, &m_uiRendererID));
+}
+
+void VertexBuffer::DeleteVBO()
+{
+    GLCall(glDeleteBuffers(1, &m_uiRendererID));
+    m_bDataUploaded = false;
+}
+
+VertexBuffer::VertexBuffer(const VertexBuffer& other)
+    : m_uiSize(other.m_uiSize)
+{
+    GLCall(glGenBuffers(1, &m_uiRendererID));
+    GLCall(glBindBuffer(GL_COPY_READ_BUFFER, other.m_uiRendererID));
+    GLCall(glBindBuffer(GL_COPY_WRITE_BUFFER, m_uiRendererID));
+    GLCall(glBufferData(GL_COPY_WRITE_BUFFER, other.m_uiSize, nullptr, GL_STATIC_DRAW));
+    GLCall(glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, other.m_uiSize));
 
 }
 
@@ -35,23 +46,23 @@ VertexBuffer& VertexBuffer::operator=(const VertexBuffer& other)
     if (this == &other)
         return *this;
 
-    GLCall(glDeleteBuffers(1, &_rendererID));
+    GLCall(glDeleteBuffers(1, &m_uiRendererID));
 
-    _size = other._size;
-    GLCall(glGenBuffers(1, &_rendererID));
-    GLCall(glBindBuffer(GL_COPY_READ_BUFFER, other._rendererID));
-    GLCall(glBindBuffer(GL_COPY_WRITE_BUFFER, _rendererID));
-    GLCall(glBufferData(GL_COPY_WRITE_BUFFER, other._size, nullptr, GL_STATIC_DRAW));
-    GLCall(glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, other._size));
+    m_uiSize = other.m_uiSize;
+    GLCall(glGenBuffers(1, &m_uiRendererID));
+    GLCall(glBindBuffer(GL_COPY_READ_BUFFER, other.m_uiRendererID));
+    GLCall(glBindBuffer(GL_COPY_WRITE_BUFFER, m_uiRendererID));
+    GLCall(glBufferData(GL_COPY_WRITE_BUFFER, other.m_uiSize, nullptr, GL_STATIC_DRAW));
+    GLCall(glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, other.m_uiSize));
 
     return *this;
 }
 
 VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept
-    : _rendererID(other._rendererID), _size(other._size)
+    : m_uiRendererID(other.m_uiRendererID), m_uiSize(other.m_uiSize)
 {
-    other._rendererID = 0;
-    other._size = 0;
+    other.m_uiRendererID = 0;
+    other.m_uiSize = 0;
 }
 
 VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
@@ -59,31 +70,59 @@ VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
     if (this == &other)
         return *this;
 
-    GLCall(glDeleteBuffers(1, &_rendererID));
+    GLCall(glDeleteBuffers(1, &m_uiRendererID));
 
-    _rendererID = other._rendererID;
-    _size = other._size;
+    m_uiRendererID = other.m_uiRendererID;
+    m_uiSize = other.m_uiSize;
 
-    other._rendererID = 0;
-    other._size = 0;
+    other.m_uiRendererID = 0;
+    other.m_uiSize = 0;
 
     return *this;
 }
 
-void VertexBuffer::BufferData(const void* data, GLuint size)
+void VertexBuffer::UploadDataToGPU(const void* ptrData, GLuint size, int iDrawingHint)
 {
-    Bind();
-    GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
-    _size = size;
-    Unbind();
+    GLCall(glBufferData(m_iBufferType, size, ptrData, iDrawingHint));
+    m_bDataUploaded = true;
+    m_uiSize = size;
+    m_uiCurrentSize = size;
 }
 
-void VertexBuffer::Bind() const
+void* VertexBuffer::MapBufferToMemory(int iUsageHint)
 {
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, _rendererID));
+    if (!m_bDataUploaded)return NULL;
+    void* ptrRes = glMapBuffer(m_iBufferType, iUsageHint);
+    return ptrRes;
+}
+
+void* VertexBuffer::MapSubBufferToMemory(int iUsageHint, 
+    GLuint uiOffset, GLuint uiLength)
+{
+    if (!m_bDataUploaded)return NULL;
+    void* ptrRes = glMapBufferRange(m_iBufferType, uiOffset, uiLength, iUsageHint);
+    return ptrRes;
+}
+
+void VertexBuffer::UnmapBuffer()
+{
+    glUnmapBuffer(m_iBufferType);
+}
+
+void VertexBuffer::Bind() const 
+{
+    GLCall(glBindBuffer(m_iBufferType, m_uiRendererID));
 }
 
 void VertexBuffer::Unbind() const
 {
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GLCall(glBindBuffer(m_iBufferType, 0));
+}
+
+void VertexBuffer::PrintInfo() const
+{
+    std::cout << "[VBO] ID: " << m_uiRendererID
+        << " | Size in bytes: " << m_uiSize
+        << " | Data uploaded: " << (m_bDataUploaded ? "yes" : "no")
+        << std::endl;
 }

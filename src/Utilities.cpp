@@ -170,7 +170,7 @@ Mesh Utils::generatePlane(const int SIZE_X, const  int SIZE_Z)
     layout.Push<GLfloat>(3);
     layout.Push<GLfloat>(2);
 
-    return Mesh(vertexData.data(), vertexData.size(), sizeof(GLfloat) , indices, layout);
+    return Mesh(vertexData.data(), vertexData.size(), sizeof(GLfloat) , indices, layout, GL_ARRAY_BUFFER);
 }
 
 void Utils::loadModel(std::string path, 
@@ -300,7 +300,7 @@ Mesh* Utils::processMesh(aiMesh* mesh,
     layout.Push<GLfloat>(3);
     layout.Push<GLfloat>(3);
     layout.Push<GLfloat>(2);
-    return new Mesh(vertexes.data(), vertexes.size(), sizeof(Vertex), indices, layout);
+    return new Mesh(vertexes.data(), vertexes.size(), sizeof(Vertex), indices, layout, GL_ARRAY_BUFFER);
     
 }
 

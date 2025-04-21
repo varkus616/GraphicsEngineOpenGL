@@ -17,15 +17,14 @@ public:
 	VertexArray(VertexArray&& other) noexcept;
 	VertexArray& operator=(VertexArray&& other) noexcept;
 
-	void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
-	void Reset() { _currentAttribIndex = 0; } ;
+	void AddBuffer(const VertexBuffer& vb,
+		const VertexBufferLayout& layout);
 
 	void Bind() const;
 	void Unbind() const;
 
 private:
 	GLuint _rendererID;
-	GLuint _currentAttribIndex;
 
 };
 

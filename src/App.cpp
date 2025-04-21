@@ -32,9 +32,6 @@ std::vector<std::string> faces = {
 
 App::App(Window& window)
     : m_window(window),
-    cubes(100),
-    plane(Utils::generatePlane(100, 100)),
-    obj(&plane, DrawMode::ELEMENTS),
     shadowMap(1024, 1024),
     m_skybox(faces)
 {
@@ -53,90 +50,129 @@ App::App(Window& window)
             glm::vec3 cameraPos = w.getCamera().GetPosition();
             glm::vec3 camDir = w.getCamera().GetDirection();
 
-            d.shaderProgram.setVec3("viewPos", cameraPos);
-            d.shaderProgram.setMat4("model", model);
-            //d.shaderProgram.setVec3("norm_matrix", cameraPos);
-            d.shaderProgram.setMat4("mvpmatrix", mvp);
+            d.shaderProgram->setVec3("viewPos", cameraPos);
+            d.shaderProgram->setMat4("model", model);
+            //d.shaderProgram->setVec3("norm_matrix", cameraPos);
+            d.shaderProgram->setMat4("mvpmatrix", mvp);
 
-            d.shaderProgram.setVec3("viewPos", cameraPos);
+            d.shaderProgram->setVec3("viewPos", cameraPos);
 
-            d.shaderProgram.setInt("numPointLights", (int)pointLights.size());
-            d.shaderProgram.setInt("numSpotLights", (int)spotLights.size());
+            d.shaderProgram->setInt("numPointLights", (int)pointLights.size());
+            d.shaderProgram->setInt("numSpotLights", (int)spotLights.size());
 
             for (size_t i = 0; i < pointLights.size(); i++) {
                 std::string index = std::to_string(i);
-                d.shaderProgram.setVec3("pointLights[" + index + "].position"   ,pointLights[i].position);
+                d.shaderProgram->setVec3("pointLights[" + index + "].position"   ,pointLights[i].position);
 
-                d.shaderProgram.setFloat("pointLights[" + index + "].constant"  ,pointLights[i].constant);
-                d.shaderProgram.setFloat("pointLights[" + index + "].linear"    ,pointLights[i].linear);
-                d.shaderProgram.setFloat("pointLights[" + index + "].quadratic" ,pointLights[i].quadratic);
+                d.shaderProgram->setFloat("pointLights[" + index + "].constant"  ,pointLights[i].constant);
+                d.shaderProgram->setFloat("pointLights[" + index + "].linear"    ,pointLights[i].linear);
+                d.shaderProgram->setFloat("pointLights[" + index + "].quadratic" ,pointLights[i].quadratic);
 
-                d.shaderProgram.setVec3("pointLights[" + index + "].ambient"    ,pointLights[i].ambient);
-                d.shaderProgram.setVec3("pointLights[" + index + "].diffuse"    ,pointLights[i].diffuse);
-                d.shaderProgram.setVec3("pointLights[" + index + "].specular"   ,pointLights[i].specular);
+                d.shaderProgram->setVec3("pointLights[" + index + "].ambient", pointLights[i].ambient);
+                d.shaderProgram->setVec3("pointLights[" + index + "].diffuse", pointLights[i].diffuse);
+                d.shaderProgram->setVec3("pointLights[" + index + "].specular"   ,pointLights[i].specular);
 
             }
 
             for (size_t i = 0; i < spotLights.size(); i++) {
                 std::string index = std::to_string(i);
-                d.shaderProgram.setVec3("spotLights[" + index + "].position"     ,cameraPos            );
-                d.shaderProgram.setVec3("spotLights[" + index + "].direction"    ,camDir               );
+                d.shaderProgram->setVec3("spotLights[" + index + "].position"     ,cameraPos            );
+                d.shaderProgram->setVec3("spotLights[" + index + "].direction"    ,camDir               );
 
-                d.shaderProgram.setFloat("spotLights[" + index + "].constant"    ,spotLights[i].constant);      
-                d.shaderProgram.setFloat("spotLights[" + index + "].linear"      ,spotLights[i].linear);
-                d.shaderProgram.setFloat("spotLights[" + index + "].quadratic"   ,spotLights[i].quadratic);
-                d.shaderProgram.setFloat("spotLights[" + index + "].cutOff"      ,spotLights[i].cutOff);
-                d.shaderProgram.setFloat("spotLights[" + index + "].outerCutOff" ,spotLights[i].outerCutOff);
+                d.shaderProgram->setFloat("spotLights[" + index + "].constant"    ,spotLights[i].constant);      
+                d.shaderProgram->setFloat("spotLights[" + index + "].linear"      ,spotLights[i].linear);
+                d.shaderProgram->setFloat("spotLights[" + index + "].quadratic"   ,spotLights[i].quadratic);
+                d.shaderProgram->setFloat("spotLights[" + index + "].cutOff"      ,spotLights[i].cutOff);
+                d.shaderProgram->setFloat("spotLights[" + index + "].outerCutOff" ,spotLights[i].outerCutOff);
 
-                d.shaderProgram.setVec3("spotLights[" + index + "].ambient"      , spotLights[i].ambient);
-                d.shaderProgram.setVec3("spotLights[" + index + "].diffuse"      , spotLights[i].diffuse);
-                d.shaderProgram.setVec3("spotLights[" + index + "].specular"     , spotLights[i].specular);
+                d.shaderProgram->setVec3("spotLights[" + index + "].ambient"      , spotLights[i].ambient);
+                d.shaderProgram->setVec3("spotLights[" + index + "].diffuse"      , spotLights[i].diffuse);
+                d.shaderProgram->setVec3("spotLights[" + index + "].specular"     , spotLights[i].specular);
 
             }
 
-            d.shaderProgram.setVec3("dirLight.direction",   dirLight.direction);
-            d.shaderProgram.setVec3("dirLight.ambient",     dirLight.ambient);
-            d.shaderProgram.setVec3("dirLight.diffuse",     dirLight.diffuse);
-            d.shaderProgram.setVec3("dirLight.specular",    dirLight.specular);
+            d.shaderProgram->setVec3("dirLight.direction",   dirLight.direction);
+            d.shaderProgram->setVec3("dirLight.ambient",     dirLight.ambient);
+            d.shaderProgram->setVec3("dirLight.diffuse",     dirLight.diffuse);
+            d.shaderProgram->setVec3("dirLight.specular",    dirLight.specular);
 
-            d.shaderProgram.setVec4("objectColor", r.getColor());
+            d.shaderProgram->setVec4("objectColor", r.getColor());
 
-            d.shaderProgram.setBool("calculateLight", calculateLightFlag);
-            d.shaderProgram.setBool("calculateShadows", calculateShadows);
-            d.shaderProgram.setBool("hasTexture", hasTextureFlag);
+            d.shaderProgram->setBool("calculateLight", calculateLightFlag);
+            d.shaderProgram->setBool("calculateShadows", calculateShadows);
+            d.shaderProgram->setBool("hasTexture", hasTextureFlag);
         };
 
-    currentRenderData.uniformUpdater = func;
+    //currentRenderData.uniformUpdater = func;
+    glm::mat4 projection = glm::ortho(
+        0.0f, static_cast<float>(m_window.getWidth()),
+        0.0f, static_cast<float>(m_window.getHeight()),
+        -1.0f, 1.0f
+    );
+
+    auto pointfunc = [&](Renderable& r, RenderData& d, Window& w)
+        {
+            d.shaderProgram->setMat4("modelMatrix", glm::mat4(1));
+
+            d.shaderProgram->setMat4("projectionMatrix", w.getProjectionMatrix());
+            d.shaderProgram->setMat4("viewMatrix", w.getViewMatrix());
+        };  
+    currentRenderData.uniformUpdater = pointfunc;
+    currentRenderData.drawMode = DrawMode::ARRAYS;
+    currentRenderData.primitiveType = PrimitiveType::POINTS;
 
     srand(777);
 
-    randomCubes();
+    m_window.getCamera().SetPosition(glm::vec3(0, 0, 0));
+    points.resize(100);
+    for (int i = 0; i < points.size(); ++i) {
+        points[i].position = glm::vec3(i * 0.018, 0.f, 1.0f); // cokolwiek
+        points[i].mass = 10;
+        points[i].invMass = 1/points[i].mass;
+    }
+    std::vector<glm::vec3> positions;
+    positions.reserve(points.size());
 
-    m_window.getCamera().SetPosition(glm::vec3(0, 1, 3));
-    s.addTexture(&earthText, 0);
-    Miku.loadModel("resources\\crusader.max");
-    Miku2.loadModel("resources\\miku.obj");
-    Miku.m_drawMode = DrawMode::ELEMENTS;
-    Miku.m_primType = PrimitiveType::TRIANGLES;
-    Miku2.m_drawMode = DrawMode::ELEMENTS;
-    Miku2.m_primType = PrimitiveType::TRIANGLES;
-    Miku.setColor(glm::vec4(1, 0, 1, 1));
+    for (const auto& p : points) {
+        positions.push_back(p.position);
+    }
+
+    pointsVBO.setBufferType(GL_ARRAY_BUFFER);
+    pointsVBO.CreateVBO();
+    pointsVBO.Bind();
+    pointsVBO.UploadDataToGPU(positions.data(), positions.size() * sizeof(glm::vec3), GL_DYNAMIC_DRAW);
     
-    Miku.setPosition(2,0,0);
-    Miku.rotate(-90, Axis::X);
-    Miku.addTexture(&wallText, 0);
-    Miku.addTexture(&mikuText2, 1);
-    Miku.addTexture(&mikuText, 2);
-
-    Miku2.addTexture(&wallText, 0);
-    Miku2.addTexture(&wallText, 1);
-    Miku2.addTexture(&wallText, 2);
-    Miku2.setScale(0.1, 0.1, 0.1);
-
-   // Miku.setScale(0.1f, 0.1f, 0.1f);  // Dostosuj skalê
-
+    VertexBufferLayout layout;
+    layout.Push<GLfloat>(3);
+    pointsVAO.AddBuffer(pointsVBO, layout);
+    pointsRenderable.setVAO(&pointsVAO);
+    m_window.getWidth();
+    gravitation.x = -1;
 }
 
+void App::calculateForces()
+{
+    for (auto& point : points)
+    {
+        if ( !(point.flag & P_ZAW))
+        {
+            point.force = gravitation * point.mass;
+        }
+    }
+}
+void App::calculateEuler(float dt)
+{
+    for (auto& point : points)
+    {
+        if (!(point.flag & P_ZAW))
+        {
+            point.dv = W_Euler(point.force * point.invMass, dt);
+            point.speed += point.dv;
+            point.dr = point.speed * dt;
+            point.position += point.dr;
+        }
+    }
+}
 void App::renderShadows()
 {
     //glm::mat4 lightProjection = glm::ortho(
@@ -173,58 +209,59 @@ void App::renderShadows()
 
 void App::run()
 {
+    int oldTime = 0;
     while (isRunning())
     {
+        int timeStart = glfwGetTime();
+        int delta = timeStart - oldTime;
+        oldTime = timeStart;
         processInput();
-        update();
+        update(0.005);
         renderShadows();
         render();
         printFPS();
     }
 }
 
+
+bool calculate = false;
 void App::processInput() 
 {
     m_window.processInput(0.05f);
     if (m_window.shouldClose())
         m_app_running = false;
+    if (glfwGetKey(m_window.getWindowHandle(), GLFW_KEY_SPACE) == GLFW_PRESS) {
+        calculate = !calculate;
+    }
 }
 
-void App::update()
+void App::update(float dt)
 {
     float t = glfwGetTime();
+    if (calculate) {
+        calculateForces();
+        calculateEuler(dt);
+        }
+    std::vector<glm::vec3> positions;
+    positions.reserve(points.size());
+
+    for (const auto& p : points) {
+        positions.push_back(p.position);
+    }
+
+    currentRenderData.vertexCount = positions.size();
+    pointsVBO.UploadDataToGPU(positions.data(), positions.size() * sizeof(glm::vec3), GL_DYNAMIC_DRAW);
 
     m_window.getCamera().Update();
-   // s.setAngle(sin(t) * 180);
 }
 
 void App::render()
 {
    m_window.clear();
-
-   //currentRenderData.shaderProgram.use();
-   //shadowMap.BindForRead(GL_TEXTURE0);
-   //
-   //currentRenderData.shaderProgram.setInt("shadowMap", 0);
-   //currentRenderData.shaderProgram.setMat4("lightSpaceMatrix", lightSpaceMatrix);
    
-   m_skybox.render(skyboxShader, m_window.getViewMatrix(), m_window.getCamera().GetProjectionMatrix());
-   //currentRenderData.shaderProgram.setBool("hasTexture", hasTextureFlag);
-
-   for (int i = 0; i < cubes.size(); i++) {
-       auto& cube = cubes[i];
-       
-       m_window.draw(cube, currentRenderData);
-   }
-   m_window.draw(s, currentRenderData);
-   m_window.draw(Miku, currentRenderData);
-   hasTextureFlag = false;
-   m_window.draw(Miku2, currentRenderData);
-   hasTextureFlag = true;
-
+   m_window.draw(pointsRenderable, currentRenderData);
+   
    openGlFLags();
-   
-   renderImGui();
 
    m_window.display();
 }
@@ -236,58 +273,6 @@ void App::renderImGui()
     ImGui::NewFrame();
 
     ImGui::Begin("Shadow Map Controls");
-
-    // Kontrola pozycji œwiat³a z przyciskami +/-
-    ImGui::Text("Light Settings");
-    ImGui::PushID("LightPos");
-    {
-        ImGui::Text("Light Position:");
-        ImGui::SliderFloat("X", &dirLight.position.x, -50.0f, 50.0f);
-        ImGui::SameLine(); if (ImGui::SmallButton("-1")) pointLights[0].position.x -= 1.0f;
-        ImGui::SameLine(); if (ImGui::SmallButton("+1")) pointLights[0].position.x += 1.0f;
-
-        ImGui::SliderFloat("Y", &dirLight.position.y, -50.0f, 50.0f);
-        ImGui::SameLine(); if (ImGui::SmallButton("-1")) pointLights[0].position.y -= 1.0f;
-        ImGui::SameLine(); if (ImGui::SmallButton("+1")) pointLights[0].position.y += 1.0f;
-
-        ImGui::SliderFloat("Z", &dirLight.position.z, -50.0f, 50.0f);
-        ImGui::SameLine(); if (ImGui::SmallButton("-1")) pointLights[0].position.z -= 1.0f;
-        ImGui::SameLine(); if (ImGui::SmallButton("+1")) pointLights[0].position.z += 1.0f;
-    }
-    ImGui::PopID();
-
-    // Kontrola celu œwiat³a z przyciskami +/-
-    ImGui::PushID("LightTarget");
-    {
-        ImGui::Text("Light Target:");
-        ImGui::SliderFloat("X##Target", &dirLight.direction.x, -50.0f, 50.0f);
-        ImGui::SameLine(); if (ImGui::SmallButton("-1##TX")) lightTarget.x -= 1.0f;
-        ImGui::SameLine(); if (ImGui::SmallButton("+1##TX")) lightTarget.x += 1.0f;
-
-        ImGui::SliderFloat("Y##Target", &dirLight.direction.y, -50.0f, 50.0f);
-        ImGui::SameLine(); if (ImGui::SmallButton("-1##TY")) lightTarget.y -= 1.0f;
-        ImGui::SameLine(); if (ImGui::SmallButton("+1##TY")) lightTarget.y += 1.0f;
-
-        ImGui::SliderFloat("Z##Target", &dirLight.direction.z, -50.0f, 50.0f);
-        ImGui::SameLine(); if (ImGui::SmallButton("-1##TZ")) lightTarget.z -= 1.0f;
-        ImGui::SameLine(); if (ImGui::SmallButton("+1##TZ")) lightTarget.z += 1.0f;
-    }
-    ImGui::PopID();
-
-    // Kontrola parametrów rzutowania z przyciskami +/-
-    ImGui::Text("Projection Settings");
-    ImGui::SliderFloat("Near Plane", &lightNear, 0.1f, 50.0f);
-    ImGui::SameLine(); if (ImGui::SmallButton("-1##Near")) lightNear = glm::max(0.1f, lightNear - 1.0f);
-    ImGui::SameLine(); if (ImGui::SmallButton("+1##Near")) lightNear += 1.0f;
-
-    ImGui::SliderFloat("Far Plane", &lightFar, 50.0f, 500.0f);
-    ImGui::SameLine(); if (ImGui::SmallButton("-1##Far")) lightFar = glm::max(lightNear + 1.0f, lightFar - 1.0f);
-    ImGui::SameLine(); if (ImGui::SmallButton("+1##Far")) lightFar += 1.0f;
-
-    ImGui::SliderFloat("Ortho Size", &orthoSize, 10.0f, 200.0f);
-    ImGui::SameLine(); if (ImGui::SmallButton("-1##Ortho")) orthoSize = glm::max(1.0f, orthoSize - 1.0f);
-    ImGui::SameLine(); if (ImGui::SmallButton("+1##Ortho")) orthoSize += 1.0f;
-
     ImGui::End();
 
     ImGui::Render();
@@ -296,65 +281,32 @@ void App::renderImGui()
 
 void App::openGlFLags()
 {
+    glPointSize(5.f);
+    glEnable(GL_POINT_SMOOTH);
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);glCullFace(GL_BACK);glFrontFace(GL_CW);
     glDepthFunc(GL_LEQUAL);
-}
-
-void App::randomCubes()
-{
-    int BOUND_X = 15;
-    int BOUND_Y = 0;
-    int BOUND_Z = 15;
-
-    for (int i = 0; i < cubes.size(); i++) {
-        auto& cube = cubes[i];
-    
-        // Losowanie pozycji
-        float x = rand() % (BOUND_X + 1 - (-BOUND_X)) + (-BOUND_X);
-        float y = rand() % (BOUND_Y + 1 - (-BOUND_Y)) + (-BOUND_Y);
-        float z = rand() % (BOUND_Z + 1 - (-BOUND_Z)) + (-BOUND_Z);
-    
-        cube.addTexture(&wallText, 0);
-        cube.setPosition(x, y + 2.55, z);
-    
-        float angleX = rand() % 360;
-        float angleY = rand() % 360;
-        float angleZ = rand() % 360;
-    
-        cube.rotate(angleX, Axis::X);
-        cube.rotate(angleY, Axis::Y);
-        cube.rotate(angleZ, Axis::Z);
-        x = rand() % 255;
-        y = rand() % 255;
-        z = rand() % 255;
-    
-        cube.setColor(glm::vec4(1, 0, 0, 0));
-    }
 }
 
 void App::initializeShaders()
 {
+    mainShader.addShader("shaders\\vert\\vertShader2.glsl", GL_VERTEX_SHADER);
+    mainShader.addShader("shaders\\frag\\fragShader2.glsl", GL_FRAGMENT_SHADER);
+    mainShader.linkProgram();
 
-    currentRenderData.shaderProgram.addShader("shaders\\vert\\vertShader2.glsl", GL_VERTEX_SHADER);
-    currentRenderData.shaderProgram.addShader("shaders\\frag\\fragShader2.glsl", GL_FRAGMENT_SHADER);
-    currentRenderData.shaderProgram.linkProgram();
-
-    //shadowView.addShader("shaders\\vert\\viewShadowVert.glsl", GL_VERTEX_SHADER);
-    //shadowView.addShader("shaders\\frag\\viewShadowFrag.glsl", GL_FRAGMENT_SHADER);
-    //shadowView.linkProgram();
-
-    //shadowShader.addShader("shaders\\vert\\shadowsVert.glsl", GL_VERTEX_SHADER);
-    //shadowShader.addShader("shaders\\frag\\shadowsFrag.glsl", GL_FRAGMENT_SHADER);
-    //shadowShader.linkProgram();
+    pointsShader.addShader("shaders\\vert\\pointsShaderVert.glsl", GL_VERTEX_SHADER);
+    pointsShader.addShader("shaders\\frag\\pointsShaderFrag.glsl", GL_FRAGMENT_SHADER);
+    pointsShader.linkProgram();
 
     skyboxShader.addShader("shaders\\vert\\cubemapVert.glsl", GL_VERTEX_SHADER);
     skyboxShader.addShader("shaders\\frag\\cubemapFrag.glsl", GL_FRAGMENT_SHADER);
     skyboxShader.linkProgram();
+
+    currentRenderData.shaderProgram = &pointsShader;
 }
 
 void App::installLights()
 {
+    SpotLight light;
     light.position = { 0, 4, 5 };
     dirLight.direction = { 30, -10, 0 };
 

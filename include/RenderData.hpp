@@ -1,14 +1,10 @@
 #ifndef RENDER_DATA_HPP
 #define RENDER_DATA_HPP
 
-#include "Shader.hpp"
-#include "Transform.hpp"
-#include "VertexArray.hpp"
-#include "VertexBufferLayout.hpp"
+#include <Shader.hpp>
+#include <Transform.hpp>
 #include <memory>
-#include <Window.hpp>
 #include <functional>
-
 
 class Window;
 
@@ -22,7 +18,8 @@ enum class PrimitiveType {
     TRIANGLES,
     QUADS,
     TRIANGLE_FAN,
-    TRIANGLE_STRIP
+    TRIANGLE_STRIP,
+    POINTS
 };
 
 inline GLenum GetGLPrimitiveType(PrimitiveType type) {
@@ -31,20 +28,18 @@ inline GLenum GetGLPrimitiveType(PrimitiveType type) {
     case PrimitiveType::QUADS:          return GL_QUADS;
     case PrimitiveType::TRIANGLE_FAN:   return GL_TRIANGLE_FAN;
     case PrimitiveType::TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
+    case PrimitiveType::POINTS:         return GL_POINTS; 
     default:                            return GL_TRIANGLES; // Fallback
     }
 }
 
-struct RenderData {
-    //RenderData(const Shader& shader, const Transform& transform, const VertexBufferLayout& layout);
-    //RenderData(const Shader& shader, const Transform& transform);
-    //RenderData(const Shader& shader);
+struct RenderData { 
     RenderData() = default;
 
     std::function<void(Renderable&, RenderData&, Window&)> uniformUpdater = nullptr;
+    std::function<void()> GenericUniformUpdater = nullptr;
 
-    Shader shaderProgram;
-
+    Shader* shaderProgram = nullptr;
 
     GLuint instancedDrawModeSize = 0;
     GLuint startPosition = 0;

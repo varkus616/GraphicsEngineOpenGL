@@ -1,3 +1,4 @@
+#pragma once
 #ifndef UTILITIES_HPP
 #define UTILITIES_HPP
 
@@ -5,6 +6,13 @@
 #define GLCall(x) Utils::GLClearError();\
 	x;\
 	ASSERT(Utils::GLLogCall(#x, __FILE__, __LINE__));
+
+#define FOR(q,n) for(int q=0;q<n;q++)
+#define SFOR(q,s,e) for(int q=s;q<=e;q++)
+#define RFOR(q,n) for(int q=n;q>=0;q--)
+#define RSFOR(q,s,e) for(int q=s;q>=e;q--)
+
+#define ESZ(elem) (int)elem.size()
 
 
 #include "glm/glm.hpp"

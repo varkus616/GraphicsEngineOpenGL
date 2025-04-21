@@ -12,6 +12,8 @@
 #include <Light.hpp>
 #include <ShadowMapFBO.hpp>
 #include <Cubemap.hpp>
+#include <GenericRenderable.hpp>
+#include <Physics.hpp>
 
 class App
 {
@@ -24,54 +26,39 @@ public:
 	const Window& getWindow()const { return m_window; }
 	
 	void processInput();
-	void update();
+	void update(float dt);
 	void render();
 	void renderShadows();
 	void renderImGui();
 
+	RenderData currentRenderData;
 	Window& m_window;
-	Texture wallText = Texture("resources\\container2.png");
-	Texture earthText = Texture("resources\\earth2048.bmp");
-	Texture mikuText = Texture("resources\\mikuText1.png");
-	Texture mikuText2 = Texture("resources\\mikuText2.png");
-
-	Mesh	plane;
 	Cubemap m_skybox;
 
-	RenderableObject obj;
-	RenderableObject Miku;
-	RenderableObject Miku2;
-	Sphere s;
-	std::vector<Cube> cubes;
-	RenderData currentRenderData;
-
-	SpotLight light;
 	DirLight dirLight;
 
 	std::vector<PointLight> pointLights;
 	std::vector<SpotLight> spotLights;
 
-	Material material;
+	Shader mainShader;
+	Shader pointsShader;
 	Shader shadowShader;
 	Shader shadowView;
 	Shader skyboxShader;
 
 	ShadowMapFBO shadowMap;
-	float w = m_window.getWidth();
-	float h = m_window.getHeight();
-
-	float orthoSize = 120.0f;
-	float lightNear = 1;
-	float lightFar = 1500;
-
-	glm::vec3 lightTarget;
 	bool m_app_running = true;
 
+	std::vector<Point> points;
+	glm::vec3 gravitation;
+	VertexBuffer pointsVBO;
+	VertexArray pointsVAO;
+	GenericRenderable pointsRenderable;
 
 private:
-
+	void calculateForces();
+	void calculateEuler(float dt);
 	void initializeShaders();
-	void randomCubes();
 	void installLights();
 	void openGlFLags();
 	void initShadows();

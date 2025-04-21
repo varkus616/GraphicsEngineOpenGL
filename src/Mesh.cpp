@@ -1,32 +1,34 @@
 ﻿#include "Mesh.hpp"
 #include <Texture.hpp>
 
-Mesh::Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
+Mesh::  Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
     const std::vector<GLuint>& indices,
-    const VertexBufferLayout& layout)
-    : m_VBO(vertexData, vertexCount * vertexSize),
-    m_EBO(indices.data(), indices.size() * sizeof(GLuint)),
+    const VertexBufferLayout& layout,
+    GLint bufferType)
+    : m_VBO(vertexData, vertexCount * vertexSize, vertexSize),
+    m_EBO(indices.data(), indices.size() * sizeof(GLuint), sizeof(GLuint)),
     m_layout(layout),
     m_vertexCount(vertexCount),
     m_indexCount(indices.size())
 {
-    setupBuffers();
+    setupBuffers(bufferType);
 }
 
 Mesh::Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
-    const VertexBufferLayout& layout)
-    : m_VBO(vertexData, vertexCount* vertexSize),
-    m_EBO(nullptr, 0),
+    const VertexBufferLayout& layout,
+    GLint bufferType)
+    : m_VBO(vertexData, vertexCount* vertexSize, vertexSize),
+    m_EBO(nullptr, 0, 0),
     m_layout(layout),
     m_vertexCount(vertexCount),
     m_indexCount(0)
 {
-    setupBuffers();
+    setupBuffers(bufferType);
 }
 
 Mesh::Mesh() :
-    m_VBO(0, 0),
-    m_EBO(0, 0)
+    m_VBO(0, 0, 0),
+    m_EBO(0, 0, 0)
 {
 }
 
@@ -64,10 +66,13 @@ Mesh& Mesh::operator=(const Mesh& other)
     return *this;
 }
 
-void Mesh::setupBuffers() {
+void Mesh::setupBuffers(GLint bufferType) {
+    m_EBO.setBufferType(GL_ELEMENT_ARRAY_BUFFER);
+    m_VBO.setBufferType(bufferType);
+    
     m_EBO.Bind();
     m_VAO.AddBuffer(m_VBO, m_layout);
-        m_VAO.Unbind();
+    m_VAO.Unbind();
 }
 
 void Mesh::bindBuffers()
@@ -120,7 +125,7 @@ Mesh Mesh::CreateWithPositions(const std::vector<glm::vec3>& positions) {
     VertexBufferLayout layout;
     layout.Push<GLfloat>(3); // Position
 
-    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), layout);
+    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), layout, GL_ARRAY_BUFFER);
 }
 
 Mesh Mesh::CreateWithPositionsAndColors(const std::vector<glm::vec3>& positions,
@@ -142,7 +147,7 @@ Mesh Mesh::CreateWithPositionsAndColors(const std::vector<glm::vec3>& positions,
     layout.Push<GLfloat>(3); // Position
     layout.Push<GLfloat>(4); // Color
 
-    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), layout);
+    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), layout, GL_ARRAY_BUFFER);
 }
 
 Mesh Mesh::CreateWithPositionsAndNormals(const std::vector<glm::vec3>& positions,
@@ -164,7 +169,7 @@ Mesh Mesh::CreateWithPositionsAndNormals(const std::vector<glm::vec3>& positions
     layout.Push<GLfloat>(3); // Position
     layout.Push<GLfloat>(3); // Normal
 
-    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), layout);
+    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), layout, GL_ARRAY_BUFFER);
 }
 
 
@@ -192,7 +197,7 @@ Mesh Mesh::CreateWithPositionsNormalsAndTextures(const std::vector<glm::vec3>& p
     layout.Push<GLfloat>(3); // Normal
     layout.Push<GLfloat>(2); // Normal
 
-    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), layout);
+    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), layout, GL_ARRAY_BUFFER);
 }
 
 
@@ -225,5 +230,5 @@ Mesh Mesh::CreateWithFullData(const std::vector<glm::vec2>& uvs,
     layout.Push<GLfloat>(3); // Normal
     layout.Push<GLfloat>(4); // Color
 
-    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), indices, layout);
+    return Mesh(vertices.data(), vertices.size(), sizeof(Vertex), indices, layout, GL_ARRAY_BUFFER);
 }

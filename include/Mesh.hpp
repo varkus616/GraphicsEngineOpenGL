@@ -8,7 +8,6 @@
 #include <VertexArray.hpp>
 #include <VertexBuffer.hpp>
 #include <VertexBufferLayout.hpp>
-#include <IndexBuffer.hpp>
 #include <Texture.hpp>
 
 
@@ -18,10 +17,12 @@ public:
 public:
     Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
         const std::vector<GLuint>& indices,
-        const VertexBufferLayout& layout);
+        const VertexBufferLayout& layout,
+        GLint bufferType);
 
     Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
-        const VertexBufferLayout& layout); // bez indeksów
+        const VertexBufferLayout& layout,
+        GLint bufferType); // bez indeksów
 
     Mesh();
 
@@ -51,7 +52,7 @@ public:
         const std::vector<GLuint>& indices);
 
 
-    void setupBuffers();
+    void setupBuffers(GLint bufferType);
     void bindTextures() const;
     void unbindTextures() const;
     void addTexture(const Texture* texture);
@@ -59,7 +60,7 @@ public:
     void unbindBuffers();
 
     VertexBuffer& getBuffer()  { return m_VBO; }
-    IndexBuffer&  getIndexBuffer() { return m_EBO; }
+    VertexBuffer&  getIndexBuffer() { return m_EBO; }
     VertexArray&  getVertexArray() { return m_VAO; }
 
     const GLuint getVertexCount() const { return m_vertexCount; }
@@ -72,9 +73,7 @@ private:
     VertexBufferLayout m_layout;
     VertexArray     m_VAO;
     VertexBuffer    m_VBO;
-    IndexBuffer     m_EBO;
-    
-
+    VertexBuffer    m_EBO;
 };
 #endif // !MESH_HPP
 

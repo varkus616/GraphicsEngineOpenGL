@@ -145,106 +145,6 @@ std::vector<glm::vec2> cubeTextCoords =
 	{0.0f, 1.0f},
 };
 
-// Trójkąt
-std::vector<glm::vec3> trianglePositions =
-{
-	{0.0f,  0.5f,  0.0f},  // Wierzchołek 1
-	{-0.5f, -0.5f,  0.0f}, // Wierzchołek 2
-	{0.5f, -0.5f,  0.0f},  // Wierzchołek 3
-};
-
-std::vector<glm::vec3> triangleNormals =
-{
-	{0.0f, 0.0f, 1.0f}, // Normalna w górę
-	{0.0f, 0.0f, 1.0f}, // Normalna w górę
-	{0.0f, 0.0f, 1.0f}, // Normalna w górę
-};
-
-std::vector<glm::vec2> triangleTextCoords =
-{
-	{0.5f, 1.0f}, // Wierzchołek 1
-	{0.0f, 0.0f}, // Wierzchołek 2
-	{1.0f, 0.0f}, // Wierzchołek 3
-};
-
-// Kwadrat
-std::vector<glm::vec3> squarePositions =
-{
-	{-0.5f, -0.5f,  0.0f}, // Lewy dolny róg
-	{ 0.5f, -0.5f,  0.0f}, // Prawy dolny róg
-	{ 0.5f,  0.5f,  0.0f}, // Prawy górny róg
-	{ 0.5f,  0.5f,  0.0f}, // Prawy górny róg
-	{-0.5f,  0.5f,  0.0f}, // Lewy górny róg
-	{-0.5f, -0.5f,  0.0f}, // Lewy dolny róg
-};
-
-std::vector<glm::vec3> squareNormals =
-{
-	{0.0f, 0.0f, 1.0f}, // Wszystkie normalne w stronę kamery
-	{0.0f, 0.0f, 1.0f},
-	{0.0f, 0.0f, 1.0f},
-	{0.0f, 0.0f, 1.0f},
-	{0.0f, 0.0f, 1.0f},
-	{0.0f, 0.0f, 1.0f},
-};
-
-std::vector<glm::vec2> squareTextCoords =
-{
-	{0.0f, 0.0f}, // Lewy dolny róg
-	{1.0f, 0.0f}, // Prawy dolny róg
-	{1.0f, 1.0f}, // Prawy górny róg
-	{1.0f, 1.0f}, // Prawy górny róg
-	{0.0f, 1.0f}, // Lewy górny róg
-	{0.0f, 0.0f}, // Lewy dolny róg
-};
-
-// Piramida (prosta piramida o podstawie kwadratu)
-std::vector<glm::vec3> pyramidPositions =
-{
-	// Podstawa piramidy (kwadrat)
-	{-0.5f, -0.5f, -0.5f}, // Lewy dolny róg
-	{ 0.5f, -0.5f, -0.5f}, // Prawy dolny róg
-	{ 0.5f, -0.5f,  0.5f}, // Prawy górny róg
-	{-0.5f, -0.5f,  0.5f}, // Lewy górny róg
-
-	// Wierzchołek piramidy
-	{0.0f,  0.5f,  0.0f},  // Wierzchołek
-};
-
-
-//std::vector<glm::vec3> pyramidPositions =
-//{ {-1.0f, -1.0f, 1.0f}, {1.0f, -1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, // front face
-//{1.0f, -1.0f, 1.0f}, {1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, // right face
-//{1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, // back face
-//{-1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, // left face
-//{-1.0f, -1.0f, -1.0f}, {1.0f, -1.0f, 1.0f}, {-1.0f, -1.0f, 1.0f}, // base – left front
-//{1.0f, -1.0f, 1.0f}, {-1.0f, -1.0f, -1.0f}, {1.0f, -1.0f, -1.0f }// base – right back
-//};
-
-std::vector<glm::vec3> pyramidNormals =
-{
-	{0.0f, -1.0f, 0.0f}, // Normalna do podstawy
-	{0.0f, -1.0f, 0.0f},
-	{0.0f, -1.0f, 0.0f},
-	{0.0f, -1.0f, 0.0f},
-
-	// Normalne do ścian piramidy (na przykład wektor skierowany w górę w stronę wierzchołka)
-	{0.0f,  1.0f,  0.0f},
-};
-
-std::vector<glm::vec2> pyramidTextCoords =
-{
-	{0.0f, 0.0f}, // Lewy dolny róg
-	{1.0f, 0.0f}, // Prawy dolny róg
-	{1.0f, 1.0f}, // Prawy górny róg
-	{0.0f, 1.0f}, // Lewy górny róg
-
-	// Wierzchołek piramidy
-	{0.5f, 0.5f}, // Wierzchołek
-};
-
-
-
 const Mesh CreateSphere(GLfloat radius, GLint stackCount, GLint sectorCount) {
 
 	struct Vertex {
@@ -308,5 +208,5 @@ const Mesh CreateSphere(GLfloat radius, GLint stackCount, GLint sectorCount) {
 	layout.Push<GLfloat>(3);
 	layout.Push<GLfloat>(3);
 	layout.Push<GLfloat>(2);
-	return 	Mesh(vertices.data(), vertices.size(), sizeof(Vertex), indices, layout);
+	return 	Mesh(vertices.data(), vertices.size(), sizeof(Vertex), indices, layout, GL_ARRAY_BUFFER);
 }

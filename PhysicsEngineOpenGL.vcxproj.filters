@@ -63,9 +63,6 @@
     <ClCompile Include="src\VertexBuffer.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\IndexBuffer.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="src\Utilities.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
@@ -117,6 +114,9 @@
     <ClCompile Include="src\Physics.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="src\GenericRenderable.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\glew64.dll" />
@@ -138,10 +138,10 @@
     <None Include="shaders\vert\shadowsVert.glsl">
       <Filter>Shaders\Vert</Filter>
     </None>
-    <None Include="shaders\frag\viewShadowFrag.glsl">
+    <None Include="shaders\frag\pointsShaderFrag.glsl">
       <Filter>Shaders\Frag</Filter>
     </None>
-    <None Include="shaders\vert\viewShadowVert.glsl">
+    <None Include="shaders\vert\pointsShaderVert.glsl">
       <Filter>Shaders\Vert</Filter>
     </None>
     <None Include="shaders\frag\cubemapFrag.glsl">
@@ -183,9 +183,6 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="include\VertexBuffer.hpp">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IndexBuffer.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="include\Utilities.hpp">
@@ -267,6 +264,9 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="include\Physics.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GenericRenderable.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,7 +3,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include <Utilities.hpp>
-#include <IndexBuffer.hpp>
 #include <functional>
 
 Window::Window(RenderContext& context, int width, int height, const std::string& title)
@@ -22,10 +21,10 @@ Window::Window(RenderContext& context, int width, int height, const std::string&
     context.createContext(m_window);
     initialize(m_window);
 
-    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos) {
-        static_cast<Window*>(glfwGetWindowUserPointer(window))->mouseCallback(xpos, ypos);
-        });
+    //glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos) {
+    //    static_cast<Window*>(glfwGetWindowUserPointer(window))->mouseCallback(xpos, ypos);
+    //    });
     glfwSetWindowUserPointer(m_window, this);
 }
 
@@ -67,9 +66,21 @@ void Window::clear(const Color& color) {
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
+//void Window::drawGeneric(const VertexArray& VAO, RenderData& data)
+//{
+//    if (data.shaderProgram)
+//        data.shaderProgram->use();
+//
+//    if (data.uniformUpdater)
+//        data.GenericUniformUpdater();
+//    
+//    this->draw(VAO, data);
+//}
+
 void Window::draw(Renderable& renderable, RenderData& data)
 {
-    data.shaderProgram.use();
+    if (data.shaderProgram)
+        data.shaderProgram->use();
 
     if (data.uniformUpdater)
         data.uniformUpdater(renderable, data, *this);
@@ -129,35 +140,33 @@ void Window::processInput(float deltaTime) {
     //    glfwSetInputMode(m_window, GLFW_CURSOR, m_enableMouseControl ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     //}
     
-    if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-        m_camera.Walk(deltaTime);
-    if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        m_camera.Walk(-deltaTime);
-    if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-        m_camera.Strafe(-deltaTime);
-    if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-        m_camera.Strafe(deltaTime);
-    if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        m_camera.Lift(deltaTime);
-    if (glfwGetKey(m_window, GLFW_KEY_G) == GLFW_PRESS)
-        m_camera.Lift(-deltaTime);
-    
-    if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
-        m_camera.Rotate(deltaTime, 0, 0);
-    if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
-        m_camera.Rotate(-deltaTime, 0, 0);
-    
-    if (glfwGetKey(m_window, GLFW_KEY_Z) == GLFW_PRESS)
-        m_camera.Rotate(0, deltaTime, 0);
-    if (glfwGetKey(m_window, GLFW_KEY_X) == GLFW_PRESS)
-        m_camera.Rotate(0, -deltaTime, 0);
-
-    if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS) {
-        m_camera.ResetRotation();
-        m_camera.SetPosition(glm::vec3(0.f, 0.f, 0.f));
-    }
-
-
+    //if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+    //    m_camera.Walk(deltaTime);
+    //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+    //    m_camera.Walk(-deltaTime);
+    //if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+    //    m_camera.Strafe(-deltaTime);
+    //if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+    //    m_camera.Strafe(deltaTime);
+    //if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    //    m_camera.Lift(deltaTime);
+    //if (glfwGetKey(m_window, GLFW_KEY_G) == GLFW_PRESS)
+    //    m_camera.Lift(-deltaTime);
+    //
+    //if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+    //    m_camera.Rotate(deltaTime, 0, 0);
+    //if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+    //    m_camera.Rotate(-deltaTime, 0, 0);
+    //
+    //if (glfwGetKey(m_window, GLFW_KEY_Z) == GLFW_PRESS)
+    //    m_camera.Rotate(0, deltaTime, 0);
+    //if (glfwGetKey(m_window, GLFW_KEY_X) == GLFW_PRESS)
+    //    m_camera.Rotate(0, -deltaTime, 0);
+    //
+    //if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS) {
+    //    m_camera.ResetRotation();
+    //    m_camera.SetPosition(glm::vec3(0.f, 0.f, 0.f));
+    //}
 }
 
 void Window::mouseCallback(double xpos, double ypos) {
