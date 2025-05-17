@@ -53,6 +53,7 @@ public:
     void processMouseScroll(float yoffset);
 
     const glm::mat4& getProjectionMatrix() const;
+    const glm::mat4& getOrthographicMatrix() const;
     const glm::mat4& getViewMatrix() const;
 
 private:
@@ -64,7 +65,7 @@ private:
 
     CFreeCamera m_camera;
     glm::mat4 m_projection_matrix;
-
+    glm::mat4 m_orthographic_matrix;
     void initialize(GLFWwindow* window);
 
 };

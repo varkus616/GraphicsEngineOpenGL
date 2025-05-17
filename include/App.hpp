@@ -14,6 +14,9 @@
 #include <Cubemap.hpp>
 #include <GenericRenderable.hpp>
 #include <Physics.hpp>
+#include <SimpleMesh.hpp>
+#include <ResourceManager.hpp>	
+
 
 class App
 {
@@ -25,20 +28,13 @@ public:
 	const bool isRunning()const { return m_app_running; }
 	const Window& getWindow()const { return m_window; }
 	
-	void processInput();
-	void update(float dt);
-	void render();
-	void renderShadows();
-	void renderImGui();
-
 	RenderData currentRenderData;
 	Window& m_window;
 	Cubemap m_skybox;
-
-	DirLight dirLight;
-
+	
 	std::vector<PointLight> pointLights;
 	std::vector<SpotLight> spotLights;
+	DirLight dirLight;
 
 	Shader mainShader;
 	Shader pointsShader;
@@ -47,15 +43,25 @@ public:
 	Shader skyboxShader;
 
 	ShadowMapFBO shadowMap;
-	bool m_app_running = true;
-
-	std::vector<Point> points;
 	glm::vec3 gravitation;
-	VertexBuffer pointsVBO;
-	VertexArray pointsVAO;
-	GenericRenderable pointsRenderable;
+
+	//std::vector<Point> points;
+	//VertexBuffer pointsVBO;
+	//VertexArray pointsVAO;
+	//GenericRenderable pointsRenderable;
+	//SimpleMesh pMesh;
+	SferaN sfera;
+	Cube c;
 
 private:
+	bool m_app_running = true;
+	
+	void processInput();
+	void update(float dt);
+	void render();
+	void renderShadows();
+	void renderImGui();
+
 	void calculateForces();
 	void calculateEuler(float dt);
 	void initializeShaders();

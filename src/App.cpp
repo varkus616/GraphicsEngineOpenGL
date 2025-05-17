@@ -1,12 +1,12 @@
 #include "App.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
 
-bool calculateLightFlag = true;
-bool calculateShadows = false;
-bool hasTextureFlag = true;
-glm::mat4 lightSpaceMatrix;
+    bool calculateLightFlag = true;
+    bool calculateShadows = false;
+    bool hasTextureFlag = true;
+    glm::mat4 lightSpaceMatrix;
 
-void printFPS()
+    void printFPS()
 {
     static double lastTime = glfwGetTime();
     static int frameCount = 0;
@@ -35,10 +35,9 @@ App::App(Window& window)
     shadowMap(1024, 1024),
     m_skybox(faces)
 {
+    srand(777);
     initializeShaders();
-
     installLights();
-
     auto func = [&](Renderable& r, RenderData& d, Window& w) -> void 
         {
             const glm::mat4& proj = w.getProjectionMatrix();
@@ -103,163 +102,148 @@ App::App(Window& window)
             d.shaderProgram->setBool("hasTexture", hasTextureFlag);
         };
 
-    //currentRenderData.uniformUpdater = func;
-    glm::mat4 projection = glm::ortho(
-        0.0f, static_cast<float>(m_window.getWidth()),
-        0.0f, static_cast<float>(m_window.getHeight()),
-        -1.0f, 1.0f
-    );
-
     auto pointfunc = [&](Renderable& r, RenderData& d, Window& w)
         {
-            d.shaderProgram->setMat4("modelMatrix", glm::mat4(1));
-
-            d.shaderProgram->setMat4("projectionMatrix", w.getProjectionMatrix());
-            d.shaderProgram->setMat4("viewMatrix", w.getViewMatrix());
+            d.shaderProgram->setMat4("projectionMatrix", w.getOrthographicMatrix());
+            d.shaderProgram->setMat4("viewMatrix", glm::mat4(1)); //w.getViewMatrix());
         };  
-    currentRenderData.uniformUpdater = pointfunc;
-    currentRenderData.drawMode = DrawMode::ARRAYS;
-    currentRenderData.primitiveType = PrimitiveType::POINTS;
-
-    srand(777);
-
-    m_window.getCamera().SetPosition(glm::vec3(0, 0, 0));
-    points.resize(100);
-    for (int i = 0; i < points.size(); ++i) {
-        points[i].position = glm::vec3(i * 0.018, 0.f, 1.0f); // cokolwiek
-        points[i].mass = 10;
-        points[i].invMass = 1/points[i].mass;
-    }
-    std::vector<glm::vec3> positions;
-    positions.reserve(points.size());
-
-    for (const auto& p : points) {
-        positions.push_back(p.position);
-    }
-
-    pointsVBO.setBufferType(GL_ARRAY_BUFFER);
-    pointsVBO.CreateVBO();
-    pointsVBO.Bind();
-    pointsVBO.UploadDataToGPU(positions.data(), positions.size() * sizeof(glm::vec3), GL_DYNAMIC_DRAW);
+    m_window.getCamera().SetPosition(glm::vec3(0, 0, -8));
+    c.setPosition(0, 0, 0);
+    c.setColor(glm::vec4(255, 255, 0, 0));
     
-    VertexBufferLayout layout;
-    layout.Push<GLfloat>(3);
-    pointsVAO.AddBuffer(pointsVBO, layout);
-    pointsRenderable.setVAO(&pointsVAO);
-    m_window.getWidth();
-    gravitation.x = -1;
+    //`int pointCount = 50;
+    //`float screenWidth = static_cast<float>(m_window.getWidth());
+    //`float step = screenWidth / (pointCount - 1);
+    //`for (int i = 0; i < pointCount; ++i) {
+    //`    float x = i * step;
+    //`    float y = m_window.getHeight(); 
+    //`    Point p(x, y * 0.02, 0.0f);
+    //`    p.mass = 1.f;
+    //`    p.invMass = 1.f / p.mass;
+    //`    points.push_back(p); 
+    //`}
+
+    currentRenderData.uniformUpdater = func;
+    //currentRenderData.drawMode = DrawMode::ARRAYS;
+    //currentRenderData.primitiveType = PrimitiveType::POINTS;
+
+    //VertexBufferLayout layout;
+    //layout.Push<GLfloat>(3);
+    //pMesh.setBufferType(GL_ARRAY_BUFFER);
+    //pMesh.setData(points, GL_DYNAMIC_DRAW);
+    //pMesh.setupBuffers(layout);
+    //pointsRenderable.setMesh(&pMesh);
+
+    //gravitation.y = 1;
+    //
+    //sfera.pos.x = m_window.getWidth() / 2;
+    //sfera.pos.y = m_window.getHeight() / 2;
+    //sfera.tlum = 0;
+    //sfera.R = 200;
+    
+    //s.setPosition(0, 0, -8);
 }
 
 void App::calculateForces()
 {
-    for (auto& point : points)
-    {
-        if ( !(point.flag & P_ZAW))
-        {
-            point.force = gravitation * point.mass;
-        }
-    }
+    //for (auto& point : points)
+    //{
+    //    if ( !(point.flag & P_ZAW))
+    //    {
+    //        point.force = gravitation * point.mass;
+    //    }
+    //}
 }
+
 void App::calculateEuler(float dt)
 {
-    for (auto& point : points)
-    {
-        if (!(point.flag & P_ZAW))
-        {
-            point.dv = W_Euler(point.force * point.invMass, dt);
-            point.speed += point.dv;
-            point.dr = point.speed * dt;
-            point.position += point.dr;
-        }
-    }
-}
-void App::renderShadows()
-{
-    //glm::mat4 lightProjection = glm::ortho(
-    //    -orthoSize, orthoSize,
-    //    -orthoSize, orthoSize,
-    //    lightNear, lightFar);
-    //
-    //glm::mat4 lightView = glm::lookAt(
-    //    glm::vec3(0.0f, 1.0f, 0.0f),
-    //    -dirLight.direction, 
-    //    glm::vec3(0.0f, 1.0f, 0.0f));  
-    //
-    //lightSpaceMatrix = lightProjection * lightView;
-    //shadowMap.BindForWrite();  
-    //
-    //glClear(GL_DEPTH_BUFFER_BIT);
-    //
-    //shadowShader.use();
-    //shadowShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-    //
-    //for (int i = 0; i < cubes.size(); i++) {
-    //    auto& cube = cubes[i];
-    //    shadowShader.setMat4("model",cube.getModelMatrix());
-    //
-    //    m_window.draw(cube, shadowShader);
+    //for (auto& point : points)
+    //{
+    //    if (!(point.flag & P_ZAW))
+    //    {
+    //        point.dv = W_Euler(point.force * point.invMass, dt);
+    //        point.speed += point.dv;
+    //        point.dr = point.speed * dt;
+    //        point.position += point.dr;
+    //    }
     //}
-    //shadowShader.setMat4("model", obj.getModelMatrix());
-    //
-    //m_window.draw(obj, shadowShader);
-    //
-    //shadowMap.Unbind();
-    //glViewport(0, 0, m_window.getWidth(), m_window.getHeight());
- }
+}
 
 void App::run()
 {
-    int oldTime = 0;
     while (isRunning())
     {
-        int timeStart = glfwGetTime();
-        int delta = timeStart - oldTime;
-        oldTime = timeStart;
         processInput();
-        update(0.005);
+        //update(0.005);
         renderShadows();
         render();
-        printFPS();
     }
 }
 
-
-bool calculate = false;
 void App::processInput() 
 {
     m_window.processInput(0.05f);
+    m_window.getCamera().Update();
     if (m_window.shouldClose())
         m_app_running = false;
-    if (glfwGetKey(m_window.getWindowHandle(), GLFW_KEY_SPACE) == GLFW_PRESS) {
-        calculate = !calculate;
-    }
 }
 
 void App::update(float dt)
-{
-    float t = glfwGetTime();
-    if (calculate) {
-        calculateForces();
-        calculateEuler(dt);
-        }
-    std::vector<glm::vec3> positions;
-    positions.reserve(points.size());
+{   
+    
+    calculateForces();
+    calculateEuler(dt);
+    
+    //for (auto& p : points) {
+    //    if (p.position.x < 0) {
+    //        p.position.x = 0;
+    //        p.speed.x *= -1;
+    //    }
+    //    if (p.position.x > m_window.getWidth()) {
+    //        p.position.x = m_window.getWidth();
+    //        p.speed.x *= -1;
+    //    }
+    //    if (p.position.y < 0) {
+    //        p.position.y = 0;
+    //        p.speed.y *= -1;
+    //    }
+    //    if (p.position.y > m_window.getHeight()) {
+    //        p.position.y = m_window.getHeight();
+    //        p.speed.y *= -1;
+    //    }
+    //
+    //    glm::vec3 d = sfera.pos - p.position;
+    //   
+    //    if (glm::length(d) - sfera.R < 0)
+    //    {
+    //        glm::vec3 n = (sfera.pos - p.position);
+    //        n = glm::normalize(n);
+    //        glm::vec3 z = d - sfera.R;
+    //        p.position = p.position + n * z;
+    //
+    //        glm::vec3 Vn = n * (n * p.speed);
+    //        glm::vec3 Vs = p.speed - Vn;
+    //
+    //        p.speed = (Vs - Vn*sfera.tlum);
+    //    }
+    //}
+    //
+    //std::vector<glm::vec3> positionsOnly;
+    //positionsOnly.reserve(points.size());
+    //for (const auto& p : points) {
+    //    positionsOnly.push_back(p.position);
+    //}
+    //
+    //pMesh.updateData(positionsOnly);
 
-    for (const auto& p : points) {
-        positions.push_back(p.position);
-    }
-
-    currentRenderData.vertexCount = positions.size();
-    pointsVBO.UploadDataToGPU(positions.data(), positions.size() * sizeof(glm::vec3), GL_DYNAMIC_DRAW);
-
-    m_window.getCamera().Update();
+    //currentRenderData.vertexCount = points.size();
 }
 
 void App::render()
 {
    m_window.clear();
-   
-   m_window.draw(pointsRenderable, currentRenderData);
+   std::cout << c.getPosition().x << c.getPosition().x << c.getPosition().x << std::endl;
+   m_window.draw(c, currentRenderData);
    
    openGlFLags();
 
@@ -281,8 +265,8 @@ void App::renderImGui()
 
 void App::openGlFLags()
 {
-    glPointSize(5.f);
-    glEnable(GL_POINT_SMOOTH);
+    //glPointSize(10.f);
+    //glEnable(GL_POINT_SMOOTH);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 }
@@ -301,7 +285,7 @@ void App::initializeShaders()
     skyboxShader.addShader("shaders\\frag\\cubemapFrag.glsl", GL_FRAGMENT_SHADER);
     skyboxShader.linkProgram();
 
-    currentRenderData.shaderProgram = &pointsShader;
+    currentRenderData.shaderProgram = &mainShader;
 }
 
 void App::installLights()
@@ -338,4 +322,38 @@ void App::installLights()
     //pointLights.emplace_back(pointLight);
     spotLights.emplace_back(light);
 
+}
+
+void App::renderShadows()
+{
+    //glm::mat4 lightProjection = glm::ortho(
+    //    -orthoSize, orthoSize,
+    //    -orthoSize, orthoSize,
+    //    lightNear, lightFar);
+    //
+    //glm::mat4 lightView = glm::lookAt(
+    //    glm::vec3(0.0f, 1.0f, 0.0f),
+    //    -dirLight.direction, 
+    //    glm::vec3(0.0f, 1.0f, 0.0f));  
+    //
+    //lightSpaceMatrix = lightProjection * lightView;
+    //shadowMap.BindForWrite();  
+    //
+    //glClear(GL_DEPTH_BUFFER_BIT);
+    //
+    //shadowShader.use();
+    //shadowShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    //
+    //for (int i = 0; i < cubes.size(); i++) {
+    //    auto& cube = cubes[i];
+    //    shadowShader.setMat4("model",cube.getModelMatrix());
+    //
+    //    m_window.draw(cube, shadowShader);
+    //}
+    //shadowShader.setMat4("model", obj.getModelMatrix());
+    //
+    //m_window.draw(obj, shadowShader);
+    //
+    //shadowMap.Unbind();
+    //glViewport(0, 0, m_window.getWidth(), m_window.getHeight());
 }

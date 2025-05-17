@@ -67,6 +67,7 @@ public:
     const GLuint getIndexCount() const { return m_indexCount; }
 
     std::vector<const Texture*>  m_textures;
+
 private:
     GLuint m_vertexCount;
     GLuint m_indexCount;

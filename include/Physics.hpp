@@ -12,18 +12,29 @@ inline glm::vec3 W_Euler(glm::vec3 f, float h)
 	return f * h;
 }
 
+
+typedef struct SferaN
+{
+	glm::vec3 pos = { 0,0,0 };
+	float R = 0;
+	float tlum = 0;
+};
+
 typedef struct Point{
 
-	int flag;
-	float mass;
-	float invMass = 1.f / mass;
+	Point() = default;
+	Point(float x, float y, float z):position(x,y,z){}
 
-	glm::vec3 position;
-	glm::vec3 speed;
-	glm::vec3 force;
+	int flag = 0;
+	float mass = 0;
+	float invMass = 0;
+
+	glm::vec3 position = {0, 0, 0};
+	glm::vec3 speed = {0, 0, 0};
+	glm::vec3 force = {0, 0, 0};
 	
-	glm::vec3 dr;
-	glm::vec3 dv;
+	glm::vec3 dr = { 0, 0, 0 };
+	glm::vec3 dv = { 0, 0, 0 };
 
 };
 

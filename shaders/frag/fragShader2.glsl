@@ -135,4 +135,6 @@ void main() {
     }
     
     FragColor = vec4(result, hasTexture ? texture(diffuseTexture, fs_in.TexCoords).a : objectColor.a);
+    FragColor = vec4(1,1,0.5,0);
+    
 }

@@ -3,8 +3,8 @@
 
 void GenericRenderable::draw(RenderTarget& target, RenderData& data)
 {
-    if (m_VAO)
-	    target.draw(*m_VAO, data);
+    if (m_mesh)
+	    target.draw(m_mesh->getVAO(), data);
 }
 
 glm::mat4& GenericRenderable::getModelMatrix()

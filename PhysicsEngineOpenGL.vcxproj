@@ -152,9 +152,12 @@
     <ClCompile Include="src\Physics.cpp" />
     <ClCompile Include="src\RenderableObject.cpp" />
     <ClCompile Include="src\RenderContext.cpp" />
+    <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\ResourceSystem.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ShadowMapFBO.cpp" />
     <ClCompile Include="src\Shapes.cpp" />
+    <ClCompile Include="src\SimpleMesh.cpp" />
     <ClCompile Include="src\TargetCamera.cpp" />
     <ClCompile Include="src\Transformable.cpp" />
     <ClCompile Include="src\Utilities.cpp" />
@@ -190,6 +193,7 @@
     <ClInclude Include="include\Color.hpp" />
     <ClInclude Include="include\CPlane.hpp" />
     <ClInclude Include="include\Cubemap.hpp" />
+    <ClInclude Include="include\Drawable.hpp" />
     <ClInclude Include="include\FrameBuffer.hpp" />
     <ClInclude Include="include\FreeCamera.hpp" />
     <ClInclude Include="include\GenericRenderable.hpp" />
@@ -203,9 +207,12 @@
     <ClInclude Include="include\RenderContext.hpp" />
     <ClInclude Include="include\RenderData.hpp" />
     <ClInclude Include="include\RenderTarget.hpp" />
+    <ClInclude Include="include\ResourceManager.hpp" />
+    <ClInclude Include="include\ResourceSystem.hpp" />
     <ClInclude Include="include\Shader.hpp" />
     <ClInclude Include="include\ShadowMapFBO.hpp" />
     <ClInclude Include="include\Shapes.hpp" />
+    <ClInclude Include="include\SimpleMesh.hpp" />
     <ClInclude Include="include\TargetCamera.hpp" />
     <ClInclude Include="include\Texture.hpp" />
     <ClInclude Include="include\Transform.hpp" />

@@ -18,18 +18,12 @@ extern std::vector<glm::vec2> squareTextCoords;
 
 
 static Mesh* sharedCubeMesh = nullptr;
-static Mesh* sharedSphereMesh = nullptr;
 
 class Sphere : public RenderableObject {
 public:
 
-    Sphere() : RenderableObject() {
-        this->m_drawMode = DrawMode::ELEMENTS;
-        this->m_primType = PrimitiveType::TRIANGLES;
-        if (!sharedSphereMesh) {
-            sharedSphereMesh = new Mesh(CreateSphere(1.f, 36, 12));
-        }
-        addMesh(sharedSphereMesh);
+    Sphere(float radius = 1.f) : RenderableObject(new Mesh(CreateSphere(radius, 36, 12)), DrawMode::ELEMENTS, PrimitiveType::TRIANGLES) 
+    {
     }
 };
 

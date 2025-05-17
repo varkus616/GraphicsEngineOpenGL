@@ -1,7 +1,7 @@
 ﻿#include "Mesh.hpp"
 #include <Texture.hpp>
 
-Mesh::  Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
+Mesh::Mesh(const void* vertexData, size_t vertexCount, size_t vertexSize,
     const std::vector<GLuint>& indices,
     const VertexBufferLayout& layout,
     GLint bufferType)

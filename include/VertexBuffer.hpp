@@ -8,7 +8,10 @@ class VertexBuffer
 {
 public:
 
-    VertexBuffer(const void* data, GLuint size, GLuint vertexSize, GLint bufferType = GL_ARRAY_BUFFER, GLint drawHint = GL_STATIC_DRAW);
+    VertexBuffer(const void* data, GLuint size,
+        GLuint vertexSize, 
+        GLint bufferType = GL_ARRAY_BUFFER, 
+        GLint drawHint = GL_STATIC_DRAW);
     VertexBuffer() = default;
 
     void CreateVBO();

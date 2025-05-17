@@ -4,18 +4,19 @@
 #include <Renderable.hpp>
 #include <VertexArray.hpp>
 #include <Transformable.hpp>
+#include <SimpleMesh.hpp>
 
 class GenericRenderable : public Renderable, public Transformable
 {
 public:
-    GenericRenderable(VertexArray* vao): m_VAO(vao){}
+    GenericRenderable(SimpleMesh* m): m_mesh(m){}
     GenericRenderable() = default;
     void draw(RenderTarget& target, RenderData& data);
     glm::mat4& getModelMatrix();
     glm::vec4 getColor();
-    void setVAO(VertexArray* vao) { m_VAO = vao; }
+    void setMesh(SimpleMesh* mesh) { m_mesh = mesh; }
 private:
-    VertexArray* m_VAO = nullptr;
+    SimpleMesh* m_mesh;
 };
 
 #endif // !GENERIC_RENDERABLE_HPP
