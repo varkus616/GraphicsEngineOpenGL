@@ -1,12 +1,12 @@
 #include "App.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
 
-    bool calculateLightFlag = true;
-    bool calculateShadows = false;
-    bool hasTextureFlag = true;
-    glm::mat4 lightSpaceMatrix;
+bool calculateLightFlag = true;
+bool calculateShadows = false;
+bool hasTextureFlag = true;
+glm::mat4 lightSpaceMatrix;
 
-    void printFPS()
+void printFPS()
 {
     static double lastTime = glfwGetTime();
     static int frameCount = 0;
@@ -111,29 +111,35 @@ App::App(Window& window)
     c.setPosition(0, 0, 0);
     c.setColor(glm::vec4(255, 255, 0, 0));
     
-    //`int pointCount = 50;
-    //`float screenWidth = static_cast<float>(m_window.getWidth());
-    //`float step = screenWidth / (pointCount - 1);
-    //`for (int i = 0; i < pointCount; ++i) {
-    //`    float x = i * step;
-    //`    float y = m_window.getHeight(); 
-    //`    Point p(x, y * 0.02, 0.0f);
-    //`    p.mass = 1.f;
-    //`    p.invMass = 1.f / p.mass;
-    //`    points.push_back(p); 
-    //`}
+    int pointCount = 50;
+    float screenWidth = static_cast<float>(m_window.getWidth());
+    float step = screenWidth / (pointCount - 1);
+    for (int i = 0; i < pointCount; ++i) 
+    {
+        float x = i * step;
+        float y = m_window.getHeight(); 
+        Point p(x, y * 0.02, 0.0f);
+        p.mass = 1.f;
+        p.invMass = 1.f / p.mass;
+        points.push_back(p); 
+    }
+
+    for (auto& p : points)
+    {
+        std::cout << p.position.x << " " << p.position.y << " " << p.position.z << std::endl;
+    }
 
     currentRenderData.uniformUpdater = func;
     //currentRenderData.drawMode = DrawMode::ARRAYS;
     //currentRenderData.primitiveType = PrimitiveType::POINTS;
-
+    //
     //VertexBufferLayout layout;
     //layout.Push<GLfloat>(3);
     //pMesh.setBufferType(GL_ARRAY_BUFFER);
     //pMesh.setData(points, GL_DYNAMIC_DRAW);
     //pMesh.setupBuffers(layout);
     //pointsRenderable.setMesh(&pMesh);
-
+    //
     //gravitation.y = 1;
     //
     //sfera.pos.x = m_window.getWidth() / 2;
@@ -242,7 +248,6 @@ void App::update(float dt)
 void App::render()
 {
    m_window.clear();
-   std::cout << c.getPosition().x << c.getPosition().x << c.getPosition().x << std::endl;
    m_window.draw(c, currentRenderData);
    
    openGlFLags();

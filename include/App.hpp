@@ -45,10 +45,10 @@ public:
 	ShadowMapFBO shadowMap;
 	glm::vec3 gravitation;
 
-	//std::vector<Point> points;
+	std::vector<Point> points;
 	//VertexBuffer pointsVBO;
 	//VertexArray pointsVAO;
-	//GenericRenderable pointsRenderable;
+	GenericRenderable pointsRenderable;
 	//SimpleMesh pMesh;
 	SferaN sfera;
 	Cube c;
