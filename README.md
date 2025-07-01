@@ -1,1 +1,1 @@
-# PhysicsEngineOpenGL
+# GraphicsEngineOpenGL
