@@ -28,10 +28,10 @@ Window::Window(RenderContext& context, int width, int height, const std::string&
     context.createContext(m_window);
     initialize(m_window);
 
-    //glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    //glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos) {
-    //    static_cast<Window*>(glfwGetWindowUserPointer(window))->mouseCallback(xpos, ypos);
-    //    });
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos) {
+        static_cast<Window*>(glfwGetWindowUserPointer(window))->mouseCallback(xpos, ypos);
+        });
     glfwSetWindowUserPointer(m_window, this);
 }
 
@@ -131,10 +131,10 @@ void Window::processInput(float deltaTime) {
     if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(m_window, true);
 
-    //if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS) {
-    //    m_enableMouseControl = !m_enableMouseControl; // Prze³¹czanie kontroli myszy
-    //    glfwSetInputMode(m_window, GLFW_CURSOR, m_enableMouseControl ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
-    //}
+    if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS) {
+        m_enableMouseControl = !m_enableMouseControl; // Prze³¹czanie kontroli myszy
+        glfwSetInputMode(m_window, GLFW_CURSOR, m_enableMouseControl ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+    }
     
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
         m_camera.Walk(deltaTime);

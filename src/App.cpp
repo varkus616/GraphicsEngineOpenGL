@@ -3,7 +3,8 @@
 
 bool calculateLightFlag = true;
 bool calculateShadows = false;
-bool hasTextureFlag = true;
+bool calculateTorchLight = true;
+bool hasTextureFlag = false;
 glm::mat4 lightSpaceMatrix;
 
 void printFPS()
@@ -33,7 +34,10 @@ std::vector<std::string> faces = {
 App::App(Window& window)
     : m_window(window),
     shadowMap(1024, 1024),
-    m_skybox(faces)
+    m_skybox(faces),
+    planeMesh(Utils::generatePlane(100, 100)),
+    plane(&planeMesh, DrawMode::ELEMENTS),
+    t("resources/earth2048.bmp")
 {
     srand(777);
     initializeShaders();
@@ -98,81 +102,35 @@ App::App(Window& window)
             d.shaderProgram->setVec4("objectColor", r.getColor());
 
             d.shaderProgram->setBool("calculateLight", calculateLightFlag);
+            d.shaderProgram->setBool("calculateTorchLight", calculateTorchLight);
             d.shaderProgram->setBool("calculateShadows", calculateShadows);
             d.shaderProgram->setBool("hasTexture", hasTextureFlag);
         };
 
-    auto pointfunc = [&](Renderable& r, RenderData& d, Window& w)
-        {
-            d.shaderProgram->setMat4("projectionMatrix", w.getOrthographicMatrix());
-            d.shaderProgram->setMat4("viewMatrix", glm::mat4(1)); //w.getViewMatrix());
-        };  
+   
     m_window.getCamera().SetPosition(glm::vec3(0, 0, -8));
     c.setPosition(0, 0, 0);
     c.setColor(glm::vec4(255, 255, 0, 0));
+
+    plane.setPosition(0, -1.5, 0);
+    for (int i = 0; i < 9; ++i) {
+        Cube cube;
+        cube.setColor(glm::vec4(0.2f * i, 0.5f, 1.0f - 0.2f * i, 1.0f));
+        orbitingCubes.push_back(cube);
+
+        cubeRotAngles.push_back(0.0f);
+
+        Axis axis = static_cast<Axis>(i % 3);
+        cubeRotAxes.push_back(axis);
+
+        float speed = (i % 2 == 0 ? 1.0f : -1.0f) * (1.6f + 0.6f * i);
+        cubeRotSpeeds.push_back(speed);
+    }
+
     
-    int pointCount = 50;
-    float screenWidth = static_cast<float>(m_window.getWidth());
-    float step = screenWidth / (pointCount - 1);
-    for (int i = 0; i < pointCount; ++i) 
-    {
-        float x = i * step;
-        float y = m_window.getHeight(); 
-        Point p(x, y * 0.02, 0.0f);
-        p.mass = 1.f;
-        p.invMass = 1.f / p.mass;
-        points.push_back(p); 
-    }
-
-    for (auto& p : points)
-    {
-        std::cout << p.position.x << " " << p.position.y << " " << p.position.z << std::endl;
-    }
-
     currentRenderData.uniformUpdater = func;
-    //currentRenderData.drawMode = DrawMode::ARRAYS;
-    //currentRenderData.primitiveType = PrimitiveType::POINTS;
-    //
-    //VertexBufferLayout layout;
-    //layout.Push<GLfloat>(3);
-    //pMesh.setBufferType(GL_ARRAY_BUFFER);
-    //pMesh.setData(points, GL_DYNAMIC_DRAW);
-    //pMesh.setupBuffers(layout);
-    //pointsRenderable.setMesh(&pMesh);
-    //
-    //gravitation.y = 1;
-    //
-    //sfera.pos.x = m_window.getWidth() / 2;
-    //sfera.pos.y = m_window.getHeight() / 2;
-    //sfera.tlum = 0;
-    //sfera.R = 200;
-    
-    //s.setPosition(0, 0, -8);
-}
-
-void App::calculateForces()
-{
-    //for (auto& point : points)
-    //{
-    //    if ( !(point.flag & P_ZAW))
-    //    {
-    //        point.force = gravitation * point.mass;
-    //    }
-    //}
-}
-
-void App::calculateEuler(float dt)
-{
-    //for (auto& point : points)
-    //{
-    //    if (!(point.flag & P_ZAW))
-    //    {
-    //        point.dv = W_Euler(point.force * point.invMass, dt);
-    //        point.speed += point.dv;
-    //        point.dr = point.speed * dt;
-    //        point.position += point.dr;
-    //    }
-    //}
+  
+    earth.addTexture(&t, 0);
 }
 
 void App::run()
@@ -180,7 +138,7 @@ void App::run()
     while (isRunning())
     {
         processInput();
-        //update(0.005);
+        update(0.0005);
         renderShadows();
         render();
     }
@@ -188,72 +146,52 @@ void App::run()
 
 void App::processInput() 
 {
-    m_window.processInput(0.05f);
+    m_window.processInput(0.005f);
     m_window.getCamera().Update();
     if (m_window.shouldClose())
         m_app_running = false;
+    if (glfwGetKey(m_window.getWindowHandle(), GLFW_KEY_V) == GLFW_PRESS)
+        calculateTorchLight = !calculateTorchLight;
 }
-
 void App::update(float dt)
-{   
-    
-    calculateForces();
-    calculateEuler(dt);
-    
-    //for (auto& p : points) {
-    //    if (p.position.x < 0) {
-    //        p.position.x = 0;
-    //        p.speed.x *= -1;
-    //    }
-    //    if (p.position.x > m_window.getWidth()) {
-    //        p.position.x = m_window.getWidth();
-    //        p.speed.x *= -1;
-    //    }
-    //    if (p.position.y < 0) {
-    //        p.position.y = 0;
-    //        p.speed.y *= -1;
-    //    }
-    //    if (p.position.y > m_window.getHeight()) {
-    //        p.position.y = m_window.getHeight();
-    //        p.speed.y *= -1;
-    //    }
-    //
-    //    glm::vec3 d = sfera.pos - p.position;
-    //   
-    //    if (glm::length(d) - sfera.R < 0)
-    //    {
-    //        glm::vec3 n = (sfera.pos - p.position);
-    //        n = glm::normalize(n);
-    //        glm::vec3 z = d - sfera.R;
-    //        p.position = p.position + n * z;
-    //
-    //        glm::vec3 Vn = n * (n * p.speed);
-    //        glm::vec3 Vs = p.speed - Vn;
-    //
-    //        p.speed = (Vs - Vn*sfera.tlum);
-    //    }
-    //}
-    //
-    //std::vector<glm::vec3> positionsOnly;
-    //positionsOnly.reserve(points.size());
-    //for (const auto& p : points) {
-    //    positionsOnly.push_back(p.position);
-    //}
-    //
-    //pMesh.updateData(positionsOnly);
+{
+    static float time = 0;
+    time += dt;
+    auto t = glfwGetTime();
+    for (int i = 0; i < orbitingCubes.size(); ++i) {
+        float angle = time + i * glm::radians(72.0f);
+        float radius = 8.0f + i;
 
-    //currentRenderData.vertexCount = points.size();
+        float x = cos(angle) * radius;
+        float z = sin(angle) * radius;
+
+        orbitingCubes[i].setPosition(x, 0.0f, z);
+
+        cubeRotAngles[i] += cubeRotSpeeds[i]  * 0.1;
+
+        orbitingCubes[i].rotate(cubeRotAngles[i], cubeRotAxes[i]);
+        earth.rotate(360 * sin(t), Axis::Y);
+    }
 }
 
 void App::render()
 {
-   m_window.clear();
-   m_window.draw(c, currentRenderData);
-   
-   openGlFLags();
+    m_window.clear();
 
-   m_window.display();
+
+    m_window.draw(plane, currentRenderData);
+    
+    m_window.draw(c, currentRenderData);
+    hasTextureFlag = true;
+    m_window.draw(earth, currentRenderData);
+    hasTextureFlag = false;
+    for (auto& cube : orbitingCubes)
+        m_window.draw(cube, currentRenderData);
+
+    openGlFLags();
+    m_window.display();
 }
+
 
 void App::renderImGui()
 {
@@ -309,9 +247,10 @@ void App::installLights()
     light.cutOff = glm::cos(glm::radians(12.5f));
     light.outerCutOff = glm::cos(glm::radians(17.5));
 
-    light.ambient = { 0.2, 0.2, 0.2 };
-    light.diffuse = { 0.8, 0.8, 0.8 };
-    light.specular = { 1.f, 1.f, 1.f };
+    light.ambient = { 0.3f, 0.15f, 0.0f };
+    light.diffuse = { 0.9f, 0.4f, 0.0f };
+    light.specular = { 1.0f, 0.5f, 0.1f };
+
 
 
     PointLight pointLight;

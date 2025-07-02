@@ -41,6 +41,7 @@ uniform DirLight dirLight;
 uniform vec4 objectColor;
 uniform vec3 viewPos;
 uniform bool calculateLight;
+uniform bool calculateTorchLight;
 uniform bool hasTexture;
 uniform bool calculateShadows; 
 
@@ -128,13 +129,14 @@ void main() {
         for (int i = 0; i < numPointLights; i++)
             result += CalculatePointLight(pointLights[i], normal, fs_in.FragPos, viewDir, material);
         
-        for (int i = 0; i < numSpotLights; i++)
-            result += CalculateSpotLight(spotLights[i], normal, fs_in.FragPos, viewDir, material);
+        if (calculateTorchLight)
+            for (int i = 0; i < numSpotLights; i++)
+                result += CalculateSpotLight(spotLights[i], normal, fs_in.FragPos, viewDir, material);
     } else {
         result = vec3(0);//material;
     }
     
     FragColor = vec4(result, hasTexture ? texture(diffuseTexture, fs_in.TexCoords).a : objectColor.a);
-    FragColor = vec4(1,1,0.5,0);
+    //FragColor = vec4(1,1,0.5,0);
     
 }

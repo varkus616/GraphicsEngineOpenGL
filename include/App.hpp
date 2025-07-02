@@ -21,10 +21,11 @@
 class App
 {
 public:
+	void run();
 	App(Window& window);
 	~App() = default;
+private:
 
-	void run();
 	const bool isRunning()const { return m_app_running; }
 	const Window& getWindow()const { return m_window; }
 	
@@ -43,17 +44,18 @@ public:
 	Shader skyboxShader;
 
 	ShadowMapFBO shadowMap;
-	glm::vec3 gravitation;
-
-	std::vector<Point> points;
-	//VertexBuffer pointsVBO;
-	//VertexArray pointsVAO;
-	GenericRenderable pointsRenderable;
-	//SimpleMesh pMesh;
-	SferaN sfera;
 	Cube c;
+	Texture t;
+	Sphere earth;
+	Mesh planeMesh;
+	RenderableObject plane;
 
-private:
+
+	std::vector<Cube> orbitingCubes;
+	std::vector<float> cubeRotAngles;
+	std::vector<Axis> cubeRotAxes;
+	std::vector<float> cubeRotSpeeds;
+
 	bool m_app_running = true;
 	
 	void processInput();
@@ -62,8 +64,6 @@ private:
 	void renderShadows();
 	void renderImGui();
 
-	void calculateForces();
-	void calculateEuler(float dt);
 	void initializeShaders();
 	void installLights();
 	void openGlFLags();
