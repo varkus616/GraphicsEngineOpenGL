@@ -44,7 +44,8 @@
 - `Window.hpp` – zarządzanie oknem i kamerą.
 
 ## 📸 Screenshot (opcjonalnie)
-(Dodaj tu obraz sceny jeśli masz)
+![Silnik w akcji](gifs/gif2.gif)
+![Silnik w akcji](gifs/gif1.gif)
 
 ## 📃 Licencja
 
